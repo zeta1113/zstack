@@ -1,9 +1,8 @@
 <!-- AUTO-GENERATED from tasks-aggregator.md.tmpl — do not edit directly -->
 <!-- Regenerate: bun run gen:skill-docs -->
-## Implementation Tasks aggregator
+## 구현 작업 집계
 
-Before rendering the Final Approval Gate output block below, aggregate the
-per-phase task lists each review skill wrote.
+아래 최종 승인 게이트 출력 블록을 렌더링하기 전에, 각 리뷰 기술이 썼습니다.
 
 ```bash
 eval "$(~/.claude/skills/gstack/bin/gstack-slug 2>/dev/null)"
@@ -65,16 +64,9 @@ else
 fi
 ```
 
-Inside the Final Approval Gate output template below, render the aggregated
-markdown in the `### Implementation Tasks (aggregated across phases)` section.
-Substitute the contents of `$AGGREGATED_TASKS` (the bash variable set above)
-before printing the message to the user. This is NOT a template placeholder
-— the agent does the substitution at runtime, not gen-skill-docs at build time.
+아래 최종 승인 게이트 출력 템플릿 내부에서 `### Implementation Tasks (aggregated across phases)` 섹션에서 골재된 마커를 렌더링합니다. `$AGGREGATED_TASKS`(위의 bash 변수 설정)의 내용을 사용자에 메시지를 인쇄하기 전에 사용합니다. 이것은 NOT 템플릿 위주인 - 에이전트는 런타임에 대 한 하위 대용을 수행, 빌드 시간에 gen-skill-docs.
 
-If `$AGGREGATED_TASKS` is empty (no JSONL files found — none of the review
-skills ran in this session), render:
+`$AGGREGATED_TASKS`가 빈 경우 (JSONL 파일이 발견되지 않았습니다. - 이 세션에서 검토 기술이 ran의 아무도), 렌더링 :
 
-`_No per-phase task lists found in $TASKS_DIR for branch $BRANCH. Each review
-skill writes its own; if you ran one of them but no list appears here, check
-that jq is installed and the tasks-<phase>-*.jsonl files exist._`
+`_No per-phase task lists found in $TASKS_DIR for branch $BRANCH. Each review skill writes its own; if you ran one of them but no list appears here, check that jq is installed and the tasks-<phase>-*.jsonl files exist._`
 

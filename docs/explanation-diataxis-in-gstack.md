@@ -1,20 +1,20 @@
-# Why gstack uses Diataxis for documentation
+# 왜 gstack는 Diataxis 문서를 위해 사용
 
-The two doc skills in gstack — `/document-release` and `/document-generate` — both speak Diataxis. New entities get scored across four quadrants. Coverage gaps surface in PR bodies tagged by quadrant. This doc explains why that vocabulary is load-bearing, and why a simpler "just write markdown" approach falls down at the scale gstack operates at.
+gstack - `/document-release` 및 `/document-generate` - 둘 다 Diataxis를 말하십시오. 새로운 entities는 4명의 참가자를 맞댄 득점했습니다. PR 몸에 있는 적용 간격 표면은 사만에 의해 태그했습니다. 이 문서는 왜 항해가 적재 방위이고, 왜 단지 “단지” 접근이 가늠자 gstack에서 아래로 떨어지는지 이유를 설명합니다.
 
-## The problem
+## 문제
 
-Documentation rot is the easiest kind of rot to ignore. Code stops compiling and you notice immediately. A test fails and CI screams. Docs go stale silently — the README still parses, the install command still copy-pastes — and the only signal is a confused user weeks later filing an issue or quietly walking away.
+문서 rot는 무시하기 위해 rot의 가장 쉬운 종류입니다. 코드는 컴파일을 중지하고 즉시 통지합니다. 테스트는 실패하고 CI 비명입니다. Docs는  stale을 조용히 간다 — README는 여전히 파스, 설치 명령은 여전히 복사 - 파스 - 유일한 신호는 혼란스러워서 문제가 나 조용히 걷는 혼란스러워서만입니다.
 
-gstack has more than 45 skills. Every one is a SKILL.md plus a `.tmpl` template plus, ideally, a getting-started tutorial somewhere and an explanation of why it works the way it does. Multiply that by however many gstack users have similar surface-area in their own projects and the maintenance load is real.
+gstack에는 45개 이상의 기술이 있습니다. 각 것은 SKILL.md 플러스 `.tmpl` 템플렛 플러스, 이상적으로, 얻는 시작된 튜토리얼 어딘가에 그리고 왜 그것이 작동하는 방법의 설명입니다. 그러나 많은 gstack 사용자는 그들의 자신의 프로젝트에 있는 유사한 표면 지역이 있고 정비 짐은 진짜입니다.
 
-The naive failure mode is "every team writes docs in their own format." One project has a Wiki. Another has nested README files. A third has reference-only API docs and no tutorials. A fourth has tutorials that no longer compile. You can't write tooling that audits across all of those because there's no shared vocabulary for what good coverage means.
+네이티브 실패 모드는 "모든 팀이 자신의 형식에서 docs를 작성합니다." 하나의 프로젝트는 Wiki가 있습니다. 또 다른 하나는 README 파일에 배열되었습니다. 세 번째는 참고 전용 API docs 및 자습서가 없습니다. 네 번째는 더 이상 컴파일하지 않는 튜토리얼이 있습니다. 당신은 좋은 적용 수단을 위해 공유 어휘가 없기 때문에 모든 사람들을 통해 감사하는 도구가 작성되지 않습니다.
 
-The second failure mode is more subtle: even when a team is disciplined, they tend to write the kind of doc that matches their current state of mind. Engineers in build mode write reference. Engineers in launch mode write tutorials. Engineers in maintenance mode write troubleshooting how-tos. No one wakes up and says "today I'll write the explanation doc for why we chose this architecture" — so explanation rot accumulates fastest.
+두 번째 실패 모드는 더 다소 다소: 팀이 훈련 될 때, 그들은 마음의 현재 상태를 일치 doc의 종류를 작성하는 경향이. 빌드 모드 쓰기 참조 엔지니어. 시작 모드 쓰기 자습서 엔지니어. 유지 보수 모드에 엔지니어는 문제 해결 방법을 쓰기. 아무도 일어나고 "오늘 내가이 아키텍처를 선택 한 이유에 대한 설명 doc을 작성합니다"- 그래서 설명 rot 가장 빠른 축적.
 
-## The approach
+## 접근
 
-Diataxis (Daniele Procida, originally at Divio, now adopted across CPython, Django, NumPy, FastAPI, GitHub docs, and many others) splits documentation into four quadrants based on **reader intent**:
+Diataxis (Daniele Procida, 원래 Divio에서, 이제 CPython, Django, NumPy, FastAPI, GitHub docs 및 기타 많은 다른 사람)에 따라 4 개의 사분자로 문서를 분할 **독자 intent**:
 
 ```
                     THEORETICAL                        PRACTICAL
@@ -40,40 +40,40 @@ Diataxis (Daniele Procida, originally at Divio, now adopted across CPython, Djan
                    +-----------------------------+----------------------------+
 ```
 
-A reader in tutorial mode is learning by doing. They want a guided path with guaranteed success. A reader in how-to mode already knows the basics and wants the recipe for a specific task. A reader in reference mode wants accurate, complete, fact-table coverage of the API. A reader in explanation mode wants to understand a design decision.
+튜토리얼 모드의 리더는 학습을 통해 이루어집니다. 그들은 보장 된 성공으로 안내 된 경로를 원합니다. 모드에 독자는 이미 기본을 알고 특정 작업에 대한 조리법을 원합니다. 참고 모드에서 독자는 정확하고, 완전한, 사실 - 테이블 적용을 원합니다. 설명 모드에서 독자는 디자인 결정을 이해하는 것을 원합니다.
 
-The same person reads a project from each of these modes at different times. The same paragraph cannot serve all four — tutorials need handholding that would slow down a reference reader; reference needs completeness that would overwhelm a tutorial reader.
+동일한 사람이 다른 시간에이 모드의 각에서 프로젝트를 읽습니다. 동일한 단락은 모든 4 - 튜토리얼을 제공하여 참조 리더를 느리고 있습니다. 참고는 튜토리얼 리더를 압도 할 수있는 완전성을 필요로합니다.
 
-## Why this matters as a coverage lens
+## 왜 이런 일이 적용 렌즈로
 
-A coverage map written in Diataxis terms gives you a deterministic answer to "did docs get updated?" — not "is there a README" but "is there a tutorial for this new skill, a how-to for the common task, a reference for the API, and an explanation for the non-obvious design choice?"
+Diataxis 용어에 쓴 적용지도는 "did docs get updated?"에 대한 결정적인 대답을 제공합니다. "이 새로운 기술에 대한 자습서가 있지만, 일반적인 작업의 방법, API의 참조 및 비 명백한 디자인 선택에 대한 설명이 없습니다?"
 
-`/document-release` Step 1.5 walks the diff, extracts new public surface (skills, CLI flags, config options, API endpoints), and scores each entity across the four quadrants. Items with zero coverage become **critical gaps**. Items with only reference coverage (the most common failure mode in gstack's own history) become **common gaps**. Both land in the PR body where reviewers see them.
+`/document-release` 단계 1.5는 diff를, 추출합니다 새로운 공중 표면 (스킬, CLI 깃발, 구성 선택권, API 내점)를 걸고, 4개의 사분면의 맞은편에 각 법인을 점수를 매깁니다. 0개의 적용이 **긴 수명**가 되는 품목. (gstack의 자신의 역사에 있는 일반적인 실패 형태)를 가진 품목은 **common gaps**. 둘 다 PR 몸에 있는 땅은 그(것)들을 볼 수 있습니다.
 
-`/document-generate` writes docs in the four quadrants intentionally. It refuses to mix them: a tutorial does not get a "Configuration" section, a reference doc does not get a "What you'll build" paragraph. The skill's 9 steps go reference → explanation → how-to → tutorial because that ordering matches the dependency: reference fixes the vocabulary, explanation justifies the design, how-tos build on both, tutorials are the last and hardest.
+`/document-generate` 4개의 사분면에서 docs를 의도적으로 쓰지 않습니다. 그것은 그들을 섞기 위하여 거절합니다: 튜토리얼은 "Configuration" 단면도를 얻지 않습니다, 참고 doc는 "What you'll build" 단락을 얻지 않습니다. 기술의 9 단계는 참고 → 설명 → 방법 → 어떻게에 → 튜토리얼을 주문하기 때문에 의존성: 참고는 구문을 고칠, 디자인 설명, 방법 - 두 튜토리얼 모두에 구축하는 방법 마지막과 가장 어려운.
 
-## Trade-offs
+## 무역 떨어져
 
-**Diataxis adds vocabulary that readers must learn.** A user who's never heard of "reference vs explanation" might find the labels strange at first. The mitigation is that Diataxis labels are self-explanatory once you've seen them once, and the labels never appear in the docs themselves — they appear in the coverage map and PR body, where reviewers see them, not end users.
+**Diataxis는 독자가 배울 수 있는 구급차를 추가합니다.** "기본대 설명"을 듣지 않는 사용자는 먼저 라벨을 찾을 수 있습니다. 완화는 Diataxis 라벨이 한 번 보았을 때 자기 계획이며 라벨은 자체 문서에 나타나지 않습니다. 그들은 적용지도와 PR 몸에 나타납니다. 검토자가 그들을보고, 사용자를 종료하지 않습니다.
 
-**Four files instead of one.** A small skill might have one `docs/SKILL.md` file that mixes all four modes. Diataxis splits that into four. The mitigation: AI generation makes the four-file structure cheap, the cross-linking between quadrants is mechanical (every reference doc links to its how-to, every how-to links to its reference, etc.), and the gains in audit-ability are substantial — `/document-release` can score coverage automatically.
+**4개의 파일 대신에 하나.** 작은 기술에는 모든 4개의 형태를 섞는 1개의 `docs/SKILL.md` 파일이 있을지도 모릅니다. Diataxis는 4로 그 자리에 나누는. 완화: AI 발생은 4개의 파일 구조를 싼 만들고, 사만료 사이 교차 결합은 기계적인 (그것에 그것의 참고 doc 연결, 등)에, 그리고 감사 능력에 있는 이익은 실질적인 - `/document-release`는 자동적으로 적용할 수 있습니다.
 
-**Diataxis is not the only good framework.** "Every page is page one" (Mark Baker), the four kinds of docs in the *Write the Docs* community, the Google developer documentation style guide — all have different cuts. gstack picked Diataxis because it has the strongest external adoption (CPython, Django, NumPy, FastAPI, etc.), which means downstream users have the highest chance of having seen the vocabulary before, and the quadrant labels translate cleanly to coverage-map signals.
+**Diataxis는 좋은 기구가 아닙니다.** "모든 페이지는 페이지 하나"(Mark Baker), *Docs를 씁니다* 커뮤니티의 4 종류의 문서, Google 개발자 문서 스타일 가이드 - 모든 다른 커트가 있습니다. gstack는 가장 강력한 외부 채택 (CPython, Django, NumPy, FastAPI 등)을 가지고 있기 때문에 Diataxis는 다운스트림 사용자가 구급차를 본 가장 높은 기회를 가지고 있음을 의미합니다.
 
-## Alternatives considered
+## 대안 고려
 
-**"Just write README sections."** Tried implicitly across gstack's history. Failure mode: tutorials accumulated in README until READMEs were 800+ lines and nobody read them past line 50. Diataxis splits them into dedicated files, each discoverable from README's table of contents.
+**"Just는 README 섹션을 작성합니다."** gstack의 역사에 따라 헌팅된 불명하게. 실패 형태: READMEs가 800+ 선을 읽을 때까지 README에서 축적된 튜토리얼은, 아무도 과거 라인 50을 읽었습니다. Diataxis는 각 발견할 수 있는 전용 파일로 분할합니다. README의 내용의 테이블.
 
-**Custom in-house taxonomy.** Tempting because it could be tailored. Rejected because every team would invent their own vocabulary and `/document-release` would lose its cross-project audit power. Diataxis is the lingua franca.
+**관내의 관세.** 템핑은 꼬리가 될 수 있기 때문에. 모든 팀이 자신의 어휘를 발명하고 `/document-release`는 크로스 프로젝트 감사 힘을 잃게 될 것입니다. Diataxis는 lingua 프랜차이입니다.
 
-**Auto-generated reference only.** Tried via tools like JSDoc / TypeDoc / Sphinx for many projects. Reference docs without explanation become impenetrable for newcomers; without tutorials, the API is hard to onboard onto. Reference is necessary but not sufficient.
+**자동 생성된 참고만.** JSDoc/TypeDoc/ Sphinx와 같은 도구를 통해 트리에 갔다 많은 프로젝트를 위한. 설명 없이 참고 문서는 newcomers를 위해 impenetrable 됩니다; 튜토리얼 없이, API는 onboard에 단단합니다. 참고는 필요하지만 충분하지 않습니다.
 
-**No documentation framework at all, just gut-check.** The status quo for most projects. Fails silently — users walk away rather than file issues, so the feedback loop is broken. Diataxis gives a structured signal even before users complain.
+**문서 프레임 워크가 전혀 없습니다.** 대부분의 프로젝트의 상태 quo. 파일 문제보다는 자동으로 실패합니다. 그래서 피드백 루프가 부서지기 때문입니다. Diataxis는 사용자의 불만을 전도적으로 구조화 된 신호를 제공합니다.
 
-## Related
+## 관련
 
-- **Reference for the skill that implements this:** [`document-generate/SKILL.md`](../document-generate/SKILL.md)
-- **Reference for the audit that uses this taxonomy:** [`document-release/SKILL.md`](../document-release/SKILL.md)
-- **Tutorial for using `/document-generate`:** [`tutorial-document-generate.md`](./tutorial-document-generate.md)
-- **How-to: document a shipped feature:** [`howto-document-a-shipped-feature.md`](./howto-document-a-shipped-feature.md)
-- **Diataxis homepage:** https://diataxis.fr/ — Procida's canonical reference for the framework
+- **이 구현하는 기술에 대한 참조 :** [`document-generate/SKILL.md`](../document-generate/SKILL.md)
+- **이 세토니티를 사용하는 감사의 참조 :** [`document-release/SKILL.md`](../document-release/SKILL.md)
+- **`/document-generate`를 사용하는 자습서:** [`tutorial-document-generate.md`](./tutorial-document-generate.md)
+- **방법: 발송된 특징을 문서로 작성:** [`howto-document-a-shipped-feature.md`](./howto-document-a-shipped-feature.md)
+- **Diataxis 홈페이지:** https://diataxis.fr/ — 프레임 워크를 위한 Procida의 도덕적 참고

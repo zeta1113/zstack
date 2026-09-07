@@ -1,3 +1,3 @@
-# Policy
+# 정책
 
-Forced-read reference number two.
+강제적인 독서 참고 수 2.

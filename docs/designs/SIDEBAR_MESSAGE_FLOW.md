@@ -1,16 +1,10 @@
-# Sidebar Flow
+# 사이드바 흐름
 
-How the GStack Browser sidebar actually works. Read this before touching
-`sidepanel.js`, `background.js`, `content.js`, `terminal-agent.ts`, or
-sidebar-related server endpoints.
+GStack 브라우저 사이드바는 실제로 작동합니다. `sidepanel.js`, `background.js`, `content.js`, `terminal-agent.ts`, 또는 sidebar-related 서버 엔드포인트를 터치하기 전에 이것을 읽으십시오.
 
-The sidebar has one primary surface — the **Terminal** pane, an interactive
-`claude` PTY. Activity / Refs / Inspector survive as debug overlays behind
-the `debug` toggle in the footer. The chat queue path (one-shot `claude -p`,
-sidebar-agent.ts) was ripped once the PTY proved out — the Terminal pane is
-strictly more capable.
+사이드바는 1개의 1개의 1 차적인 표면이 있습니다 — **의 끝** pane, 상호 작용하는 `claude` PTY. 활동/참고/검사기는 발기부에 있는 `debug` toggle 뒤에 벌레 오바레이로 살아납니다. 대화 큐 경로 (원샷 `claude -p`, sidebar-agent.ts)는 PTY가 밖으로 입증된 후에, 찢어졌습니다 — 맨끝 팬은 엄격히 더 가능합니다.
 
-## Components
+## 부품
 
 ```
 ┌─────────────────┐     ┌──────────────┐     ┌──────────────────┐
@@ -44,11 +38,9 @@ strictly more capable.
                        └──────────────────┘
 ```
 
-The compiled browse server can't `posix_spawn` external executables —
-`terminal-agent.ts` runs as a separate non-compiled `bun run` process and
-owns the `claude` subprocess.
+컴파일된 검색 서버는 `posix_spawn` 외부 실행을 하지 못할 수 있습니다. - `terminal-agent.ts`는 별도의 비 컴파일된 `bun run` 프로세스로 실행되며 `claude` 하위 처리를 소유합니다.
 
-## Startup + first-keystroke timeline
+## 스타트업 + 첫 키 입력 타임라인
 
 ```
 T+0ms     CLI runs `$B connect`
@@ -85,121 +77,90 @@ T+ready   tryAutoConnect calls connect()
             └── Agent message handler sees the byte → spawnClaude()
 ```
 
-## Auth: WebSocket can't send Authorization headers
+## Auth: WebSocket는 허가 우두머리를 보낼 수 없습니다
 
-Browser WebSocket clients can't set `Authorization`. They CAN set
-`Sec-WebSocket-Protocol` via the second arg of `new WebSocket(url,
-protocols)`. We exploit that:
+브라우저 WebSocket 클라이언트는 `Authorization`를 놓을 수 없습니다. CAN는 `Sec-WebSocket-Protocol`의 두번째 arg를 통해 `new WebSocket(url, protocols)`를 놓습니다. 우리는 그것을 악용합니다:
 
-1. `POST /pty-session` (auth: Bearer AUTH_TOKEN) → server mints a
-   short-lived session token, pushes it to the agent over loopback,
-   returns it in the JSON body.
-2. Extension calls `new WebSocket(url, ['gstack-pty.<token>'])`.
-3. Agent reads `Sec-WebSocket-Protocol`, strips `gstack-pty.`, validates
-   against `validTokens`, echoes the protocol back. Echo is mandatory —
-   without it Chromium closes the connection on receipt of the upgrade
-   response.
+1. `POST /pty-session` (auth: Bearer AUTH_TOKEN) → 서버는 분 a를 분
+   짧은 라이브 세션 token, 반복백에 에이전트에 밀어, JSON 몸에 반환.
+2. 확장 호출 `new WebSocket(url, ['gstack-pty.<token>'])`.
+3. 에이전트는 `Sec-WebSocket-Protocol`, 스트립 `gstack-pty.`, 유효성 검사를 읽습니다
+   `validTokens`에 대하여, 의정서를 뒤로 정합니다. Echo는 그것 Chromium 없이 필수 입니다 향상 응답의 영수증에 연결을 닫습니다.
 
-A `Set-Cookie: gstack_pty=...` header is also returned for non-browser
-callers (curl, integration tests). The cookie path was the original v1
-design but `SameSite=Strict` cookies don't survive the cross-port jump
-from server.ts:34567 → agent:<random> from a chrome-extension origin.
-The protocol-token path is what the browser actually uses.
+`Set-Cookie: gstack_pty=...` 헤더는 비폭스 콜러 (curl, 통합 테스트)에 대해 반환됩니다. cookie 경로는 원래 v1 디자인이었지만 `SameSite=Strict` 쿠키는 server.ts:34567 → 에이전트에서 크로스 포트 점프를 생존하지 않습니다.<random>는 크롬 확장 기원에서. 프로토콜 토큰 경로는 실제로 사용하는 것입니다.
 
-### Dual-token model
+## 듀얼-투켄 모델
 
-| Token | Lives in | Used for | Lifetime |
+| 의논하기 | 의 삶 | 사용 | 의논하기 |
 |-------|----------|----------|----------|
-| `AUTH_TOKEN` | `<stateDir>/browse.json`; in-memory in server.ts; extension memory via pinned-origin `POST /extension-token` (never `GET /health`) | `/pty-session` POST (mint cookie + token) | server lifetime |
-| `gstack-pty.<...>` (Sec-WebSocket-Protocol) | Browser memory only; agent `validTokens` Set | `/ws` upgrade auth | 30 min, auto-revoked on WS close |
-| `INTERNAL_TOKEN` | `<stateDir>/terminal-internal-token`; in agent memory | server → agent loopback `/internal/grant` | agent lifetime |
+| `AUTH_TOKEN` | `<stateDir>/browse.json`; server.ts에 있는 in 메모리; pinned-origin `POST /extension-token`를 통해 확장 기억 (never `GET /health`) | `/pty-session` POST (mint cookie + token) | 서버 일생 |
+| `gstack-pty.<...>` (Sec-WebSocket-Protocol) | 브라우저 메모리만; 에이전트 `validTokens` 설정 | `/ws` 업그레이드 auth | 30 분, 자동 보류에 WS 닫기 |
+| `INTERNAL_TOKEN` | `<stateDir>/terminal-internal-token`; 에이전트 기억에서 | 서버 → 에이전트 루프백 `/internal/grant` | 에이전트 일생 |
 
-`AUTH_TOKEN` is **never** valid for `/ws` directly. The session token is
-**never** valid for `/pty-session` or `/command`. Strict separation
-prevents an SSE or page-content token leak from escalating into shell
-access.
+`AUTH_TOKEN`는 `/ws`를 위해 유효한 **은지** 직접 입니다. 세션 token는 `/pty-session` 또는 `/command`를 위해 유효한 **은지**입니다. 엄격한 별거는 포탄 접근으로 에스컬레이션에서 SSE 또는 페이지 내용 token 누출을 방지합니다.
 
-## Threat model
+## 스트리 모델
 
-The Terminal pane **bypasses the prompt-injection security stack** on
-purpose — the user is typing directly to claude, there's no untrusted
-page content in the loop. Trust source is the keyboard, same as any
-local terminal.
+터미널 팬 **신속한 주입 보안 스택 우회** on purpose — 사용자는 claude에 직접 입력하고, 루프에 no 무신뢰 페이지 내용이 있습니다. 신뢰할 수있는 소스는 키보드, 어떤 로컬 터미널과 동일합니다.
 
-That trust assumption is load-bearing on three transport guarantees:
+즉 신뢰 가정은 3개의 수송 보증에 짐 방위입니다:
 
-1. **Local-only listener.** terminal-agent.ts binds `127.0.0.1` only.
-   The dual-listener tunnel surface (server.ts `TUNNEL_PATHS`) does
-   not include `/pty-session` or `/terminal/*`, so the tunnel returns
-   404 by default-deny.
-2. **Origin gate.** `/ws` upgrades require
-   `Origin: chrome-extension://<id>`. A localhost web page can't mount
-   a cross-site WebSocket hijack against the shell because its Origin
-   is a regular `http(s)://...`.
-3. **Session token auth.** Minted only by an authenticated
-   `/pty-session` POST, scoped to one WS, auto-revoked on close.
+1. **현지인 청취자** terminal-agent.ts `127.0.0.1`만 바인딩합니다.
+   이중 감속기 터널 표면 (server.ts `TUNNEL_PATHS`)는 `/pty-session` 또는 `/terminal/*`를 포함하지 않습니다, 그래서 터널는 404를 기본적으로 데니에 의하여 반환합니다.
+2. **근원 문.** `/ws` 업그레이드가 필요합니다.
+   `Origin: chrome-extension://<id>`. localhost 웹 페이지는 원래 `http(s)://...`이기 때문에 포탄에 대하여 단면적 WebSocket hijack를 거치지 않을 수 있습니다.
+3. **세션 token 우.** 정정된
+   `/pty-session` POST, scoped에서 1개의 WS, 닫히는 자동 보복.
 
-Drop any one of those three and the whole tab becomes unsafe.
+그 세 가지 중 하나를 떨어 뜨리고 전체 탭은 안전하지 않습니다.
 
-## Lifecycle
+## 라이프사이클
 
-- **Eager auto-connect.** Sidebar opens → tryAutoConnect polls for the
-  bootstrap globals and connects as soon as they're set. No keypress
-  required.
-- **One PTY per WS.** Closing the WebSocket SIGINTs claude, then SIGKILLs
-  after 3s. The session token is revoked so a stolen token can't be
-  replayed.
-- **No auto-reconnect on close.** The user sees "Session ended, click to
-  start a new session." Auto-reconnect would burn a fresh claude session
-  on every reload. v1.1 may add session resumption keyed on tab/session
-  id (see TODOS).
-- **Manual restart anytime.** A `↻ Restart` button lives in the always-
-  visible terminal toolbar — works mid-session, not just from the ENDED
-  state.
+- **Eager 자동 연결.** 사이드바가 열립니다 → TryAutoConnect polls for
+  부트 스트랩 글로벌과 연결이 곧 설정된다. No 키 프레스 필요.
+- **WS 당 PTY.** WebSocket SIGINTs claude, 그 다음 SIGKILLs 닫기
+  3s 후. 세션 token는 다시 재생할 수 없습니다 그래서 스 도난 token를 수정합니다.
+- **No 자동 연결은 닫힙니다.** 사용자가 "Session end, click를 참조하십시오.
+  새로운 세션을 시작합니다. 자동 연결은 각 리로드에 신선한 클로드 세션을 태울 것입니다. v1.1은 탭/session ID에 키 입력된 세션을 추가할 수 있습니다 (TODOS 참조).
+- **수동 재시작 anytime.** A `↻ Restart` 단추는 항상 안으로 생활합니다-
+  가시성 터미널 도구 모음 - ENDED 상태에서 중간 세션을 작동.
 
-## Quick-action toolbar
+## 빠른 액션 툴바
 
-Three browser-action buttons live next to the Restart button at the top
-of the Terminal pane:
+세 개의 브라우저 액션 버튼은 터미널 팬의 상단의 나머지 버튼 옆에 있습니다.
 
 | Button | Behavior |
 |--------|----------|
-| 🧹 Cleanup | `window.gstackInjectToTerminal(prompt)` — pipes a "remove ads/banners" instruction into the live PTY. claude in the terminal sees it and acts. |
-| 📸 Screenshot | `POST /command screenshot` — direct browse-server call, no PTY involvement. |
-| 🍪 Cookies | Navigates to the `/cookie-picker` page. |
+|  ⁇   ⁇   ⁇  | `window.gstackInjectToTerminal(prompt)` - "remove ads/banners"를 라이브 PTY로 파이프. 터미널에 claude는 그것을보고 행동합니다. |
+| 스크랩 | `POST /command screenshot` - 직접 검색 서버 통화, no PTY 참여. |
+|  ⁇  쿠키 | `/cookie-picker` 페이지에 이동합니다. |
 
-The Inspector's "Send to Code" button uses the same `gstackInjectToTerminal`
-path to forward CSS inspector data into claude.
+검사관의 "코드에 보내기" 버튼은 `gstackInjectToTerminal` 경로와 같은 CSS 검사관 데이터를 claude로 사용합니다.
 
-## Debug surfaces (Activity / Refs / Inspector)
+## 디버그 표면 (액티비티 / Refs / Inspector)
 
-Behind the `debug` toggle in the footer. SSE-driven, independent of the
-Terminal pane:
+발터의 `debug` toggle 뒤에. SSE-디렉션, 터미널 팬의 독립:
 
-- **Activity** — streams every browse command via `/activity/stream` SSE.
-- **Refs** — REST: `GET /refs` — current page's `@ref` element labels.
-- **Inspector** — CDP-based element picker; SSE on `/inspector/events`.
+- **의정부** - `/activity/stream` SSE를 통해 모든 검색 명령을 스트림합니다.
+- **의 특징** — REST: `GET /refs` — 현재 페이지 `@ref` 성분 상표.
+- **검사기** — CDP-기반 요소 피커; SSE `/inspector/events`.
 
-When the debug strip closes, the Terminal pane re-becomes visible.
-xterm.js doesn't auto-redraw when its container flips from `display:none`
-to `display:flex`, so sidepanel-terminal.js runs a `MutationObserver` on
-`#tab-terminal`'s class attribute and forces a fit + refresh when
-`.active` returns.
+디버그 스트립이 닫을 때, 터미널 팬은 볼 수 있습니다. xterm.js는 `display:none`에서 `display:flex`로 컨테이너 플립이 될 때 자동 철회가 아니라 `MutationObserver`는 `#tab-terminal`의 클래스 속성에서 `.active`가 반환될 때 적합 + 새로 고침을 강제합니다.
 
-## Files
+## 파일
 
-| Component | File | Runs in |
+| 제품정보 | File | 을 실행 |
 |-----------|------|---------|
-| Sidebar UI shell | `extension/sidepanel.html` + `sidepanel.js` + `sidepanel.css` | Chrome side panel |
-| Terminal UI | `extension/sidepanel-terminal.js` + `extension/lib/xterm.js` | Chrome side panel |
-| Service worker | `extension/background.js` | Chrome background |
-| Content script | `extension/content.js` | Page context |
-| HTTP server | `browse/src/server.ts` | Bun (compiled binary) |
-| PTY agent | `browse/src/terminal-agent.ts` | Bun (non-compiled) |
-| PTY token store | `browse/src/pty-session-cookie.ts` | Bun (compiled, in server.ts) |
-| CLI entry | `browse/src/cli.ts` | Bun (compiled binary) |
-| State file | `<stateDir>/browse.json` | Filesystem |
-| Terminal port | `<stateDir>/terminal-port` | Filesystem |
-| Internal token | `<stateDir>/terminal-internal-token` | Filesystem |
-| Claude probe | `<stateDir>/claude-available.json` | Filesystem |
-| Active tab | `<stateDir>/active-tab.json` | Filesystem (claude reads) |
+| Sidebar UI shell | `extension/sidepanel.html` + `sidepanel.js` + `sidepanel.css` | Chrome 측 패널 |
+| 맨끝 UI | `extension/sidepanel-terminal.js` + `extension/lib/xterm.js` | Chrome 측 패널 |
+| 서비스 노동자 | `extension/background.js` | Chrome 배경 |
+| 콘텐츠 스크립트 | `extension/content.js` | 페이지 컨텍스트 |
+| HTTP 서버 | `browse/src/server.ts` | Bun (이익을 얻은 바이너리) |
+| PTY 에이전트 | `browse/src/terminal-agent.ts` | Bun (비 컴파일) |
+| PTY token 저장 | `browse/src/pty-session-cookie.ts` | Bun (필립, server.ts) |
+| CLI 입력 | `browse/src/cli.ts` | Bun (이익을 얻은 바이너리) |
+| 국가 파일 | `<stateDir>/browse.json` | 파일시스템 |
+| 터미널 포트 | `<stateDir>/terminal-port` | 파일시스템 |
+| 내부 token | `<stateDir>/terminal-internal-token` | 파일시스템 |
+| Claude probe | `<stateDir>/claude-available.json` | 파일시스템 |
+| Active 탭 | `<stateDir>/active-tab.json` | Filesystem (클래드 읽기) |

@@ -1,14 +1,14 @@
-# Acknowledgements
+# Acknowledgements의 장점
 
-/cso v2 was informed by research across the security audit landscape. Credits to:
+/cso v2는 보안 감사 풍경을 통해 연구에 의해 알려졌습니다. 크레딧 :
 
-- **[Sentry Security Review](https://github.com/getsentry/skills)** — The confidence-based reporting system (only HIGH confidence findings get reported) and the "research before reporting" methodology (trace data flow, check upstream validation) validated our 8/10 daily confidence gate. TimOnWeb rated it the only security skill worth installing out of 5 tested.
-- **[Trail of Bits Skills](https://github.com/trailofbits/skills)** — The audit-context-building methodology (build a mental model before hunting bugs) directly inspired Phase 0. Their variant analysis concept (found one vuln? Search the whole codebase for the same pattern) inspired Phase 12's variant analysis step.
-- **[Shannon by Keygraph](https://github.com/KeygraphHQ/shannon)** — Autonomous AI pentester achieving 96.15% on the XBOW benchmark (100/104 exploits). Validated that AI can do real security testing, not just checklist scanning. Our Phase 12 active verification is the static-analysis version of what Shannon does live.
-- **[afiqiqmal/claude-security-audit](https://github.com/afiqiqmal/claude-security-audit)** — The AI/LLM-specific security checks (prompt injection, RAG poisoning, tool calling permissions) inspired Phase 7. Their framework-level auto-detection (detecting "Next.js" not just "Node/TypeScript") inspired Phase 0's framework detection step.
-- **[Snyk ToxicSkills Research](https://snyk.io/blog/toxicskills-malicious-ai-agent-skills-clawhub/)** — The finding that 36% of AI agent skills have security flaws and 13.4% are malicious inspired Phase 8 (Skill Supply Chain scanning).
-- **[Daniel Miessler's Personal AI Infrastructure](https://github.com/danielmiessler/Personal_AI_Infrastructure)** — The incident response playbooks and protection file concept informed the remediation and LLM security phases.
-- **[McGo/claude-code-security-audit](https://github.com/McGo/claude-code-security-audit)** — The idea of generating shareable reports and actionable epics informed our report format evolution.
-- **[Claude Code Security Pack](https://dev.to/myougatheaxo/automate-owasp-security-audits-with-claude-code-security-pack-4mah)** — Modular approach (separate /security-audit, /secret-scanner, /deps-check skills) validated that these are distinct concerns. Our unified approach sacrifices modularity for cross-phase reasoning.
-- **[Anthropic Claude Code Security](https://www.anthropic.com/news/claude-code-security)** — Multi-stage verification and confidence scoring validated our parallel finding verification approach. Found 500+ zero-days in open source.
-- **[@gus_argon](https://x.com/gus_aragon/status/2035841289602904360)** — Identified critical v1 blind spots: no stack detection (runs all-language patterns), uses bash grep instead of Claude Code's Grep tool, `| head -20` truncates results silently, and preamble bloat. These directly shaped v2's stack-first approach and Grep tool mandate.
+- **[Sentry Security 리뷰](https://github.com/getsentry/skills)** - 신뢰 기반 보고 시스템 (HIGH 신뢰 발견만 보고) 및 "research before reporting" 방법론 (데이터 흐름, 체크 업스트림 검증) 우리의 8/10 매일 신뢰 게이트를 검증. TimOnWeb 테스트 5 테스트 중 만 보안 기술 평가.
+- **[비트 스킬의 길](https://github.com/trailofbits/skills)** — 감사-콘텍스 건축 방법론 (헌팅 버그 전에 정신 모델을 구축) 직접 단계 0. 그들의 변형 분석 개념 (한 vuln을 설립? 같은 패턴에 대한 전체 코베이스 검색) 단계 12의 변형 분석 단계.
+- **[샨논 으로 Keygraph](https://github.com/KeygraphHQ/shannon)** - 자율 AI pentester 달성 96.15% XBOW 벤치 마크 (100/104 악용). AI가 실제 보안 테스트를 수행 할 수 있음을 검증, 그냥 체크리스트 스캔. 우리의 단계 12 활성 검증은 어떤 산포가 살고있는 정적 분석 버전입니다.
+- **[afiqiqmal/claude-security-audit](https://github.com/afiqiqmal/claude-security-audit)** — AI/LLM-specific 보안 검사 (보호 주사, RAG 독소, 허가를 부르는 도구)는 단계 7. 그들의 기구 수준 자동 탐지 (검출 “Next.js”를 “Node/TypeScript”)에 의하여 고무로 덮는 단계 0의 기구 탐지 단계.
+- **[Snyk ToxicSkills 연구](https://snyk.io/blog/toxicskills-malicious-ai-agent-skills-clawhub/)** — AI 에이전트 기술의 36%가 보안 결함과 13.4%는 악의적인 단계 8 (Skill Supply Chain 스캐닝)입니다.
+- **[Daniel Miessler의 개인 AI 인프라](https://github.com/danielmiessler/Personal_AI_Infrastructure)** - 사건 응답 playbooks 및 보호 파일 개념은 재약 및 LLM 안전 단계에 알렸습니다.
+- **[McGo/claude-code-security-audit](https://github.com/McGo/claude-code-security-audit)** — 공유 가능한 보고서 생성 및 행동 가능한 epics의 아이디어는 우리의 보고서 형식 진화를 알려줍니다.
+- **[Claude Code 보안 팩](https://dev.to/myougatheaxo/automate-owasp-security-audits-with-claude-code-security-pack-4mah)** - 모듈 접근법 (/security-audit, /secret-scanner, /deps-check 기술)은 이러한 특정한 관심사임을 검증했습니다. 우리의 통일된 접근법은 크로스 위상 소싱을 위한 모듈성을 희생합니다.
+- **[Anthropic Claude Code 보안](https://www.anthropic.com/news/claude-code-security)** — 다단계 검증 및 신뢰는 우리의 평행한 발견 검증 접근을 검증했습니다. 열려있는 근원에 있는 500+ 0days를 발견했습니다.
+- **[@gus_argon의](https://x.com/gus_aragon/status/2035841289602904360)** - 식별된 중요한 v1 눈 먼 반점: 더미 탐지 (모든 언어 본을 실행하십시오), 대신 Claude Code의 윤활 도구, `| head -20`의 대신에 bash grep를 이용합니다, truncates 결과가 침묵적으로, 그리고 preamble bloat를. 이 직접 모양 v2의 더미 첫번째 접근 및 Grep 도구 위임.

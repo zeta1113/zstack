@@ -27,40 +27,35 @@ hooks:
 <!-- Regenerate: bun run gen:skill-docs -->
 
 
-## When to invoke this skill
+## 이 기술을 호출할 때
 
-Blocks Edit and
-Write outside the allowed path. Use when debugging to prevent accidentally
-"fixing" unrelated code, or when you want to scope changes to one module.
-Use when asked to "freeze", "restrict edits", "only edit this folder",
-or "lock down edits".
+블록 편집 및 허용 경로 밖에 쓰기. 실수로 "fixing"관련 코드를 방지하는 데 디버깅을 사용하거나, 하나의 모듈에 범위를 변경 할 때. "freeze", "restrict edit", "만 편집이 폴더"또는 "lock down edit"에 물었을 때 사용하십시오.
 
-# /freeze — Restrict Edits to a Directory
+# /freeze - 디렉토리에 수정
 
-Lock file edits to a specific directory. Any Edit or Write operation targeting
-a file outside the allowed path will be **blocked** (not just warned).
+특정 디렉토리에 파일을 편집합니다. 허용되는 경로 밖에 파일을 대상으로 한 모든 편집 또는 쓰기 작업은 **blocked** (만 경고되지 않음)입니다.
 
 ```bash
 mkdir -p ~/.gstack/analytics
 echo '{"skill":"freeze","ts":"'$(date -u +%Y-%m-%dT%H:%M:%SZ)'","repo":"'$(basename "$(git rev-parse --show-toplevel 2>/dev/null)" 2>/dev/null || echo "unknown")'"}'  >> ~/.gstack/analytics/skill-usage.jsonl 2>/dev/null || true
 ```
 
-## Setup
+## 설치
 
-Ask the user which directory to restrict edits to. Use AskUserQuestion:
+편집을 제한하는 디렉토리를 요청합니다. AskUserQuestion를 사용하십시오.
 
-- Question: "Which directory should I restrict edits to? Files outside this path will be blocked from editing."
-- Text input (not multiple choice) — the user types a path.
+- 질문: "어떤 디렉토리는 편집을 제한해야 합니까? 이 경로 밖에서 편집에서 차단 될 것입니다."
+- 텍스트 입력 (다중 선택 없음) - 사용자 유형의 경로.
 
-Once the user provides a directory path:
+사용자가 디렉토리 경로를 제공하면:
 
-1. Resolve it to an absolute path:
+1. 절대 경로에 해결:
 ```bash
 FREEZE_DIR=$(cd "<user-provided-path>" 2>/dev/null && pwd)
 echo "$FREEZE_DIR"
 ```
 
-2. Ensure trailing slash and save to the freeze state file:
+2. 트레일 슬래시를 확인하고 동결 국가 파일에 저장하십시오.
 ```bash
 FREEZE_DIR="${FREEZE_DIR%/}/"
 eval "$(~/.claude/skills/gstack/bin/gstack-paths)"
@@ -70,32 +65,19 @@ echo "$FREEZE_DIR" > "$STATE_DIR/freeze-dir.txt"
 echo "Freeze boundary set: $FREEZE_DIR"
 ```
 
-Tell the user: "Edits are now restricted to `<path>/`. Any Edit or Write
-outside this directory will be blocked. To change the boundary, run `/freeze`
-again. To remove it, run `/unfreeze` or end the session."
+사용자를 말하십시오: "Edits는 이제 `<path>/`에 제한됩니다. 이 디렉토리 밖에서 편집하거나 쓰기가 차단됩니다. 경계를 바꾸려면 `/freeze`를 다시 실행하십시오. 제거하려면 `/unfreeze`를 실행하거나 세션을 종료하십시오."
 
-## How it works
+## 어떻게 작동합니까?
 
-The hook reads `file_path` from the Edit/Write tool input JSON (shared
-real-JSON extractor with /careful — one copy, sourced by both hooks), then
-checks whether the path starts with the freeze directory. If not, it returns a
-`hookSpecificOutput` payload with `permissionDecision: "deny"` to block the
-operation (nested under `hookSpecificOutput` — Claude Code ignores a top-level
-`permissionDecision`).
+Hook은 Edit/Write 도구 입력 JSON (JSON 추출기 /careful - 한 복사, 두 후크에 의해 소스), 다음 경로가 동 디렉토리로 시작했는지 확인하십시오. 그렇지 않으면, `hookSpecificOutput` 출력을 `permissionDecision: "deny"`로 반환하여 작동을 차단합니다 (`hookSpecificOutput` - Claude Code에서 제외됩니다. Claude Code는 최상위 `permissionDecision`를 무시합니다.
 
-Polarity is fail-closed: a tool payload the hook cannot parse is DENIED, not
-allowed — a boundary that fails open is not a boundary. A payload that parses
-but has no `file_path` (a non-file tool) is allowed. Symlinks are resolved
-through their FINAL component, so an in-boundary symlink pointing outside the
-boundary is checked against its target.
+Polarity는 실패로 마감됩니다. Hook을 파싱할 수 없는 도구는 DENIED이고, 공개가 경계가 아닙니다. 파싱이 아니라 no `file_path` (비 파일 도구)가 허용되지 않는 한, 파싱이 허용됩니다. Symlinks는 FINAL 구성품을 통해 해결되므로 경계를 바깥으로 인바운드 symlink 포인팅이 대상에 대해 검사됩니다.
 
-The freeze boundary persists for the session via the state file. The hook
-script reads it on every Edit/Write invocation. Boundaries containing spaces
-are supported.
+주 파일로 세션에 대한 동결 경계선. 후크 스크립트는 모든 Edit/Write invocation에 그것을 읽습니다. 공백이 포함 된 경계는 지원됩니다.
 
-## Notes
+## 노트
 
-- The trailing `/` on the freeze directory prevents `/src` from matching `/src-old`
-- Freeze applies to Edit and Write tools only — Read, Bash, Glob, Grep are unaffected
-- This prevents accidental edits, not a security boundary — Bash commands like `sed` can still modify files outside the boundary
-- To deactivate, run `/unfreeze` or end the conversation
+- 동봉에 `/`를 덮는 것은 `/src`를 일치에서 `/src-old`를 방지합니다.
+- 동결은 편집 및 쓰기 도구에만 적용됩니다. 읽기, Bash, Glob, Grep는 비범죄입니다.
+- 이 실수로 편집을 방지, 보안 경계가 아닌 - Bash 명령은 `sed`와 같은 명령은 여전히 경계 밖에 파일을 수정할 수 있습니다.
+- 비활성화하려면 `/unfreeze`를 실행하거나 대화를 종료하십시오.

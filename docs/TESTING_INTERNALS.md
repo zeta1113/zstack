@@ -1,148 +1,35 @@
-# Testing internals: env keys, hermetic E2E
+# 내부 테스트 : env 키, 신비 E2E
 
-Moved verbatim from CLAUDE.md (token-load reduction). Read this before
-writing or debugging E2E tests, passing `env:` to a runner, or touching
-`test/helpers/hermetic-env.ts`.
+CLAUDE.md (token-load reduce)에서 동사를 이동합니다. 쓰기 전에 이것을 읽고 E2E 테스트를 디버깅, `env:`를 runner로 전달하거나 `test/helpers/hermetic-env.ts`를 만지고, `test/helpers/hermetic-env.ts`를 만지고, `test/helpers/hermetic-env.ts`를 만지고, `env:`를 만지고, `test/helpers/hermetic-env.ts`를 만지고,
 
-**Env keys in Conductor workspaces.** The `GSTACK_*` env-shim (v1.39.2.0+,
-`lib/conductor-env-shim.ts`) promotes `GSTACK_ANTHROPIC_API_KEY` /
-`GSTACK_OPENAI_API_KEY` to their canonical names inside gstack's TS binaries.
-Tests run through gstack entrypoints inherit this promotion automatically.
-Don't echo the key value to stdout, logs, or shell history. The historical
-"never pass `env:` to `runAgentSdkTest`" rule is retired: the failure was
-partial-env replacement (the SDK's `Options.env` REPLACES the child's entire
-environment, so an object without the key broke auth). The runner now always
-passes a COMPLETE hermetic env with per-test `env:` merged last, so per-test
-overrides are safe; ambient `process.env.ANTHROPIC_API_KEY` mutation also
-still works (the env builder reads process.env at call time).
+**지휘자 작업대에 있는 Env 열쇠.** `GSTACK_*` env-shim (v1.39.2.0+, `lib/conductor-env-shim.ts`)는 `GSTACK_ANTHROPIC_API_KEY`/ `GSTACK_OPENAI_API_KEY`를 gstack의 TS의 내부의 대문자로 승진시킵니다. gstack의 엔트리 포인트를 통해 시험은 이 촉진을 자동적으로 상속합니다. stdout, logs, 또는 포탄 역사에 열쇠 가치를 echo하지 마십시오. 역사 "never pass `env:`는 재발합니다: `env:` 실패는 부분 엔브 교체 (SDK's `Options.env` REPLACES 어린이 전체 환경, 그래서 열쇠가 끊긴 오) 없이 목표. 주자는 이제 항상 지속되는, 그래서 지속되는 시험에 의하여 결합된 시험 `env:`를 가진 COMPLETE 신비한 env를 통과합니다; 주위 `process.env.ANTHROPIC_API_KEY` mutation는 아직도 작동합니다 (Env 건축업자는 수시로 가공합니다.)
 
-**Hermetic local E2E (default).** Every E2E runner (claude -p, PTY, Agent
-SDK, codex, gemini) spawns children through `test/helpers/hermetic-env.ts`:
-allowlist-scrubbed env (operator `CONDUCTOR_*`, `CLAUDE_*`, `GSTACK_*`,
-`MCP_*`, `GBRAIN_*`, and credentials like `GH_TOKEN` never reach children),
-a fresh seeded `CLAUDE_CONFIG_DIR` (no operator `~/.claude` CLAUDE.md /
-MCP servers / skills), a temp `GSTACK_HOME`, and `--strict-mcp-config`.
-Local eval signal matches CI. Debug against real operator state with
-`EVALS_HERMETIC=0` (restores the legacy env AND drops the strict-MCP flag).
-Per-test `env:` overrides merge last, so deliberate contamination
-(`CONDUCTOR_WORKSPACE_PATH`, per-test `GSTACK_HOME`) keeps working. The
-hermetic config dir seeds NO skills by default; a PTY test that types a
-`/skill` slash command must pass `seedSkills: true` to the PTY runner, which
-points the child's `CLAUDE_CONFIG_DIR` at `hermeticSkillsConfigDir()` — a
-seeded registry that symlinks the LIVE working tree's SKILL.md files (by
-design: the skills ARE the subject under test; a snapshot would measure stale
-copies). Wiring is pinned by `test/hermetic-wiring.test.ts` (static tripwire),
-two gate-tier canaries in `test/skill-e2e-hermetic-canary.test.ts`, and the
-seeding tripwires in `test/hermetic-skills-seeding.test.ts` /
+**신비한 지역 E2E (과태).** Every E2E runner (claude -p, PTY, Agent SDK, codex, gemini) spawns children through `test/helpers/hermetic-env.ts`: allowlist-scrubbed env (operator `CONDUCTOR_*`, `CLAUDE_*`, `GSTACK_*`, `MCP_*`, `GBRAIN_*`, and credentials like `GH_TOKEN` never reach children), a fresh seeded `CLAUDE_CONFIG_DIR` (no operator `~/.claude` CLAUDE.md / MCP servers / skills), a temp `GSTACK_HOME`, and `--strict-mcp-config`. Local eval signal matches CI. `EVALS_HERMETIC=0` (리거시 env AND를 가진 실제 통신수 상태에 대하여 디버그는 엄격한MCP 깃발을 떨어뜨립니다). 지속되는 Per-test `env:` overrides, 그래서 contamination (`CONDUCTOR_WORKSPACE_PATH`, per-test `GSTACK_HOME`)를 deliberate는 작동을 지킵니다. 이론적인 구성 디르씨 NO 기술 기본적으로; PTY는 `/skill`를 종결해야 합니다: Skills는 순서에 의하여 종결되어야 합니다: true` to the PTY runner, which points the child's `CLAUDE_CONFIG_DIR` at `hermeticSkillsConfigDir()` — a seeded registry that symlinks the LIVE working tree's SKILL.md files (by design: the skills ARE the subject under test; a snapshot would measure stale copies). Wiring is pinned by `test/hermetic-wiring.test.ts` (static tripwire), two gate-tier canaries in `test/skill-e2e-hermetic-canary.test.ts`, 그리고
+`test/hermetic-skills-seeding.test.ts`의 묘목 여행선 /
 `test/pty-skill-seeding-wiring.test.ts`.
 
-E2E tests stream progress in real-time (tool-by-tool via `--output-format stream-json
---verbose`). Results are persisted to `~/.gstack/projects/<slug>/evals/` (legacy
-fallback `~/.gstack-dev/evals/`) with auto-comparison
-against the previous finalized run (in-flight `_partial` files are never used as
-a baseline, so a run can't compare against itself).
+E2E는 `--output-format stream-json --verbose`를 통해 실시간 (tool-by-tool)에서 스트림 진행 상황을 테스트합니다. 결과는 이전 최종적으로 실행 (in-flight `_partial` 파일에 대한 자동 비교를 가진 `~/.gstack/projects/<slug>/evals/` (legacy fallback `~/.gstack-dev/evals/`)에 persisted 입니다, 그래서 실행은 자체에 비교할 수 없습니다).
 
-## Runners: how the suites execute (2026-08 overhaul)
+## 러너스: 스위트가 실행하는 방법 (2026-08 overhaul)
 
-**Free suite (`bun run test:free`).** `scripts/test-free-shards.ts` runs N
-concurrent shard processes (serial within each) with strict-output
-classification per shard. Full-suite shards are packed by RECORDED PER-FILE
-DURATIONS (LPT, `packShardsByDuration`) when the committed seed
-`scripts/free-test-durations.json` exists — refresh it occasionally with
-`bun run test:free --record-durations` (each file timed in its own child;
-CI never records). Missing seed → silent hash-shard fallback; corrupt seed →
-one warning + fallback; unknown files get 75th-percentile pessimism. Packed
-shards get duration-aware walls (`max(base, predicted × 3)`); the `--shard`
-CI-matrix path keeps stable hash indices untouched. `TREE_MUTATING` is EMPTY:
-`gen-skill-docs.ts` has a `main()` guard (imports never regenerate; pinned by
-`test/gen-skill-docs-import-purity.test.ts`) and `--out-dir` renders every
-host, so all former mutators render into mkdtemps and the trailing serial
-shard is gone. The map remains a mechanism — a test that genuinely must write
-shared artifacts in place earns a reasoned entry and is serialized again.
+**무료 스위트 (`bun run test:free`).** `scripts/test-free-shards.ts`는 shard 당 엄격한 산출 분류로 N 동시 shard 과정을 실행합니다. 전선 shards는 RECORDED PER-FILE DURATIONS (LPT, `packShardsByDuration`)에 의해, 존재할 때 - `bun run test:free --record-durations` (그들의 자신의 기록에서 때때로 각 파일; CI; 미스/>; 절대로 떨어질 때; 미스/>는 침묵합니다. 손상된 씨앗 → 하나의 경고 + 미백; 알 수없는 파일 75th 퍼센트 페시즘을 얻을. 포장 된 shards는 내구 벽을 얻을 (`max(base, predicted × 3)`); `--shard` CI-matrix 경로는 안정 해시 지수를 비난. `TREE_MUTATING`은 EMPTY: `gen-skill-docs.ts` 가 `main()` 가드 (이제되지 않는); `test/gen-skill-docs-import-purity.test.ts` 가드 (이제되지 않음)는 `test/gen-skill-docs-import-purity.test.ts` 가드와 같이, 모든 직렬 경로가 갔다. 지도는 메커니즘을 유지 - 실제적으로 공유 된 artifacts를 작성해야 할 테스트는 이유가없는 항목과 serialized됩니다.
 
-**Paid suite (sharded runner, local AND CI).** `scripts/test-paid-shards.ts`
-is the single selection engine: 1 file per shard, `EVALS_JOBS` shard
-processes × `EVALS_CONCURRENCY` within-shard, per-shard `GSTACK_EVAL_DIR`,
-full-stream spooling to per-shard log files (path printed at START and on
-failure), never-started/timed-out taxonomy, and parent-computed diff
-selection propagated to children via `EVALS_SELECTION_JSON` (fail-open: a
-child that can't parse it recomputes locally with one warning). Retry parity
-lives in `RETRY_OVERRIDES` (literals; old matrix rows' earned `retries: 2`).
-Flake telemetry rides the store: every recorded test carries its 1-based
-`attempt` (a pass-on-attempt-2 stays visible forever — bun's own stream hides
-it), runs list `flaky_retries`, the report warns on passed-only-on-retry
-tests, and `bun run eval:flake-rank` ranks the series (retried passes first,
-then failure rate; 60-day recency bound on eval files; the free lane's flake
-ledger is folded in from `flakeLedgerPath()` — override with
-`GSTACK_FLAKE_LEDGER`, the same env var the CI free lane sets before
-uploading the ledger as the `flake-ledger` artifact). Census integrity is
-enforced from the free suite: every `E2E_TOUCHFILES` / `LLM_JUDGE_TOUCHFILES`
-key must name a living paid test (`test/touchfiles.test.ts`'s reverse
-invariant), and `git show <sha>:path` fixtures are banned — vendor the bytes
-instead (`test/git-ref-fixture-tripwire.test.ts`).
+**유료 스위트 (스윙드 러너, 로컬 AND CI).** `scripts/test-paid-shards.ts`는 단 하나 선택 엔진입니다: shard, `EVALS_JOBS` shard 과정 × `EVALS_CONCURRENCY` within-shard, per-shard `GSTACK_EVAL_DIR`, per-shard log 파일에 가득 찬 교류 스풀링 (START 및 실패에 인쇄되는 동종), 결코started/timed-out 과세관 및 부모 -computed diff 선택은 아이들을 통해 전파합니다 `EVALS_SELECTION_JSON` (이동적으로 경고하는). Retry parity lives in `RETRY_OVERRIDES` (literals; old matrix rows' earned `retries: 2`). Flake telemetry rides the store: every recorded test carries its 1-based `attempt` (a pass-on-attempt-2 stays visible forever — bun's own stream hides it), runs list `flaky_retries`, the report warns on passed-only-on-retry tests, and `bun run eval:flake-rank` ranks the series (retried passes first, then failure rate; 60-day recency bound on eval files; 무료 레인의 조각 ledger는 `flakeLedgerPath()`에서 접혀 있습니다. `GSTACK_FLAKE_LEDGER`와 `GSTACK_FLAKE_LEDGER`와 함께, 동일한 env var CI는 `flake-ledger` artifact로 ledger를 업로드하기 전에 세트를 해방합니다. 검열 무결성은 자유로운 스위트에서 시행됩니다: 모든 `E2E_TOUCHFILES`/`LLM_JUDGE_TOUCHFILES`
+키는 살아있는 유료 테스트 (`test/touchfiles.test.ts`의 역
+invariant), `git show <sha>:path` 정착물은 금지됩니다 - 대신 바이트를 납품업자 (`test/git-ref-fixture-tripwire.test.ts`).
 
-**CI planner/executor/report.** `--emit-plan <path> --slices K` computes
-selection + the slice plan ONCE (killing per-slice selector divergence);
-`--plan <path> --slice i` executors consume the manifest and write
-slice-result artifacts; `--report <dir>` reconciles them FAIL-CLOSED (a slice
-whose artifact never landed, or a planned shard nobody reported, is a
-failure). Under `EVALS_ALL` the hollow-shard guard marks exit-0 shards with
-ZERO executed tests `passed-empty` (a failure) — census-health, not just
-test runs. evals.yml runs the sliced gate lane per PR — the ONLY paid lane
-since the legacy 17-row matrix (22.6 min/$21 per PR serialized ahead of the
-slices) was deleted after demonstrated parity; its
-`KNOWN_MATRIX_GAPS`/`KNOWN_TIER_UNSET` ratchets retired with it and
-`test/evals-workflow-wiring.test.ts` pins the surviving wiring (slice-count
-agreement, tier consistency, the shared register-skills composite with its
-fail-fast verification loop). evals-periodic.yml runs ALL
-periodic-tier files weekly (the coverage contract) minus the reasoned
-exclusions in `test/helpers/periodic-exclude-data.ts` (reason + tracking
-required per entry; removal re-activates the file), plus a weekly
-`EVALS_ALL` gate census, plus a tracking-issue UPSERT on red weeks. The CI
-image pins the claude CLI to an exact version (`.github/docker/Dockerfile.ci`,
-enforced by `test/ci-image-cli-pin.test.ts` — bumps ride PRs that run the PTY
-gate), and every eval-store run records `claude --version`, resolved once in
-the runner parent and handed to shard children as `GSTACK_CLAUDE_CLI_VERSION`
-(never spawned on a test thread), so a TUI-drift flake hunt is a grep, not
-archaeology.
+**CI planner/executor/report.** `--emit-plan <path> --slices K`는 선택 + 슬라이스 플랜 ONCE (킬링 당 슬라이스 선택사 다이버); `--plan <path> --slice i` executors는 표적으로 소비하고 슬라이스-result artifacts; `--report <dir>`는 FAIL-CLOSED (그 조각은 결코 착륙하지 않거나 계획된 shard nobody 보고된, 실패입니다). `EVALS_ALL`는 시험하지 않고 시험하지 않습니다. `EVALS_ALL`는 시험하지 않습니다. (----ZERO는 시험에 시험하지 않습니다. evals.yml는 PR — ONLY가 레거시 17 줄 매트릭스 (22.6 분/$21 씩 슬라이딩된 PR가 슬라이딩을 앞두고 멈춘 후 삭제되었습니다. `KNOWN_MATRIX_GAPS`/`KNOWN_TIER_UNSET` 등뼈가 그것과 퇴직한 `test/evals-workflow-wiring.test.ts`는 surviving 배선 (slice-count 계약, tier-fast-fast-funding-progress)을 기록합니다. evals-periodic.yml는 ALL 주기적인 층 파일 주간 (범위 계약) 분을 달립니다 `test/helpers/periodic-exclude-data.ts` (참여 당 요구된 지역 + 추적; 제거는 파일 활성화), 그리고 주간 `EVALS_ALL` 문 조사, 플러스 빨간 주에 추적 조직 UPSERT에 있는 소멸된 배를 몹니다. CI
+이미지는 정확한 버전 (`.github/docker/Dockerfile.ci`,
+`test/ci-image-cli-pin.test.ts`에 의해 시행 - PTY 문을 실행하는 범프 놀이 PRs, 그리고 각 eval 상점은 기록 `claude --version`, 주자에서 한 번 해결하고 `GSTACK_CLAUDE_CLI_VERSION` (테스트 실에 붙인)로 shard 아이들에게 shard 아이들에게 shard에 shard에 shard에 shard를 시켰습니다, 그래서 TUI drift flake 사냥꾼은 grep, 고고학 아닙니다.
 
-**Timeout policy.** Paid tests use the tiers in
-`test/helpers/eval-budgets.ts` (JUDGE/CAPTURE/CAPTURE_LONG/PTY/PTY_LONG);
-`test/eval-budgets-policy.test.ts` pins that every tier fits the shard wall
-minus overhead and ratchets raw literals. Budget above the wall is fiction.
-Session timeouts are two-phase: a silent API dies at the startup grace (90s
-local / 300s CI floor, distinct exit reason `timeout_startup`) and the work
-budget arms on the first byte — the total wall never grows
-(`test/session-runner-startup-grace.test.ts` pins the floor). A timed-out
-session kills its whole detached process group (claude, codex, and gemini
-runners alike — `test/session-runner-groupkill.test.ts`), so a stray
-grandchild can't stretch a 600s budget past 1400s. And sync spawns can't
-wedge a shard: every `spawnSync`/`execSync`/`execFileSync`/`Bun.spawnSync`
-in the test trees must carry a `timeout`, enforced by
-`test/spawnsync-timeout-tripwire.test.ts` with a shrink-only exemption
-ratchet.
+**Timeout 정책.** 유료 테스트는 `test/helpers/eval-budgets.ts` (JUDGE/CAPTURE/CAPTURE_LONG/PTY/PTY_LONG); `test/eval-budgets-policy.test.ts` 핀에 있는 층을 이용합니다 각 층은 shard 벽 minus 머리와 래치스 익지않는 리터럴을 적합합니다. 벽의 위 예산은 fiction입니다. 세션 타임아웃은 2 단계입니다: API는 시작 은혜 (90s Local / 300s CI floor, 명백한 출구 이유 `timeout_startup`)와 첫번째 바이트에 일 예산 팔을 죽는다 — 총 벽은 결코 성장하지 않습니다 (`test/session-runner-startup-grace.test.ts`는 바닥을 핀으로 꼿습니다). 타임 아웃 세션은 전체적인 분리 과정 그룹 (클래드, 코덱 및 gemini 주자 a — `test/session-runner-groupkill.test.ts`)를 죽이고, 그래서 그 광선 할아버지는 600의 예산을 펼칠 수 있습니다. 시험 나무의 `spawnSync`/`execSync`/`execFileSync`/`Bun.spawnSync`는 `timeout`를, 수축 전용 면제 쥐체로 `test/spawnsync-timeout-tripwire.test.ts`에 의해 강제되어야 합니다.
 
-## Cloud sandboxes (Vercel / Conductor cloud workspaces)
+## 클라우드 샌드박스 (Vercel / 지휘자 클라우드 워크스페이스)
 
-Syscall-supervised sandboxes need environment setup before `bun run test` can
-run green: run `scripts/sandbox-doctor.sh` once per boot. It documents and
-treats the full failure taxonomy (missing /dev/fd, 64M /dev/shm, spurious
-access(2) EACCES from the seccomp supervisor under load, full-capability
-processes defeating chmod-denial tests, no X server, no git identity, and
-Conductor's git-shim exit-code laundering). The doctor seeds `TMPDIR`,
-`DISPLAY`, and the runner knobs into `~/.bashrc`, so open a new shell (or
-`source ~/.bashrc`) before running the suite. Then:
+Syscall-supervised sandboxes는 환경 설정 전에 `bun run test` 녹색을 실행할 수 있습니다. 부팅 당 `scripts/sandbox-doctor.sh`를 실행합니다. 그것은 문서와 전체 실패 세법 (/dev/fd, 64M /dev/shm, spurious access(2) EACCES 부하의 seccomp supervisor에서, 전체 능력 프로세스를 물리 치고 chmod-denial 테스트를 물리 치고, X 서버, 아니 git-unders-unders-s-code-s-unders-code-s-s-code-s-code-). 의사는 `TMPDIR`, `DISPLAY`, 그리고 runner knobs into `~/.bashrc`, 그래서 스위트를 실행하기 전에 새로운 포탄 (또는 `source ~/.bashrc`)를 엽니다. 다음:
 
 ```bash
 setpriv --ambient-caps=-all --bounding-set=-all bun run test
 ```
 
-Two runner knobs exist for these environments (both no-ops unless set):
-`GSTACK_FREE_JOBS` overrides the shard count in either direction (2 is the measured sweet spot — one
-serial mega-shard and 6-way sharding both saturate the per-process syscall
-supervisor), and `GSTACK_FREE_RETRY_FLAKY=1` re-runs attributed failures once
-serially, downgrading a clean retry to a loud FLAKY-PASS (capped at 5 files so
-a broken tree can't masquerade as flaky). The required CI free lane sets the
-retry knob too, appending every flaky pass to the JSONL ledger it uploads
-(`GSTACK_FLAKE_LEDGER`) — a flaky pass never reds the lane, but it never
-disappears either.
+Two runner knobs exist for these environments (both no-ops unless set): `GSTACK_FREE_JOBS` overrides the shard count in either direction (2 is the measured sweet spot — one serial mega-shard and 6-way sharding both saturate the per-process syscall supervisor), and `GSTACK_FREE_RETRY_FLAKY=1` re-runs attributed failures once serially, downgrading a clean retry to a loud FLAKY-PASS (capped at 5 files so a broken tree can't masquerade as flaky). 필요한 CI 무료 레인은 재스트리 손잡이를 너무 설정, 모든 flaky 패스를 승인 JSONL ledger는 업로드 (`GSTACK_FLAKE_LEDGER`) - flaky 패스는 결코 적색하지, 하지만 그것은 결코 하나 사라지지.

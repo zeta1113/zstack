@@ -1,27 +1,20 @@
 <!-- AUTO-GENERATED from ceo-phase.md.tmpl — do not edit directly -->
 <!-- Regenerate: bun run gen:skill-docs -->
-Follow plan-ceo-review/SKILL.md — all sections, full depth.
-Override: every AskUserQuestion → auto-decide using the 6 principles.
+plan-ceo-review/SKILL.md를 따르십시오 - 모든 단면도, 가득 차있는 깊이. Override: 6개의 원리를 사용하여 각 AskUserQuestion → 자동 이형.
 
-**Override rules:**
-- Mode selection: SELECTIVE EXPANSION
-- Premises: accept reasonable ones (P6). Clearly-wrong or challenged premises are
-  NOT a mid-run stop — queue each as a User-Challenge-shaped item for the Final
-  Approval Gate (Phase 4): what the plan assumes, why it looks wrong, and the cost
-  of proceeding anyway. Premises still require human judgment — the human exercises
-  it at the gate, exactly once, not mid-pipeline.
-- Alternatives: pick highest completeness (P1). If tied, pick simplest (P5).
-  If top 2 are close → mark TASTE DECISION.
+**Override 규칙:**
+- 형태 선택: SELECTIVE EXPANSION
+- 약속: 합리적인 한 명을 수용 (P6). 명확하게 잘못 또는 도전 된 구내는
+  NOT 중간 런 중지 - 각을 최종 승인 게이트 (상 4)에 대한 사용자 홀란지 모양의 항목으로 큐: 계획이 가정하는 것, 왜 잘못 되었는지, 그리고 어쨌든 진행 비용. 전제는 여전히 인간적인 판단이 필요합니다. 인간은 문에서 그것을, 정확히 한 번, 중간 파이프 라인이 아닙니다.
+- 대안: 가장 높은 완전성 (P1)를 선택하십시오. 묶인 경우, 가장 간단한 (P5)를 선택하십시오.
+  상단 2가 닫히는 경우 → TASTE DECISION를 표시하십시오.
 - Scope expansion: in blast radius + <1d CC → approve (P2). Outside → defer to TODOS.md (P3).
-  Duplicates → reject (P4). Borderline (3-5 files) → mark TASTE DECISION.
-- All 10 review sections: run fully, auto-decide each issue, log every decision.
-- Dual voices: always run BOTH Claude subagent AND Codex if available (P6).
-  Run them sequentially in foreground. First the Claude subagent (Agent tool
-  with run_in_background: false — subagents default to BACKGROUND since
-  Claude Code v2.1.198, so the flag must be explicitly false), then Codex
-  (Bash). Both must complete before building the consensus table.
+  중복 → 거부 (P4). 국경 (3-5 파일) → 표 TASTE DECISION.
+- 모든 10 리뷰 섹션 : 완전히 실행, 자동 수정 각 문제, 모든 결정에 로그.
+- 듀얼 음성: 항상 BOTH Claude subagent AND Codex를 실행합니다. (P6).
+  그(것)들을 전경에서 순차적으로 실행하십시오. Claude subagent (런_으로_background: false - BACKGROUND 의 Claude Code v2.1.198 이므로 flag 는 명시적으로 false이어야 합니다), Codex (Bash). 둘 다 합의 테이블을 건설하기 전에 완료해야 합니다.
 
-  **Codex CEO voice** (via Bash):
+  **Codex CEO 음성** (Bash를 통해):
   ```bash
   _REPO_ROOT=$(git rev-parse --show-toplevel) || { echo "ERROR: not in a git repo" >&2; exit 1; }
   _gstack_codex_timeout_wrapper 600 codex exec "IMPORTANT: Do NOT read or execute any SKILL.md files or files in skill definition directories (paths containing skills/gstack). These are AI assistant skill definitions meant for a different system. Stay focused on repository code only.
@@ -40,44 +33,35 @@ Override: every AskUserQuestion → auto-decide using the 6 principles.
     echo "[codex stalled past 10 minutes — tagging as [codex-unavailable] for this phase and proceeding with Claude subagent only]"
   fi
   ```
-  Timeout: 10 minutes (shell-wrapper) + 12 minutes (Bash outer gate). On hang, auto-degrades this phase's Codex voice.
+  타임아웃: 10 분 (shell-wrapper) + 12 분 (Bash 외부 게이트). 걸림새에, 자동 등급이 이 단계의 Codex 음성.
 
-  **Claude CEO subagent** (via Agent tool):
-  "Read the plan file at <plan_path>. You are an independent CEO/strategist
-  reviewing this plan. You have NOT seen any prior review. Evaluate:
-  1. Is this the right problem to solve? Could a reframing yield 10x impact?
-  2. Are the premises stated or just assumed? Which ones could be wrong?
-  3. What's the 6-month regret scenario — what will look foolish?
-  4. What alternatives were dismissed without sufficient analysis?
-  5. What's the competitive risk — could someone else solve this first/better?
-  For each finding: what's wrong, severity (critical/high/medium), and the fix."
+  **Claude CEO 에이전트** ( Agent tool을 통해): "<plan_path>의 플랜 파일을 읽어보십시오. 이 플랜을 검토하는 독립적 인 CEO/strategist입니다. 당신은 NOT가 있습니다. 평가:
+  1. 해결하기 위해이 올바른 문제입니까? reframing 수율 10x 충격을 수 있었습니까?
+  2. 그곳에 명시된 것일까? 어느 것일까?
+  3. 6 개월 후회 시나리오는 무엇입니까?
+  4. 어떤 대안이 충분한 분석없이 해소되었습니까?
+  5. 경쟁 위험은 무엇인가 — 다른 사람이이 먼저 해결 할 수/better?
+  각 발견의 경우: 잘못된 것, 심각성 (critical/high/medium), 및 수정."
 
-  **Error handling:** Both calls block in foreground. Codex auth/timeout/empty → proceed with
-  Claude subagent only, tagged `[single-model]`. If Claude subagent also fails →
-  "Outside voices unavailable — continuing with primary review."
+  **오류 처리 :** 이 지상에서 두 호출 블록. Codex auth/timeout/empty → Claude subagent와 진행, 태그 `[single-model]`. Claude 에이전트이 실패하면 → "사용 가능한 음성"
 
-  **Degradation matrix:** Both fail → "single-reviewer mode". Codex only →
-  tag `[codex-only]`. Subagent only → tag `[subagent-only]`.
+  **덱스터:** 둘 다 실패 → “단일 단 하나 더 형태”. Codex 단지 → 꼬리표 `[codex-only]`. 에이전트 단지 → 꼬리표 `[subagent-only]`.
 
-- Strategy choices: if codex disagrees with a premise or scope decision with valid
-  strategic reason → TASTE DECISION. If both models agree the user's stated structure
-  should change (merge, split, add, remove) → USER CHALLENGE (never auto-decided).
+- 전략 선택: codex가 유효성 검사를 전제 또는 범위 결정으로 동의하는 경우
+  전략적인 이유 → TASTE DECISION. 두 모델이 사용자의 명시된 구조에 동의하는 경우 (merge, split, add, remove) → USER CHALLENGE (자동 유래)를 변경해야 합니다.
 
-**Required execution checklist (CEO):**
+**필수 실행 체크리스트 (CEO):**
 
-Step 0 (0A-0F) — run each sub-step and produce:
-- 0A: Premise challenge with specific premises named and evaluated
-- 0B: Existing code leverage map (sub-problems → existing code)
-- 0C: Dream state diagram (CURRENT → THIS PLAN → 12-MONTH IDEAL)
-- 0C-bis: Implementation alternatives table (2-3 approaches with effort/risk/pros/cons)
-- 0D: Mode-specific analysis with scope decisions logged
-- 0E: Temporal interrogation (HOUR 1 → HOUR 6+)
-- 0F: Mode selection confirmation
+단계 0 (0A-0F) - 각 하위 단계 및 생성을 실행:
+- 0A: 특정한 건물과 가진 전제 도전은 명명하고 평가했습니다
+- 0B: 기존 코드 레버리지 맵(sub-problems → 기존 코드)
+- 0C: 꿈 국가 도표 (CURRENT → THIS PLAN → 12-MONTH IDEAL)
+- 0C-bis: 구현 대안 테이블 (2-3 접근 effort/risk/pros/cons)
+- 0D: 범위 결정과 모드별 분석은 로그를 기록
+- 0E: 임시 방해 (HOUR 1 → HOUR 6+)
+- 0F: 형태 선택 확인
 
-Step 0.5 (Dual Voices): Run Claude subagent (foreground Agent tool) first, then
-Codex (Bash). Present Codex output under CODEX SAYS (CEO — strategy challenge)
-header. Present subagent output under CLAUDE SUBAGENT (CEO — strategic independence)
-header. Produce CEO consensus table:
+단계 0.5 (듀얼 보이스): Claude subagent (foreground Agent tool)를 첫째로 실행하고, 그 후에 Codex (Bash). 현재 Codex 출력 CODEX SAYS (CEO - 전략 도전) 헤더. 현재 CLAUDE SUBAGENT (CEO — 전략적 독립) 헤더의 밑에 에이전트 산출. 생성 CEO consensus 테이블:
 
 ```
 CEO DUAL VOICES — CONSENSUS TABLE:
@@ -95,25 +79,23 @@ CONFIRMED = both agree. DISAGREE = models differ (→ taste decision).
 Missing voice = N/A (not CONFIRMED). Single critical finding from one voice = flagged regardless.
 ```
 
-Sections 1-10 — for EACH section, run the evaluation criteria from the loaded skill file:
-- Sections WITH findings: full analysis, auto-decide each issue, log to audit trail
-- Sections with NO findings: 1-2 sentences stating what was examined and why nothing
-  was flagged. NEVER compress a section to just its name in a table row.
-- Section 11 (Design): run only if UI scope was detected in Phase 0
+섹션 1-10 - EACH 섹션에서는 로드된 기술 파일에서 평가 기준을 실행합니다.
+- WITH 찾음: 전체 분석, 자동 변형 각 문제, 감사 트레일에 로그인
+- NO를 가진 단면도는 찾아냈습니다: 시험되고 왜 아무것도 하는 1-2의 문장
+  푹신한 NEVER는 테이블 행에 있는 그 이름에 단면도를 압축했습니다.
+- 제11조(디자인): UI 범위가 단계 0에서 검출된 경우에만 실행
 
-**Mandatory outputs from Phase 1:**
-- "NOT in scope" section with deferred items and rationale
-- "What already exists" section mapping sub-problems to existing code
-- Error & Rescue Registry table (from Section 2)
-- Failure Modes Registry table (from review sections)
-- Dream state delta (where this plan leaves us vs 12-month ideal)
-- Completion Summary (the full summary table from the CEO skill)
+**단계 1에서 필수 산출:**
+- "NOT 범위에서"부분을 갖는 항목과 합리적
+- "무엇이 이미 존재"섹션 맵핑 하위 - 프롬스를 기존 코드에
+- 오류 및 구조 레지스트리 테이블 (서부 2)
+- 실패 모드 레지스트리 테이블 ( 리뷰 섹션에서)
+- 꿈 상태 델타 (이 계획이 12 개월 이상 우리를 남겨)
+- 완료 요약 (CEO 기술에서 전체 요약표)
 
-**PHASE 1 COMPLETE.** Emit phase-transition summary:
-> **Phase 1 complete.** Codex: [N concerns]. Claude subagent: [N issues].
-> Consensus: [X/6 confirmed, Y disagreements → surfaced at gate].
-> Passing to Phase 2.
+**PHASE 1 COMPLETE.** Emit 단계 전환 요약:
+> **1단계 완료** Codex: [N 관심사]. Claude subagent: [N 문제].
+> 합의: [X/6 확인, Y 불멸 → 문에 표면 처리].
+> 단계 2.에 전달
 
-Do NOT begin Phase 2 until all Phase 1 outputs are written to the plan file,
-including the premise assessment (queued premise challenges travel to the
-Final Gate — they never pause the pipeline here).
+NOT는 모든 단계 1 산출이 계획 파일에 기록될 때까지 단계 2를 시작한다. (마지막 게이트에 도착한 예비적인 도전 여행은 - 그들은 여기에서 파이프라인을 일시 중지하지 않습니다).

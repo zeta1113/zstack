@@ -1,26 +1,26 @@
-# How to document a feature you just shipped
+# 방금 배송 한 기능에 대한 문서
 
-This is the post-ship workflow: you merged a PR, the docs are stale, and you want a coverage map plus filled gaps in one pass. You'll run `/document-release` to audit, then `/document-generate` to fill the gaps it finds.
+이 게시물의 워크플로입니다: PR, docs는 stale이며, 한 패스에 커버된 갭을 원할 수 있습니다. `/document-release`를 감사하기 위해 `/document-generate`를 실행하면 갭을 채우기 위해 `/document-generate`를 실행할 수 있습니다.
 
-## Prerequisites
+## 필수품
 
-- gstack installed (`./setup` complete; verify with `which gstack` or by typing `/` in Claude Code and seeing skills listed)
-- The branch with your shipped feature is checked out
-- A PR exists on GitHub or GitLab (recommended — the workflow updates the PR body with a coverage map)
+- gstack 설치 (`./setup` 완료; `which gstack` 또는 Claude Code에서 `/`를 입력하여 기술 목록으로 보기)
+- 배송된 기능이있는 지점은 체크 아웃됩니다.
+- PR는 GitHub 또는 GitLab (recommended — 워크플로우 업데이트 PR체를 적용 맵으로 업데이트)
 
-If no PR exists yet, run `/ship` first to create one; that's what `/document-release` is designed to run against.
+PR가 아직 존재하지 않는 경우, `/ship`를 먼저 실행하여 `/document-release`가 런던 것을 디자인했습니다.
 
-## Steps
+## 단계
 
-### 1. Audit current coverage
+##1. 감사 현재 적용
 
-Run:
+실행:
 
 ```
 /document-release
 ```
 
-The skill walks your diff against the base branch, extracts new public surface (skills, CLI flags, config options, API endpoints, new modules), and scores each entity across the four Diataxis quadrants. You'll see a coverage map like:
+기술은 기본 branch에 대한 디퓨트를 걸으며 새로운 공공 표면 (스킬, CLI 플래그, 구성 옵션, API 엔드포인트, 새로운 모듈)을 추출하고, 4 Diataxis 사분면에 각 엔티티를 점수합니다. 다음과 같은 적용지도를 볼 수 있습니다.
 
 ```
 Coverage map:
@@ -30,13 +30,13 @@ Coverage map:
   FooProcessor     ❌            ❌        ❌          ❌
 ```
 
-Items with zero coverage are **critical gaps**. Items with only reference coverage are **common gaps**. Both land in the PR body as a `### Documentation Debt` subsection so reviewers see them.
+0개의 적용을 가진 품목은 **긴 수명**입니다. 단지 참고 적용을 가진 품목은 **common gaps**입니다. PR 몸에 있는 둘 다에 있는 둘 다에 의하여 `### Documentation Debt` 이하 단면도 그래서 검토자는 그(것)들을 보십시오.
 
-If `/document-release` reports everything is covered, you're done. Skip the rest of this how-to.
+`/document-release`가 모든 것을 덮고 있다면, 당신은 행해집니다. 이 방법의 나머지를 건너 뛰십시오.
 
-### 2. Read the documentation debt section in the PR body
+##2. PR체에 대한 문서 채무 섹션을 읽어
 
-Open your PR (the skill prints the URL). Scroll to `## Documentation` → `### Documentation Debt`. Each item is tagged with the Diataxis quadrant that would fill it:
+PR (기술은 URL)를 인쇄합니다. `## Documentation` → `### Documentation Debt`로 스크롤하십시오. 각 품목은 Diataxis를 채우는 quadrant로 태그됩니다:
 
 ```
 ### Documentation Debt
@@ -45,61 +45,56 @@ Open your PR (the skill prints the URL). Scroll to `## Documentation` → `### D
 - ⚠️ FooProcessor — zero coverage. Diataxis quadrants: reference, explanation.
 ```
 
-This is the input to the next step. Each line tells you what's missing and which quadrant fills it.
+이것은 다음 단계에 입력입니다. 각 라인은 당신이 누락하고 중등이 그것을 채우는 것을 말해줍니다.
 
-### 3. Fill the gaps with /document-generate
+##3. /document-generate로 격차를 채우십시오.
 
-Run:
+실행:
 
 ```
 /document-generate
 ```
 
-When the skill asks about scope, tell it the specific entities flagged in the debt section. The skill reads the codebase (its Step 1 archaeology phase is mandatory), partitions by Diataxis quadrant, and writes the missing docs.
+기술이 범위에 대해 묻을 때 부채 섹션에서 특정 엔티티티가 파쇄됩니다. 기술은 코디베이스 (its Step 1 archaeology phase is required), Diataxis 사만에 파티션을 읽고 누락 된 docs를 작성합니다.
 
-You can also let the skill auto-discover: if /document-release passed you the gaps explicitly (it does this when chained), `/document-generate` already knows what to write.
+또한 기술 자동 발견을 할 수 있습니다 : /document-release가 명시적으로 적으로 간격을 통과하면 (이 경우 체인질), `/document-generate` 이미 작성하는 것을 알고 있습니다.
 
-### 4. Verify the gaps closed
+##4. 틈을 닫아
 
-Re-run `/document-release`:
+재 실행 `/document-release`:
 
 ```
 /document-release
 ```
 
-The coverage map should now show the previously-flagged entities with green checkmarks in the previously-empty quadrants. The PR body's Documentation Debt section should be empty or reduced to items you intentionally deferred.
+적용 지도는 이전에 면제 사만에 녹색 표시를 가진 이전에 flagged entities를 보여주어야 합니다. PR 몸의 문서 변호는 비어있거나 의도적으로 방어하는 품목으로 감소되어야 합니다.
 
-## Verification
+## 인증
 
-Open your PR and confirm:
+PR를 열고 확인:
 
-1. The PR body has a `## Documentation` section with a doc-diff preview.
-2. The `### Documentation Debt` subsection lists zero critical gaps (or only items you knowingly deferred).
-3. Each generated doc file in `docs/` opens cleanly and cross-links to siblings (reference → how-to → tutorial → explanation).
-4. Run `grep -rE '\]\([^)]*\.md\)' docs/` and verify no link points to a missing file.
+1. PR 몸에는 doc-diff 미리보기가 있는 `## Documentation` 섹션이 있습니다.
+2. `### Documentation Debt` 하위 섹션은 0개의 긴 간격을 나열합니다 (또는 당신이 알고있는 항목 만).
+3. `docs/`의 각 생성된 doc 파일은 siblings (reference → how-to → tutorial → description)에 깨끗하고 교차 링크가 열립니다.
+4. `grep -rE '\]\([^)]*\.md\)' docs/`를 실행하고 누락된 파일에 연결점을 확인한다.
 
-If all four check, your PR is ready to land with complete documentation.
+모든 4개의 체크가 있다면, PR는 완전한 문서로 땅에 준비되어 있습니다.
 
-## Troubleshooting
+## 문제 해결
 
-**`/document-release` reports "No public surface changes detected."**
-The diff is internal-only (refactors, tests, infra). No docs are needed. Skip to landing.
+**`/document-release` "공공 표면이 감지되지 않음"을 보고합니다.** diff는 내부 전용 (반점, 시험, 적외선)입니다. 아무 문서도 필요하지 않습니다. 착륙을 건너 뛰십시오.
 
-**The Diataxis quadrant tag on a gap doesn't match what you'd expect.**
-The skill uses an entity taxonomy to decide which quadrants matter (CLI flags want reference + how-to; internal modules want reference + explanation; user-facing features want all four). If you disagree, you can override by hand-editing the docs after generation. The audit is a guide, not a constraint.
+**Diataxis 격차 태그는 당신이 기대하는 것 같아.** 기술에는 사소한 물질 (CLI 플래그가 참조 + 방법-to를 원한다고 결정하는 엔티티티티 세무제를 사용합니다. 내부 모듈은 참조 + 설명을 원합니다. 사용자 인터페이스는 모두 4를 원합니다. 동의하면 생성 후 docs를 편집하여 처리 할 수 있습니다. 감사는 가이드, 제약이 아닙니다.
 
-**`/document-generate` writes a tutorial that takes 8 steps to reach a working result.**
-Tutorials should hit a working result in 3 steps or fewer. Re-run the skill and ask it to compress, or hand-edit. The Step 8 Quality Self-Review catches some of these but not all.
+**`/document-generate`는 8단계를 가지고 있는 튜토리얼을 작성하여 작업결과에 도달합니다.** 자습서는 3 단계 또는 몇몇에 있는 작동 결과를 명중해야 합니다. 기술을 재 실행하고 압축, 또는 손 편집에 그것을 요구하십시오. 단계 8 질 각자 Review는 이 그러나 전혀 붙잡습니다.
 
-**You want to document a feature but no PR exists yet.**
-Run `/ship` first to create the PR, then this workflow. Without a PR, `/document-release` can still audit but skips the PR-body update.
+**PR가 아직 존재하지 않는 기능을 문서화하고 싶습니다.** `/ship`를 처음 실행하면 PR를 생성하고, 이 워크플로우가 됩니다. PR 없이 `/document-release`는 여전히 감사를 할 수 있지만 PR-body update를 건너뛰게 됩니다.
 
-**A generated reference doc has hallucinated API signatures.**
-File a bug. The skill's Step 1 archaeology is supposed to read implementation files end-to-end, not just signatures, specifically to prevent this. Include the generated text and the actual code so we can trace why the archaeology missed it.
+**생성된 참고 doc에는 API 서명이 있습니다.** 버그를 파일. 기술 단계 1 아카이브는 구현 파일이 종료되지 않는, 이 방지하기 위해 특별히이 서명을 읽는 것입니다. 생성 된 텍스트와 실제 코드를 포함하므로 고고학이 놓은 이유를 추적 할 수 있습니다.
 
-## Related
+## 관련
 
-- **Tutorial: first time using `/document-generate`:** [tutorial-document-generate.md](./tutorial-document-generate.md)
-- **Why gstack uses the Diataxis framework:** [explanation-diataxis-in-gstack.md](./explanation-diataxis-in-gstack.md)
-- **Reference for the audit skill:** [`document-release/SKILL.md`](../document-release/SKILL.md)
-- **Reference for the generation skill:** [`document-generate/SKILL.md`](../document-generate/SKILL.md)
+- **튜토리얼: `/document-generate`를 사용하는 첫 번째 시간:** [tutorial-document-generate.md](./tutorial-document-generate.md)
+- **gstack는 Diataxis 프레임워크를 사용합니다.** [explanation-diataxis-in-gstack.md](./explanation-diataxis-in-gstack.md)
+- **감사 기술에 대한 참조 :** [`document-release/SKILL.md`](../document-release/SKILL.md)
+- **세대 기술에 대한 참조 :** [`document-generate/SKILL.md`](../document-generate/SKILL.md)

@@ -1,23 +1,7 @@
 {{INHERIT:claude}}
 
-**Effort-match the step.** Simple file reads, config checks, command lookups, and
-mechanical edits don't need deep reasoning. Complete them quickly and move on. Reserve
-extended thinking for genuinely hard subproblems: architectural tradeoffs, subtle bugs,
-security implications, design decisions with competing constraints. Over-thinking
-simple steps wastes tokens and time.
+**노력-단계를 배치합니다.** 간단한 파일 읽기, 구성 체크, 명령 조회, 및 기계적인 편집은 깊은 이유가 필요하지 않습니다. 그(것)들을 빨리 완료하고 이동하십시오. 진짜로 단단한 subproblems를 위한 장시간 생각을 예약하십시오: 건축 무역, 미묘한 버그, 안전 의미, competing constraints를 가진 디자인 결정. 간단한 단계 낭비 토큰과 시간.
 
-**Pace questions to the skill.** If the current skill's text contains
-`STOP. AskUserQuestion` anywhere, pace one question per turn — emit the question as
-a tool_use, stop, wait for the user's response, then continue. Do not batch. A
-finding with an "obvious fix" is still a finding and still needs user approval
-before it lands in the plan. Only batch clarifying questions upfront when (a) the
-skill has no `STOP. AskUserQuestion` directive AND (b) you need multiple unrelated
-clarifications before you can begin. When in doubt, ask one question per turn.
+**기술에 대한 Pace 질문.** 현재 기술 텍스트가 `STOP. AskUserQuestion`를 어디에 포함하면, 차례당 한 가지 질문을 하면서, 도구_use로 질문을 방출하고, 중지, 사용자의 응답을 기다리십시오. 배치하지 마십시오. "obvious fix"를 찾는 것은 여전히 계획에서 토지를 배치하기 전에 사용자 승인을 필요로합니다. (a) 기술이 `STOP. AskUserQuestion` 지시어 AND (b)가없는 경우 일괄 처리 질문이 시작될 수 있습니다. 의심의 여지없이 한 가지 질문을하십시오.
 
-**Literal interpretation awareness.** Opus 4.7 interprets instructions literally and
-will not silently generalize. When the user says "fix the tests," fix all failing tests
-that this branch introduced or is responsible for, not just the first one (and not
-pre-existing failures in unrelated code). When the user says "update the docs," update
-every relevant doc in scope, not just the most obvious one. Read the full scope of what
-was asked and deliver the full scope. If the request is ambiguous or the scope is
-unclear, ask once (batched with any other questions), then execute completely.
+**문학 해석 인식.** Opus 4.7 해석 지침은 말 그대로 유지되지 않습니다. 사용자가 "설정 테스트"라고하면이 지점이 소개되거나 책임지지 않는 모든 실패 테스트를 수정하면 첫 번째 (그리고 관련 코드의 사전 노출 실패). 사용자가 "docs를 업데이트 할 때," 범위의 모든 관련 문서 업데이트, 그냥 가장 명백한 것. 질문하고 전체 범위를 읽어보기. 요청이 야심적 또는 범위가 불분명하다면, 한 번 요청 (다른 질문으로 배치), 다음 완전히 실행.

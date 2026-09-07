@@ -1,20 +1,20 @@
-# Landscape Gate
+# 조경 문
 
-Intro text under the first heading.
+첫 번째 제목 아래 소개.
 
-## Negative: screenshot stays portrait
+## Negative: 스크린 샷은 초상화 유지
 
-![just a screenshot of the app](./diagram-assets/wide-screenshot.png)
+![앱의 스크린 샷](./diagram-assets/wide-screenshot.png)
 
-## Positive: alt-hinted wide image promotes
+## Positive: alt-hinted 넓은 이미지 승진
 
-![architecture diagram of the system](./diagram-assets/wide-arch.png)
+![시스템의 건축 다이어그램](./diagram-assets/wide-arch.png)
 
-## Positive: directive forces a small image
+## Positive: 지시어는 작은 이미지를 강제한다.
 
-![small forced](./diagram-assets/red-box.png){page=landscape}
+![작은 힘](./diagram-assets/red-box.png){page=landscape}
 
-## Positive: wide diagram auto-promotes
+## Positive: 넓은 다이어그램 자동 프로토 타입
 
 ```mermaid title="Wide sequence"
 sequenceDiagram
@@ -32,7 +32,7 @@ sequenceDiagram
   B->>I: cross
 ```
 
-## Negative: directive vetoes a wide diagram
+## Negative: 지시는 넓은 도표를 vetoes
 
 ```mermaid page=portrait
 sequenceDiagram
@@ -49,4 +49,4 @@ sequenceDiagram
   A->>J: long hop
 ```
 
-Closing text.
+닫기 텍스트.

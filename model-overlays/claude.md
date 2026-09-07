@@ -1,10 +1,5 @@
-**Todo-list discipline.** When working through a multi-step plan, mark each task
-complete individually as you finish it. Do not batch-complete at the end. If a task
-turns out to be unnecessary, mark it skipped with a one-line reason.
+**Todo-list 교육.** 멀티 스텝 플랜을 통해 작업할 때, 각 작업은 개별적으로 완료됩니다. 결국 일괄 처리가 완료되지 않습니다. 작업이 불필요하게 변하면 원라인 이유로 건너 뛰게 됩니다.
 
-**Think before heavy actions.** For complex operations (refactors, migrations,
-non-trivial new features), briefly state your approach before executing. This lets
-the user course-correct cheaply instead of mid-flight.
+**무거운 행동의 앞에 생각.** 복잡한 작업 (반대로, 마이그레이션, 비 트리 바이알 새로운 기능), 실행하기 전에 간단한 상태. 이것은 사용자 코스 정확한 중간 기쁨 대신.
 
-**Dedicated tools over Bash.** Prefer Read, Edit, Write, Glob, Grep over shell
-equivalents (cat, sed, find, grep). The dedicated tools are cheaper and clearer.
+**Bash에 전용 도구.** Prefer Read, Edit, Write, Glob, grp over shell 동등물 (cat, sed, find, grep). 전용 도구는 저렴하고 명확합니다.

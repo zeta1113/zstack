@@ -3,132 +3,132 @@ name: gstack-openclaw-investigate
 description: Use when asked to debug, fix a bug, investigate an error, or do root cause analysis, and when users report errors, stack traces, unexpected behavior, or say something stopped working.
 ---
 
-# Systematic Debugging
+# 체계적인 부채
 
-## Iron Law
+# # 철법
 
 **NO FIXES WITHOUT ROOT CAUSE INVESTIGATION FIRST.**
 
-Fixing symptoms creates whack-a-mole debugging. Every fix that doesn't address root cause makes the next bug harder to find. Find the root cause, then fix it.
+수정 증상은 whack-a-mole 디버깅을 만듭니다. 루트 원인을 해결하지 않는 모든 수정은 다음 버그를 찾기 위해 더 열심히합니다. 루트 원인을 찾아서 수정하십시오.
 
 ---
 
-## Phase 1: Root Cause Investigation
+## 단계 1: 뿌리 원인 조사
 
-Gather context before forming any hypothesis.
+어떤 hypothesis를 형성하기 전에 가터 컨텍스트.
 
-1. **Collect symptoms:** Read the error messages, stack traces, and reproduction steps. If the user hasn't provided enough context, ask ONE question at a time. Don't ask five questions at once.
+1. **증상을 수집:** 오류 메시지, 스택 추적 및 재생 단계 읽기. 사용자가 충분한 컨텍스트를 제공하지 않은 경우, ONE 질문을 한 번에 요청하십시오. 한 번에 다섯 가지 질문을하지 마십시오.
 
-2. **Read the code:** Trace the code path from the symptom back to potential causes. Search for all references, read the logic around the failure point.
+2. **코드를 읽으십시오:** symptom에서 잠재적인 원인으로 코드 경로 추적. 모든 참조를 검색, 실패 시점의 논리를 읽습니다.
 
-3. **Check recent changes:**
+3. **최근 변경 사항:**
    ```bash
    git log --oneline -20 -- <affected-files>
    ```
-   Was this working before? What changed? A regression means the root cause is in the diff.
+   이 작업을 전에? 변경? 회귀는 루트 원인이 diff에 있다는 것을 의미한다.
 
-4. **Reproduce:** Can you trigger the bug deterministically? If not, gather more evidence before proceeding.
+4. **Reproduce:** 버그를 제정할 수 있습니까? 그렇지 않으면, 진행하기 전에 더 많은 증거를 수집합니다.
 
-5. **Check memory** for prior debugging sessions on the same area. Recurring bugs in the same files are an architectural smell.
+5. **본문 바로가기** 같은 지역에 이전 디버깅 세션. 동일한 파일에 버그를 재개하는 것은 건축 냄새입니다.
 
-Output: **"Root cause hypothesis: ..."** ... a specific, testable claim about what is wrong and why.
-
----
-
-## Phase 2: Pattern Analysis
-
-Check if this bug matches a known pattern:
-
-**Race condition** ... Intermittent, timing-dependent. Look at concurrent access to shared state.
-
-**Nil/null propagation** ... NoMethodError, TypeError. Missing guards on optional values.
-
-**State corruption** ... Inconsistent data, partial updates. Check transactions, callbacks, hooks.
-
-**Integration failure** ... Timeout, unexpected response. External API calls, service boundaries.
-
-**Configuration drift** ... Works locally, fails in staging/prod. Env vars, feature flags, DB state.
-
-**Stale cache** ... Shows old data, fixes on cache clear. Redis, CDN, browser cache.
-
-Also check:
-- Known issues in the project for related problems
-- Git log for prior fixes in the same area. Recurring bugs in the same files are an architectural smell, not a coincidence.
-
-**External search:** If the bug doesn't match a known pattern, search for the error type online. **Sanitize first:** strip hostnames, IPs, file paths, SQL, customer data. Search the error category, not the raw message.
+출력 : **"루트 원인 hypothesis : ..."** ... 특정, 테스트 가능한 주장은 무엇이 잘못되고 왜.
 
 ---
 
-## Phase 3: Hypothesis Testing
+## 2 단계 : 패턴 분석
 
-Before writing ANY fix, verify your hypothesis.
+이 버그가 알려진 패턴을 일치하면 확인 :
 
-1. **Confirm the hypothesis:** Add a temporary log statement, assertion, or debug output at the suspected root cause. Run the reproduction. Does the evidence match?
+**레이스 상태** ... Intermittent, 타이밍 의존. 공유 상태에 동시 액세스를 찾습니다.
 
-2. **If the hypothesis is wrong:** Search for the error (sanitize sensitive data first). Return to Phase 1. Gather more evidence. Do not guess.
+**Nil/null 전파** ... NoMethodError, TypeError. 옵션 값에 대한 가드를 미스.
 
-3. **3-strike rule:** If 3 hypotheses fail, **STOP**. Tell the user:
+**국가 corruption** ... Inconsistent data, 부분 업데이트. 거래, 콜백, 후크를 확인하십시오.
 
-   "3 hypotheses tested, none match. This may be an architectural issue rather than a simple bug."
+**통합 실패** ... 타임아웃, 예기치 않은 응답. 외부 API 호출, 서비스 경계.
 
-   Options:
-   - Continue investigating with a new hypothesis (describe it)
-   - Escalate for human review (needs someone who knows the system)
-   - Add logging and wait (instrument the area and catch it next time)
+**구성 drift** ... 로컬로 작동하며, staging/prod에서 실패합니다. Env vars, 기능 플래그, DB 상태.
 
-**Red flags** ... if you see any of these, slow down:
-- "Quick fix for now" ... there is no "for now." Fix it right or escalate.
-- Proposing a fix before tracing data flow ... you're guessing.
-- Each fix reveals a new problem elsewhere ... wrong layer, not wrong code.
+**Stale 캐시** ... 오래된 데이터를 표시하고, 캐시를 명확하게 수정합니다. Redis, CDN, 브라우저 캐시.
 
----
+또한 체크:
+- 관련 문제의 프로젝트에서 알려진 문제
+- Git 같은 지역에 사전 수정을 위한 로그. 동일한 파일에 있는 버그를 재개하는 것은 건축 냄새, coincidence가 아닙니다.
 
-## Phase 4: Implementation
-
-Once root cause is confirmed:
-
-1. **Fix the root cause, not the symptom.** The smallest change that eliminates the actual problem.
-
-2. **Minimal diff:** Fewest files touched, fewest lines changed. Resist the urge to refactor adjacent code.
-
-3. **Write a regression test** that:
-   - **Fails** without the fix (proves the test is meaningful)
-   - **Passes** with the fix (proves the fix works)
-
-4. **Run the full test suite.** No regressions allowed.
-
-5. **If the fix touches >5 files:** Flag the blast radius to the user before proceeding. That's large for a bug fix.
+**외부 검색:** 버그가 알려진 패턴과 일치하지 않으면 오류 유형 온라인 검색. **처음 산:** 스트립 호스트 이름, IPs, 파일 경로, SQL, 고객 데이터. 오류 범주를 검색, 원시 메시지가 아닌.
 
 ---
 
-## Phase 5: Verification & Report
+## 단계 3: Hypothesis 테스트
 
-**Fresh verification:** Reproduce the original bug scenario and confirm it's fixed. This is not optional.
+ANY 수정을 작성하기 전에, 당신의 hypothesis를 확인합니다.
 
-Run the test suite.
+1. **hypothesis를 확인하십시오:** 임시 로그 문, assertion, 또는 의심스러운 루트 원인에서 디버그 출력을 추가합니다. 재생산을 실행하십시오. 증거 일치는?
 
-Output a structured debug report:
+2. **hypothesis가 잘못되면 :** 오류 검색 (최저의 민감한 데이터를 지칭). 단계 1로 돌아가기. 더 많은 증거를 지워하지 마십시오. 추측하지 마십시오.
+
+3. **3 strike 규칙:** 3개의 가설이 실패한 경우에, **STOP**. 사용자를 말하십시오:
+
+   "3 시험, none 경기. 이것은 간단한 버그보다 오히려 건축 문제 일 수있다."
+
+   옵션:
+   - 새로운 hypothesis (이제)와 투자 계속
+   - 인간 검토에 대한 확장 (시스템을 알고있는 사람)
+   - 로깅 및 대기 추가 (지역을 내리고 다음 시간을 잡으십시오)
+
+**레드 플래그** ... 이 중 하나를 볼 경우, 느려지다 :
+- "지금 빠른 수정" ... no "지금의 경우." 올바른 또는 에스컬레이터를 수정합니다.
+- 데이터 흐름을 추적하기 전에 수정을 제안 ... 당신은 추측.
+- 각 수정은 다른 새로운 문제를 밝혀 ... 잘못된 층, 잘못된 코드.
+
+---
+
+## 4 단계 : 구현
+
+일단 루트 원인은 확인:
+
+1. **뿌리 원인을 고치고, symptom하지.** 실제 문제를 제거하는 가장 작은 변화.
+
+2. **Minimal diff:** Fewest 파일이 만져서 가장 긴 줄이 바뀌었습니다. 인접한 코드를 다시 팩터링하는 데 도움을 줍니다.
+
+3. **회귀 시험 쓰기** 그:
+   - **Fails** 수정 없이 (시험을 의미하는 것을 증명하십시오)
+   - **팟캐스트** 수정 (문제를 방지)
+
+4. **전체 테스트 스위트를 실행합니다.** No 회귀 허용.
+
+5. **수정이 >5 파일이 있는 경우:** 진행하기 전에 사용자에 폭발 반경을 플래그. 버그 수정에 큰.
+
+---
+
+## 5 단계 : 검증 및 보고서
+
+**신선한 검증:** 원래 버그 시나리오를 수정하고 수정을 확인합니다. 이것은 선택이 아닙니다.
+
+테스트 스위트를 실행합니다.
+
+Structured debug 보고서를 출력하십시오:
 
 **DEBUG REPORT**
-- **Symptom:** what the user observed
-- **Root cause:** what was actually wrong
-- **Fix:** what was changed, with file references
-- **Evidence:** test output, reproduction showing fix works
-- **Regression test:** location of the new test
-- **Related:** prior bugs in same area, architectural notes
-- **Status:** DONE | DONE_WITH_CONCERNS | BLOCKED
+- **증상:** 사용자의 관찰
+- **뿌리 원인:** 실제로 잘못되었는지
+- **수정 :** 파일 참조와 함께 변경 된 것
+- **증거:** 테스트 출력, 재제작 표시 수정 작업
+- **회귀 시험:** 새로운 시험의 위치
+- **관련 :** 같은 지역에 있는 이전 버그, 건축 노트
+- **상태:** DONE | DONE_WITH_CONCERNS | BLOCKED
 
-Save the report to `memory/` with today's date so future sessions can reference it.
+오늘 날짜와 함께 `memory/`에 대한 보고서를 저장하므로 향후 세션은 참조할 수 있습니다.
 
 ---
 
-## Important Rules
+## 중요 규칙
 
-- **3+ failed fix attempts: STOP and question the architecture.** Wrong architecture, not failed hypothesis.
-- **Never apply a fix you cannot verify.** If you can't reproduce and confirm, don't ship it.
-- **Never say "this should fix it."** Verify and prove it. Run the tests.
-- **If fix touches >5 files:** Flag to user before proceeding.
-- **Completion status:**
-  - DONE ... root cause found, fix applied, regression test written, all tests pass
-  - DONE_WITH_CONCERNS ... fixed but cannot fully verify (e.g., intermittent bug, requires staging)
-  - BLOCKED ... root cause unclear after investigation, escalated
+- **3+ 실패 수정 시도 : STOP 및 건축에 대한 질문.** 잘못된 건축, 실패한 hypothesis.
+- **인증할 수 없는 수정을 적용하지 마십시오.** 당신이 reproduce를 풀 수 없는 경우에, 그것을 발송하지 마십시오.
+- **"이 그것을 해결해야한다."** 검증하고 증명합니다. 테스트를 실행합니다.
+- **해결 >5 파일 :** 진행하기 전에 사용자에 플래그.
+- **완료 상태:**
+  - DONE ... 루트 원인 발견, 수정 적용, 회귀 테스트 작성, 모든 테스트 패스
+  - DONE_WITH_CONCERNS ... 고정하지만 완전히 검증할 수 없습니다 (예 : 간헐적 버그, 노화가 필요)
+  - BLOCKED ... 조사 후 뿌리 원인 불순, 에스컬레이션

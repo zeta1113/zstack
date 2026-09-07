@@ -1,30 +1,18 @@
-# GStack Browser V0 — The AI-Native Development Browser
+# GStack 브라우저 V0 — AI-Native Development Browser
 
-**Date:** 2026-03-30
-**Author:** Garry Tan + Claude Code
-**Status:** Phase 1a shipped, Phase 1b in progress
-**Branch:** garrytan/gstack-as-browser
+**일:** 2026-03-30 **저자:** Garry Tan + Claude Code **상태:** 단계 1a 발송해, 진행중인 단계 1b **주요 특징:** garrytan/gstack-as-browser
 
-## The Thesis
+## Thesis의
 
-Every other AI browser (Atlas, Dia, Comet, Chrome Auto Browse) starts with a
-consumer browser and bolts AI onto it. GStack Browser inverts this. It starts
-with Claude Code as the runtime and gives it a browser viewport.
+다른 AI 브라우저 (Atlas, Dia, Comet, Chrome 자동 블로깅)는 소비자 브라우저와 볼트 AI로 시작합니다. GStack 브라우저가 이것을 몹니다. 그것은 Claude Code로 런타임으로 시작하고 브라우저 뷰포트를 제공합니다.
 
-The agent is the primary citizen. The browser is the canvas. Skills are
-first-class capabilities. You don't "use a browser with AI help." You use
-an AI that can see and interact with the web.
+이 에이전트는 기본 시민입니다. 브라우저는 캔버스입니다. 기술은 일류 기능입니다. "AI 도움으로 브라우저를 사용하지 마십시오." 당신은 웹과 볼 수 있는 AI를 사용합니다.
 
-This is the IDE for the post-IDE era. Code lives in the terminal. The product
-lives in the browser. The AI works across both simultaneously. What Cursor did
-for text editors, GStack Browser does for the browser.
+IDE는 포스트 IDE 시대를 위해 IDE입니다. 코드는 맨끝에서 생활합니다. 제품은 브라우저에서 생활합니다. AI는 둘 다 동시에 작동합니다. Cursor는 원본 편집기를 위해, GStack 브라우저를 위해 했습니다.
 
-## What It Is Today (Phase 1a, shipped)
+## 오늘 (파워 1a 단계)
 
-A double-clickable macOS .app that wraps Playwright's Chromium with the gstack
-sidebar extension baked in. You open it and Claude Code can see your screen,
-navigate pages, fill forms, take screenshots, inspect CSS, clean up overlays,
-and run any gstack skill. All without touching a terminal.
+macOS .app 을 더블 클릭 Playwright 를 Chromium 으로 감싸는 gstack 사이드바 확장. 당신은 그것을 열고 Claude Code 를 볼 수 있습니다 당신의 화면을, 탐색 페이지, fill 모양, 스크린 샷을 찍고, CSS, 청소 오버레이를 검사하고, 어떤 gstack 기술을 실행하십시오. 맨끝을 만지기 없이 모두.
 
 ```
 GStack Browser.app (389MB, 189MB DMG)
@@ -34,178 +22,129 @@ GStack Browser.app (389MB, 189MB DMG)
 └── Launcher script — binds project dir, sets env vars
 ```
 
-Launch → Chromium opens with sidebar → extension auto-connects to browse server
-→ agent ready in ~5 seconds.
+시작 → Chromium는 sidebar → 확장 자동 연결으로 ~5 초에서 서버 → 에이전트을 찾아냅니다.
 
-## What It Will Be
+## 그것은 무슨 일
 
-### Phase 1b: Developer UX (next)
+### 단계 1b: 개발자 UX (다음)
 
-**Command Palette (Cmd+K):** The signature interaction. Opens a fuzzy-filtered
-skill picker. Type "/qa" to start QA testing, "/investigate" to debug, "/ship"
-to create a PR. Skills are fetched from the browse server, not hardcoded. The
-palette is the entry point to everything.
+**명령 팔레트 (Cmd+K):** 서명 상호 작용. 퓨지 필터링 기술 선택기를 엽니다. QA 테스트를 시작하려면 QA를 입력하여 /ship를 디버깅하기 위해 "/ship"를 시작합니다. 기술은 검색 서버에서 태깅되어 하드 코딩되지 않습니다. 팔레트는 모든 항목에 항목 포인트입니다.
 
-**Quick Screenshot (Cmd+Shift+S):** Capture the current viewport and pipe it into
-the sidebar chat with "What do you see?" context. The AI analyzes the screenshot
-and gives you actionable feedback. Visual bug reports in one keystroke.
+**빠른 스크린 샷 (Cmd + Shift + S) :** 현재 뷰포트를 캡처하고 "What do you see?" context와 사이드바 채팅으로 파이프를 캡처합니다. AI 스크린 샷을 분석하고 행동 가능한 피드백을 제공합니다. 1 개의 키 입력에 대한 비주얼 버그 보고서.
 
-**Status Bar:** A persistent 30px bar at the bottom of every page. Shows agent
-status (idle/thinking), workspace name, current branch, and auto-detected dev
-servers. Click a dev server pill to navigate. Always-visible context about what
-the AI is doing.
+**상태 막대기:** 각 페이지의 하단에 지속 30px 바. 에이전트 상태 표시 (idle/thinking), workspace 이름, 현재 branch, 자동 감지 dev 서버. 탐색을 위해 dev 서버 알약을 클릭합니다. AI가 수행되는지에 대해 항상 접근 할 수 있습니다.
 
-**Auto-Detect Dev Servers:** On launch, scans common ports (3000, 3001, 4200,
-5173, 5174, 8000, 8080). If exactly one server is found, auto-navigates to it.
-Dev server pills in the status bar for one-click switching.
+**Auto-Detect Dev Servers:** 시작에, 스캔 일반적인 포트 (3000, 3001, 4200, 5173, 5174, 8000, 8080). 정확히 하나의 서버가 발견되면 자동 -navigates to it. 한 클릭 전환을위한 상태 표시줄에 있는 서버 약을 개발하십시오.
 
-### Phase 2: BoomLooper Integration
+### 2 단계: BoomLooper 통합
 
-The sidebar connects to BoomLooper's Phoenix/Elixir APIs instead of a local
-`claude -p` subprocess. BoomLooper provides:
+sidebar는 BoomLooper의 Phoenix/Elixir API로 로컬 `claude -p` 하위 처리 대신 연결됩니다. BoomLooper는 다음과 같습니다.
 
-- **Multi-agent orchestration.** Spawn 5 agents in parallel, each with its own
-  browser tab. One runs QA, one does design review, one watches for regressions.
-- **Docker infrastructure.** Each agent gets an isolated container. The browser
-  inside the container tests the dev server. No port conflicts, no state leakage.
-- **Session persistence.** Agent conversations survive browser restarts. Pick up
-  where you left off.
-- **Team visibility.** Your teammates can watch what your agents are doing in
-  real-time. Like pair programming, but the pair is 5 AI agents and you're the
-  conductor.
+- **멀티 에이전트 관현.** Spawn 5 에이전트은 평행한, 각각에 그것의 자신의
+  브라우저 탭. 하나의 실행 QA, 하나는 디자인 검토, 회귀를위한 하나의 시계.
+- **Docker 인프라.** 각 에이전트는 격리 된 컨테이너를 가져옵니다. 브라우저
+  컨테이너 내부는 dev 서버를 테스트합니다. No 포트 충돌, no 상태 누설.
+- **세션 지속.** Agent 대화는 브라우저를 다시 시작한다.
+  당신은 떨어져 있습니다.
+- **팀 가시성.** 당신의 팀원은 당신의 에이전트이 무슨 일을 하는지 볼 수 있습니다
+  실시간. 페어 프로그래밍처럼, 쌍은 5 AI 에이전트이며, 당신은 지휘자입니다.
 
-### Phase 3: Browse as BoomLooper Tool
+### 단계 3: BoomLooper 도구로 찾아
 
-The browse binary becomes an MCP tool in BoomLooper. Agents in Docker containers
-use browse commands to test dev servers, take screenshots, fill forms, and verify
-deployments. Cross-platform compilation (linux-arm64/x64) required.
+검색 바이너리는 BoomLooper의 MCP 도구가 됩니다. Docker 컨테이너의 에이전트는 dev 서버 테스트 명령을 사용하여 스크린 샷을 찍고 fill 양식을 입력하고 배포를 확인합니다. Cross-platform 컴파일 (linux-arm64/x64)가 필요합니다.
 
-### Phase 4: Chromium Fork (trigger-gated)
+### 단계 4: Chromium 포크 (건조한 가닥)
 
-When the extension side panel hits hard API limits, GStack Browser ships to
-external users, build infra exists, and the business justifies maintenance:
-fork Chromium. Brave's `chromium_src` override pattern, CC-powered 6-week
-rebases (2-4 hours with CC vs 1-2 weeks human). ~20-30 files modified.
+확장 측면 패널이 하드 API 제한을 보았을 때, GStack 브라우저는 외부 사용자에게 배를 제공, 인프라가 존재하고, 사업은 유지 보수를 촉진합니다. 포크 크롬. 브래브의 `chromium_src` 과도한 패턴, CC-powered 6-week rebases (2-4 시간 CC vs 1-2 주 인간). ~20-30 파일 수정.
 
-### Phase 5: Native Shell
+### 단계 5: 본래 포탄
 
-SwiftUI/AppKit app shell with native sidebar, isolated Chromium service. Full
-platform integration. May be superseded by Phase 4 if the Chromium fork includes
-a native sidebar.
+SwiftUI/AppKit 앱 쉘은 네이티브 사이드바, 분리된 Chromium 서비스. 전체 플랫폼 통합. Chromium 포크가 네이티브 사이드바를 포함하면 Phase 4에 의해 초소음 될 수 있습니다.
 
-## Vision: What an AI Browser Can Do
+## 시각: AI 브라우저가 할 수 있는 것
 
-### 1. See What You See
+##1. 당신이 본 것을 보십시오
 
-The browser is the AI's eyes. Not through screenshots (though it can do that),
-but through DOM access, CSS inspection, network monitoring, and accessibility
-tree parsing. The AI understands the page structure, not just the pixels.
+브라우저는 AI의 눈입니다. 스크린 샷을 통해서도 (그것을 할 수 있는 것), 그러나 DOM 접근, CSS 검사, 네트워크 감시 및 접근가능성 나무 파싱을 통해서. AI는 단지 화소가 아닌 페이지 구조를 이해합니다.
 
-**Today:** `snapshot` command returns an accessibility-tree representation of any
-page. The AI can "see" every button, link, form field, and text element. Element
-references (`@e1`, `@e2`) let the AI click, fill, and interact.
+**오늘:** `snapshot` 명령은 모든 페이지의 접근성tree 표현을 반환합니다. AI는 각 단추, 연결, 모양 분야 및 원본 성분을 볼 수 있습니다. 요소 참조 (`@e1`, `@e2`)는 AI click, fill, 상호 작용합니다.
 
-**Next:** Real-time page observation. The AI notices when a page changes, when an
-error appears in the console, when a network request fails. Proactive debugging
-without being asked.
+**다음 :** 실시간 페이지 관측. AI는 페이지 변경이 되면 오류가 콘솔에 나타나면 네트워크 요청이 실패할 때 발생합니다. 요청하지 않고도 능동적 디버깅.
 
-**Future:** Visual understanding. The AI compares before/after screenshots to catch
-visual regressions. Pixel-level design review. "This button moved 3px left and the
-font changed from 14px to 13px."
+**미래:** 시각 이해. AI 앞에 비교합니다/after 스크린 샷은 시각 회귀를 잡기 위해. 픽셀 수준의 디자인 검토. "이 버튼은 왼쪽 3px로 이동하고 글꼴은 14px에서 13px로 변경했습니다."
 
-### 2. Act on What It Sees
+##2. 그것이 무엇을 본 적법
 
-Not just reading pages, but interacting with them like a human user would.
+페이지는 읽지 않지만, 인간 사용자와 같은 사람들과 상호 작용합니다.
 
-**Today:** Click, fill, select, hover, type, scroll, upload files, handle dialogs,
-navigate, manage tabs. All via simple commands through the browse server.
+**오늘:** 클릭, fill, 선택, hover, 유형, 스크롤, 업로드 파일, 핸들 대화, 탐색, 탭을 관리. 모든 검색 서버를 통해 간단한 명령을 통해.
 
-**Next:** Multi-step user flows. "Log in, go to settings, change the timezone,
-verify the confirmation message." The AI chains commands with verification at each
-step.
+**다음 :** 멀티 스텝 사용자 흐름. "로그인, 설정으로 이동, 시간대를 변경, 확인 메시지 확인." AI 체인은 각 단계에서 검증을 가진 명령을 나타냅니다.
 
-**Future:** Autonomous QA agent. "Test every link on this page. Fill every form.
-Try to break it." The AI runs exhaustive interaction testing without a script.
-Finds bugs a human tester would miss because it tries combinations humans don't
-think of.
+**미래:** 자율 QA 에이전트. "이 페이지에 각 링크를 테스트합니다. 모든 양식을 작성하십시오. 그것을 깰 것을 시도하십시오." AI는 스크립트없이 배설 상호 작용 테스트를 실행합니다. 인간 테스터를 찾아서 인간이 생각하지 않도록 놓습니다.
 
-### 3. Write Code While Browsing
+##3. 검색하는 동안 코드 작성
 
-This is the key differentiator. The AI can see the bug in the browser AND fix it
-in the code simultaneously.
+이것은 키가 다르다. AI는 브라우저 AND에서 버그를 동시에 수정할 수 있습니다.
 
-**Today:** The sidebar chat connects to Claude Code. You say "this button is
-misaligned" and the AI reads the CSS, identifies the issue, and proposes a fix.
-The `/design-review` skill takes screenshots, identifies visual issues, and
-commits fixes with before/after evidence.
+**오늘:** 사이드바 채팅은 Claude 코드에 연결됩니다. "이 버튼은 잘못 정렬되어 있습니다"라고 말하며 AI는 CSS를 읽고 문제를 식별하고 수정을 제안합니다. `/design-review` 기술은 스크린 샷을 식별하고 시각적 문제를 식별하고 이전 /after 증거와 수정을 투입합니다.
 
-**Next:** Live reload loop. The AI edits CSS/HTML, the browser auto-reloads, the
-AI verifies the fix visually. No human in the loop for simple visual fixes.
-"Fix every spacing issue on this page" becomes a 30-second task.
+**다음 :** 라이브 리로드 루프. AI CSS/HTML, 브라우저 자동 리로드, AI는 수정을 시각화 정의합니다. No 간단한 시각 수정을위한 루프의 인간. "이 페이지에 모든 간격 문제가"은 30 초 작업이됩니다.
 
-**Future:** Full-stack debugging. The AI sees a 500 error in the browser, reads
-the server logs, traces to the failing line, writes the fix, and verifies in the
-browser. One command: "This page is broken. Fix it."
+**미래:** 풀 스택 디버깅. AI는 브라우저에서 500 오류를 보고 서버 로그를 읽고, 실패 줄에 추적, 수정을 작성하고 브라우저에서 검증합니다. 한 명령: "이 페이지는 깨어납니다. 수정"
 
-### 4. Understand the Whole Stack
+##4. 전체 스택에 대한 이해
 
-The browser isn't just a viewport. It's a window into the application's health.
+브라우저는 뷰포트가 아닙니다. 응용 프로그램의 건강에 창이 됩니다.
 
-**Today:**
-- Console log capture — every `console.log`, `console.error`, and warning
-- Network request monitoring — every XHR, fetch, websocket, and static asset
-- Performance metrics — Core Web Vitals, resource timing, paint events
-- Cookie and storage inspection — read and write localStorage, sessionStorage
-- CSS inspection — computed styles, box model, rule cascade
+**오늘:**
+- 콘솔 로그 캡처 - 모든 `console.log`, `console.error`, 경고
+- 네트워크 요청 모니터링 - 모든 XHR, fetch, websocket 및 정적 자산
+- 성능 메트릭 - 핵심 웹 비틀, 리소스 타이밍, 페인트 이벤트
+- 쿠키 및 저장 검사 — 읽기 및 쓰기 localStorage, sessionStorage
+- CSS 검사 - computed 작풍, 상자 모형, 규칙 폭포
 
-**Next:**
-- Network request replay — "replay this failing request with different params"
-- Performance regression detection — "this page is 200ms slower than yesterday"
-- Dependency auditing — "this page loads 47 third-party scripts"
-- Accessibility auditing — "this form has no labels, these colors fail contrast"
+**다음 :**
+- 네트워크 요청 재생 — "다른 params와이 실패 요청 재생"
+- 성능 회귀 감지 - "이 페이지는 어제보다 200ms 느리게"
+- Dependency Auditing — "이 페이지는 47 타사 스크립트를로드합니다"
+- 접근성 감사 - "이 양식에는 no 라벨이 있으며이 색상은 대조가 실패합니다"
 
-**Future:**
-- Full application telemetry — CPU, memory, GPU usage in real-time
-- Cross-browser testing — same test suite across Chrome, Firefox, Safari
-- Real user monitoring correlation — "this bug affects 12% of production users"
+**미래:**
+- 풀 애플리케이션 원격 측정 - CPU, Memory, GPU 실시간 사용
+- Cross-browser 테스트 - Chrome, Firefox, Safari의 동일한 테스트 스위트
+- 실제 사용자 모니터링 상관 — "이 버그는 생산 사용자의 12%에 영향을줍니다"
 
-### 5. The Workspace Model
+##5. 작업 공간 모델
 
-The browser IS the workspace. Not a tab in a workspace. The workspace itself.
+브라우저 IS 작업 공간. 작업 공간에 탭이 아닙니다. 작업 공간 자체.
 
-**Today:** Each browser session is bound to a project directory. The sidebar shows
-the current branch. The status bar shows detected dev servers.
+**오늘:** 각 브라우저 세션은 프로젝트 디렉토리에 바인딩됩니다. 사이드바는 현재 branch을 보여줍니다. 상태 표시 줄은 dev 서버를 감지했습니다.
 
-**Next:** Multi-project support. Switch between projects without closing the
-browser. Each project gets its own set of tabs, its own agent, its own context.
-Like VSCode workspaces, but for the browser.
+**다음 :** 멀티 프로젝트 지원. 브라우저를 닫지 않고 프로젝트간에 전환. 각 프로젝트는 탭, 자체 에이전트, 자체 컨텍스트를 가져옵니다. VSCode 작업 공간처럼, 하지만 브라우저에.
 
-**Future:** Team workspaces. Multiple developers share a browser workspace. See
-each other's agents working. Collaborative debugging where one person navigates
-and the other watches the AI fix things in real-time.
+**미래:** 팀 워크스페이스. 여러 개발자는 브라우저 작업 공간을 공유합니다. 서로의 에이전트 작업을 참조하십시오. 한 사람이 탐색하고 다른 시계가 실시간 AI 수정 된 것들을 볼 수 있는 협업 디버깅.
 
-### 6. Skills as Browser Capabilities
+##6. 브라우저 능력으로 기술
 
-Every gstack skill becomes a browser capability.
+gstack 기술이 브라우저 기능이 됩니다.
 
-| Skill | Browser Capability |
+| 스킬 | 비밀번호 |
 |-------|-------------------|
-| `/qa` | Test every page, find bugs, fix them, verify fixes |
-| `/design-review` | Screenshot → analyze → fix CSS → screenshot again |
-| `/investigate` | See the error in browser → trace to code → fix → verify |
-| `/benchmark` | Measure page performance → detect regressions → alert |
-| `/canary` | Monitor deployed site → screenshot periodically → alert on changes |
-| `/ship` | Run tests → review diff → create PR → verify deployment in browser |
-| `/cso` | Audit page for XSS, open redirects, clickjacking in real browser |
-| `/office-hours` | Browse competitor sites → synthesize observations → design doc |
+| `/qa` | 모든 페이지를 테스트, 버그를 발견, 수정, 수정 |
+| `/design-review` | 스크린 샷 → 분석 → 수정 CSS → 스크린 샷 다시 |
+| `/investigate` | 브라우저에서 오류를 보고 → 코드를 추적 → 수정 → 확인 |
+| `/benchmark` | 측정 페이지 성능 → 회귀 → alert |
+| `/canary` | 호스팅 배포 사이트 → 스크린 샷 정기 → 변경 경고 |
+| `/ship` | 테스트 실행 → 검토 diff → PR → 브라우저에서 배포 확인 |
+| `/cso` | XSS, 리디렉션, 클릭잭링을 위한 감사페이지 |
+| `/office-hours` | 경쟁 사이트 → 관측 → 설계 doc 종합 |
 
-The command palette (Cmd+K) is the hub. You don't need to know the skills exist.
-You type what you want, the fuzzy filter finds the right skill, and the AI runs it
-with the browser as context.
+명령 팔레트 (Cmd+K)는 허브입니다. 기술이 존재하는 것을 알 필요가 없습니다. 원하는 것을 입력하면, fuzzy 필터는 올바른 기술을 찾아 AI는 브라우저에서 컨텍스트로 실행합니다.
 
-### 7. The Design Loop
+##7 디자인 루프
 
-AI-powered design is a loop, not a handoff.
+AI 전원 디자인은 손전등이 아닌 루프입니다.
 
 ```
 Generate mockup (GPT Image API)
@@ -218,25 +157,24 @@ Generate mockup (GPT Image API)
   → Ship
 ```
 
-The browser closes the gap between "what it looks like in Figma" and "what it
-looks like in production." Because the AI can see both simultaneously.
+브라우저는 "Figma"와 "생산에서 보이는 것"과 "같은 것"과 같은 차이를 닫습니다. AI는 동시에 볼 수 있기 때문에.
 
-### 8. The Security Loop
+##8 보안 루프
 
-CSO review in a real browser, not just static analysis.
+CSO 실제 브라우저에서 검토, 그냥 정적 분석.
 
-- Inject XSS payloads into every input field, check if they execute
-- Test CSRF by replaying requests from a different origin
-- Check for open redirects by navigating to crafted URLs
-- Verify CSP headers are actually enforced (not just present)
-- Test auth flows by manipulating cookies and tokens in real-time
-- Check for clickjacking by loading the site in an iframe
+- XSS를 입력 필드에 출력하면, 실행 중인 경우 체크
+- 다른 origin에서 요청을 재생하여 CSRF를 테스트하십시오
+- URL을 제작하는 navigating에 의해 리디렉션을 엽니 다
+- CSP 헤더를 실제로 시행합니다. (현재는 아닙니다)
+- 테스트 auth는 실시간 쿠키 및 토큰을 조작하여 흐름을
+- iframe에서 사이트에로드하여 clickjacking을 확인
 
-Static analysis catches patterns. Browser testing catches reality.
+정적 분석은 패턴을 잡아. 브라우저 테스트는 현실을 잡습니다.
 
-### 9. The Monitoring Loop
+##9. 모니터링 루프
 
-Post-deploy canary monitoring, in a real browser.
+Post-deploy canary monitoring, 실제 브라우저에서.
 
 ```
 Deploy → Browser loads production URL
@@ -246,10 +184,9 @@ Deploy → Browser loads production URL
   → Auto-rollback if critical error detected
 ```
 
-Synthetic monitoring with AI judgment. Not just "did the page return 200" but
-"does the page look right and work correctly."
+AI 판단과 합성 모니터링. "페이지 반환 200"을 무시하지만 "페이지가 오른쪽과 제대로 작동"
 
-## Architecture
+## 건축
 
 ```
 +-------------------------------------------------------+
@@ -286,57 +223,55 @@ Synthetic monitoring with AI judgment. Not just "did the page return 200" but
   +---------------------+    +-----------------------+
 ```
 
-## Competitive Landscape
+## 경쟁적인 조경
 
-| Browser | Approach | Differentiator | Weakness |
+| Browser | 앱로치 | 의 특징 | 의약 |
 |---------|----------|---------------|----------|
-| **Atlas** | Chromium fork + AI layer | Agentic browser, "OWL" isolated Chromium | Consumer-focused, no code integration |
-| **Dia** | AI-native browser | Clean UI, built for AI interaction | No dev tools, no code editing |
-| **Comet** | AI browser | Multi-agent browsing | Early, unclear dev workflow |
-| **Chrome Auto Browse** | Extension | Google's own, deep Chrome integration | Extension-only, no code editing |
-| **Cursor** | VSCode fork + AI | Best-in-class code editing | No browser viewport |
-| **GStack Browser** | CC runtime + browser viewport | See bug in browser, fix in code, verify | Currently macOS-only, no consumer features |
+| **팟캐스트** | Chromium 포크 + AI 층 | Agentic browser, "OWL" 고립 된 Chromium | 소비자 중심, no 코드 통합 |
+| **디아지오** | AI-native browser | Clean UI, built for AI interaction | No dev 도구, no 코드 편집 |
+| **Comet** | AI 브라우저 | 멀티 에이전트 브라우징 | 초기, 삼촌 dev 워크플로우 |
+| **Chrome 자동 블로깅** | 의 확장 | Google의 자체, 딥 Chrome 통합 | 확장자, no 코드 편집 |
+| **Cursor** | VSCode 포크 + AI | Best-in-class 코드 편집 | No 브라우저 뷰포트 |
+| **GStack 브라우저** | CC 런타임 + 브라우저 뷰포트 | 브라우저에서 버그를 보고, 코드에 수정, 확인 | 현재 macOS 전용, no 소비자 기능 |
 
-GStack Browser doesn't compete with consumer browsers. It competes with the
-workflow of switching between browser and editor. The goal is to make that switch
-invisible.
+GStack Browser는 소비자 브라우저와 경쟁하지 않습니다. 브라우저와 편집기 간의 전환 작업 흐름과 경쟁합니다. 목표는 보이지 않는 전환을 만드는 것입니다.
 
-## Design System
+## 디자인 시스템
 
-From DESIGN.md:
-- **Primary accent:** Amber-500 (#F59E0B) — agent active, focus states, pulse
-- **Background:** Zinc-950 (#09090B) through Zinc-800 (#27272A) — dark, dense
-- **Typography:** JetBrains Mono (code/status), DM Sans (UI/labels)
-- **Border radius:** 8px (md), 12px (lg), full (pills)
-- **Motion:** Pulse animation on agent active, 200ms transitions
-- **Layout:** Sidebar (right), status bar (bottom), palette (centered overlay)
+DESIGN.md에서:
+- **1 차적인 악센트:** Amber-500 (#F59E0B) - 에이전트 활성, 초점 상태, 펄스
+- **배경:** 아연 950 (#09090B) 아연-800 (#27272A) - 어둠, 밀도
+- **전기:** JetBrains Mono (code/status), DM 산 (UI/labels)
+- **국경 반경:** 8px (md), 12px (lg), 전체 (pills)
+- **동작:** 펄스 애니메이션 에이전트 활성, 200ms 전환
+- **모델 번호:** 사이드바 (right), 상태바 (바닥), 팔레트 (주로 오버레이)
 
-## Implementation Status
+## 구현 상태
 
-| Component | Status | Notes |
+| 제품정보 | Status | 참고 |
 |-----------|--------|-------|
-| .app bundle | **SHIPPED** | 389MB, launches in ~5s |
-| DMG packaging | **SHIPPED** | 189MB compressed |
-| `GSTACK_CHROMIUM_PATH` | **SHIPPED** | Custom Chromium binary support |
-| `BROWSE_EXTENSIONS_DIR` | **SHIPPED** | Extension path override |
-| Auth via `/health` | **SHIPPED** | Replaces .auth.json file approach, auto-refreshes on server restart |
-| Build script | **SHIPPED** | `scripts/build-app.sh` |
-| Model routing | **SHIPPED** | Sonnet for actions, Opus for analysis (`pickSidebarModel`) |
-| Debug logging | **SHIPPED** | 40+ silent catches → prefixed console logging across 4 files |
-| No idle timeout (headed) | **SHIPPED** | Browser stays alive as long as window is open |
-| Cookie import button | **SHIPPED** | One-click in sidebar footer, opens `/cookie-picker` |
-| Sidebar arrow hint | **SHIPPED** | Points to sidebar, hides only when sidebar actually opens |
-| Architecture doc | **SHIPPED** | `docs/designs/SIDEBAR_MESSAGE_FLOW.md` |
-| Command palette | Planned | Phase 1b |
-| Quick screenshot | Planned | Phase 1b |
-| Status bar | Planned | Phase 1b |
-| Dev server detection | Planned | Phase 1b |
-| BoomLooper integration | Future | Phase 2 |
-| Cross-platform | Future | Phase 3 |
-| Chromium fork | Trigger-gated | Phase 4 |
-| Native shell | Deferred | Phase 5 |
+| .app 번들 | **SHIPPED** | 389MB, ~5s에서 출시 |
+| DMG 포장 | **SHIPPED** | 189MB 압축 |
+| `GSTACK_CHROMIUM_PATH` | **SHIPPED** | 사용자 정의 Chromium 바이너리 지원 |
+| `BROWSE_EXTENSIONS_DIR` | **SHIPPED** | 확장 경로 override |
+| `/health`를 통해 Auth | **SHIPPED** | .auth.json 파일 접근, 서버 재시작에 자동 재시작 |
+| 스크립트 | **SHIPPED** | `scripts/build-app.sh` |
+| 모형 routing | **SHIPPED** | 행동의 아들넷, 분석용 Opus (`pickSidebarModel`) |
+| Debug 로깅 | **SHIPPED** | 40+ 침묵하는 캐치 → 4개의 파일에 의하여 접힌 콘솔 로깅 |
+| No 요일 타임아웃 (headed) | **SHIPPED** | 브라우저는 창이 열리기 때문에 살아있다 |
+| 쿠키 가져오기 버튼 | **SHIPPED** | 사이드바 풋거에서 클릭한 `/cookie-picker` |
+| 사이드바 화살표 힌트 | **SHIPPED** | sidebar에 포인트, sidebar 실제로 열릴 때만 숨기십시오 |
+| 건축 문서 | **SHIPPED** | `docs/designs/SIDEBAR_MESSAGE_FLOW.md` |
+| 명령 팔레트 | 옵션 정보 | 단계 1b |
+| 빠른 스크린 샷 | 옵션 정보 | 단계 1b |
+| 상태 표시 | 옵션 정보 | 단계 1b |
+| Dev 서버 탐지 | 옵션 정보 | 단계 1b |
+| BoomLooper 통합 | Future | 단계 2 |
+| 크로스 플랫폼 | Future | 3 단계 |
+| Chromium 포크 | Trigger-gated를 덫을 놓으십시오 | 4 단계 |
+| 기본 쉘 | 의제 | 5 단계 |
 
-## The 12-Month Vision
+## 12개월 비전
 
 ```
 TODAY (Phase 1)               6 MONTHS (Phase 2-3)          12 MONTHS (Phase 4-5)
@@ -350,27 +285,21 @@ Manual skill invocation       Autonomous QA loops            Skill marketplace
                               Real-time collaboration         Enterprise features
 ```
 
-The 12-month ideal: you open GStack Browser, it detects your project, starts
-your dev server, runs your test suite, and reports what's broken. You say "fix
-it" and the AI fixes every bug, verifies each fix visually, and creates a PR.
-You review the PR in the same browser, approve it, and the AI deploys it and
-monitors the canary. All in one window.
+12 개월 이상: GStack 브라우저를 열고, 프로젝트가 시작되며, dev 서버를 시작하며 테스트 스위트를 실행하고, 부서지는 것을 보고합니다. "fix it"와 AI는 각 버그를 수정하고, 각 수정을 시각화하고 PR를 생성합니다. 같은 브라우저에서 PR를 검토하고 AI는 그것을 배포하고 운하를 모니터링합니다. 모든 창에서.
 
-That's the browser as AI workspace. Not a browser with AI bolted on. An AI
-with a browser bolted on.
+AI workspace로 브라우저입니다. AI가 붙은 브라우저가 아닙니다. 브라우저가 켜져 있는 AI는 입니다.
 
-## Review History
+## 리뷰 역사
 
-This plan went through 4 reviews:
+이 계획은 4 리뷰를 통해 갔다 :
 
-1. **CEO Review** (`/plan-ceo-review`, SELECTIVE EXPANSION) — 9 scope proposals,
-   3 accepted (Cmd+K, Cmd+Shift+S, status bar), 5 deferred, 1 skipped
-2. **Design Review** (`/plan-design-review`) — scored 5/10 → 8/10, 9 design
-   decisions added, 2 approved mockups generated
-3. **Eng Review** (`/plan-eng-review`) — 4 issues found, 0 critical gaps,
-   test plan produced
-4. **Codex Review** (outside voice) — 9 findings, 3 critical gaps caught
-   (server bundling, auth file location, project binding). All resolved.
+1. **CEO 리뷰** (`/plan-ceo-review`, SELECTIVE EXPANSION) - 9개의 범위 제안,
+   3 허용 (Cmd+K, Cmd+Shift+S의 상태 막대기), 5개의 deferred, 1 건너뛰기
+2. **디자인 리뷰** (`/plan-design-review`) - 점수 5/10 → 8/10, 9 디자인
+   결정이 추가됨, 2개의 승인된 모조
+3. **Eng 검토** (`/plan-eng-review`) - 4개의 문제점은, 0개의 긴요한 간격, 찾아냈습니다
+   시험 계획 생성
+4. **Codex 리뷰** (outside voice) - 9개의 결과, 3개의 중요한 간격 잡힌
+   (서버 번들링, auth 파일 위치, 프로젝트 바인딩). 모든 해결.
 
-The Codex review caught 3 real architecture gaps that survived 3 prior reviews.
-Cross-model review works.
+Codex 리뷰는 3개의 실제 건축 격차를 기록했습니다. Cross-model 리뷰는 작동합니다.

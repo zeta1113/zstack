@@ -1,58 +1,49 @@
-# CHANGELOG entry format
+# CHANGELOG 입력 형식
 
-Moved verbatim from CLAUDE.md (token-load reduction). Read this BEFORE
-writing any `## [X.Y.Z]` CHANGELOG entry.
+CLAUDE.md (token-load reduce)에서 동사를 이동합니다. BEFORE를 작성한 `## [X.Y.Z]` CHANGELOG 항목에 대해 읽어보십시오.
 
-### Release-summary format (every `## [X.Y.Z]` entry)
+### 릴리스-수사 형식 (모든 `## [X.Y.Z]` 항목)
 
-Every version entry in `CHANGELOG.md` MUST start with a release-summary section in
-the GStack/Garry voice, one viewport's worth of prose + tables that lands like a
-verdict, not marketing. The itemized changelog (subsections, bullets, files) goes
-BELOW that summary, separated by a `### Itemized changes` header.
+`CHANGELOG.md` MUST의 모든 버전 항목은 GStack/Garry 음성의 릴리스 요약 섹션으로 시작되며, 베라텍스와 같은 토지가 있는 prose + 테이블의 가치는 마케팅이 아닙니다. 항목화 된 changelog (보석, 총알, 파일)는 BELOW 요약을 `### Itemized changes` 헤더에 의해 분리되는 BELOW로 이동합니다.
 
-The release-summary section gets read by humans, by the auto-update agent, and by
-anyone deciding whether to upgrade. The itemized list is for agents that need to
-know exactly what changed.
+릴리스 요약 섹션은 인간에 의해 읽을 수, 자동 업데이트 에이전트에 의해, 그리고 누구가 업그레이드 여부를 결정. 항목화 목록은 정확히 무슨 변경을 알고 필요한 에이전트에 대한.
 
-Structure for the top of every `## [X.Y.Z]` entry:
+각 `## [X.Y.Z]` 항목의 상단에 대한 구조:
 
-1. **Two-line bold headline** (10-14 words total). Should land like a verdict, not
-   marketing. Sound like someone who shipped today and cares whether it works.
-2. **Lead paragraph** (3-5 sentences). What shipped, what changed for the user.
-   Specific, concrete, no AI vocabulary, no em dashes, no hype.
-3. **A "The X numbers that matter" section** with:
-   - One short setup paragraph naming the source of the numbers (real production
-     deployment OR a reproducible benchmark, name the file/command to run).
-   - A table of 3-6 key metrics with BEFORE / AFTER / Δ columns.
-   - A second optional table for per-category breakdown if relevant.
-   - 1-2 sentences interpreting the most striking number in concrete user terms.
-4. **A "What this means for [audience]" closing paragraph** (2-4 sentences) tying
-   the metrics to a real workflow shift. End with what to do.
+1. **두 라인 대담한 헤드 라인** (10-14 단어 합계). 베라딕트처럼 땅을 덮어, 아니
+   마케팅. 오늘 발송 한 사람과 같은 소리가 나지 않는 것이 작동.
+2. **납 단락** (3-5 문장). 어떤 배송, 사용자에 대한 변경 사항.
+   특정한, 콘크리트, AI vocabulary, em dashes 없음, hype 없음.
+3. **"X 번호는"섹션** 와:
+   - 숫자의 소스를 naming 한 짧은 설정 단락 (실물 생산
+     배포 OR 재현 가능한 벤치 마크, file/command 를 실행합니다.
+   - BEFORE/AFTER/Δ 란을 가진 3-6의 열쇠 미터의 테이블.
+   - 관련 항목이 있다면, 두 번째 옵션 테이블.
+   - 1-2 문장은 콘크리트 사용자의 가장 눈에 띄는 숫자를 해석합니다.
+4. **"이 수단은 무엇인가"종료** (2-4 문장) tying
+   실제 작업 흐름에 미터. 무엇을해야 하는지 끝.
 
-Voice rules for the release summary:
-- No em dashes (use commas, periods, "...").
-- No AI vocabulary (delve, robust, comprehensive, nuanced, fundamental, etc.) or
-  banned phrases ("here's the kicker", "the bottom line", etc.).
-- Real numbers, real file names, real commands. Not "fast" but "~30s on 30K pages."
-- Short paragraphs, mix one-sentence punches with 2-3 sentence runs.
-- Connect to user outcomes: "the agent does ~3x less reading" beats "improved precision."
-- Be direct about quality. "Well-designed" or "this is a mess." No dancing.
+릴리스 요약에 대한 음성 규칙 :
+- 아니 em dashes (사용 commas, 기간, "...").
+- AI 구급차 (구조, 견고하고, 종합적인, nuanced, 근본, 등) 또는
+  금지된 구문 ("그녀의 킥 "바닥 라인", 등).
+- 실제 번호, 실제 파일 이름, 실제 명령. "빠른"하지만 "30K 페이지에 30 분."
+- 단락, 2-3 문장이 실행되는 한 문장 펀치를 섞는다.
+- 사용자의 결과에 연결: "제는 ~3x 덜 읽기"가 "미래된 정밀도"를 이길 수 있습니다.
+- 품질에 대해 직접해야합니다. "Well-designed"또는 "이는 메시입니다." 춤이 없습니다.
 
-Source material:
-- CHANGELOG previous entry for prior context.
-- Benchmark files or `/retro` output for headline numbers.
-- Recent commits (`git log <prev-version>..HEAD --oneline`) for what shipped.
-- Don't make up numbers. If a metric isn't in a benchmark or production data,
-  don't include it. Say "no measurement yet" if asked.
+근원 물자:
+- CHANGELOG 이전 항목에 대한 이전 항목.
+- 벤치 마크 파일 또는 `/retro` 헤드 라인 번호 출력.
+- 배송된 것에 대한 최근 커밋 (`git log <prev-version>..HEAD --oneline`).
+- 숫자를 만들지 마십시오. 미터가 벤치 마크 또는 생산 데이터에 있지 않다면,
+  포함하지 마십시오. "no Measurement yet"라고 물어주세요.
 
-Target length: ~250-350 words for the summary. Should render as one viewport.
+대상 길이 : ~250-350 단어 요약. 한 뷰 포트로 렌더링해야합니다.
 
-### Itemized changes (below the release summary)
+### Itemized changes (출시 요약값)
 
-Write `### Itemized changes` and continue with the detailed subsections (Added,
-Changed, Fixed, For contributors). Same rules as the user-facing voice guidance
-above, plus:
+`### Itemized changes`를 작성하고 자세한 하위 섹션을 계속하십시오 (추가, 변경, 수정, 기여자에 대한). 위의 사용자 - 직면 목소리로 동일한 규칙과, 플러스 :
 
-- **Always credit community contributions.** When an entry includes work from a
-  community PR, name the contributor with `Contributed by @username`. Contributors
-  did real work. Thank them publicly every time, no exceptions.
+- **항상 신용 커뮤니티 기여.** 입력이 있을 때에는
+  커뮤니티 PR, `Contributed by @username`와 기여자를 이름을 지정합니다. 기여자는 실제 일을했습니다. 공개적으로 모든 시간을 감사하고 예외는 없습니다.

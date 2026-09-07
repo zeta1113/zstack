@@ -1,21 +1,16 @@
-# Design: slop-scan integration in /review and /ship
+# 디자인: /review 및 /ship에 있는 사면할 수 있는 통합
 
-Status: deferred
-Created: 2026-04-09
-Depends on: slop-diff script (scripts/slop-diff.ts, already landed)
+상태: 생성된 deferred: 2026-04-09 에 따라: 슬로프 디프 스크립트 (scripts/slop-diff.ts, 이미 착륙)
 
-## Problem
+## 문제
 
-slop-scan findings are only visible if you run `bun run slop:diff` manually. They
-should surface automatically during code review and shipping, the same way SQL safety
-and trust boundary checks do.
+slop-scan 발견은 수동으로 `bun run slop:diff`를 실행하는 경우에만 눈에 보입니다. 그들은 코드 검토와 선박 도중 표면을 자동적으로, 동일한 방법 SQL 안전과 신뢰 경계 검사를 해야 합니다.
 
-## Integration points
+## 통합점
 
-### /review (Step 4, after checklist pass)
+## /review (표시 후 4 단계)
 
-Run `bun run slop:diff` after the critical/informational checklist pass. Show new
-findings inline with other review output:
+`bun run slop:diff`를 실행하면 /informational 체크리스트 패스가 표시됩니다. 다른 리뷰 출력으로 새로운 발견을 표시하십시오.
 
 ```
 Pre-Landing Review: 3 issues (1 critical, 2 informational)
@@ -27,15 +22,13 @@ AI Slop: +2 new findings, -0 removed
       line 87: empty catch, boundary=process
 ```
 
-Classification: INFORMATIONAL (never blocks merge, just surfaces the pattern).
+분류: INFORMATIONAL (단 하나 구획 합병, 다만 표면 본).
 
-Fix-First heuristic applies: if the finding is an empty catch around a file op,
-auto-fix with `safeUnlink()`. If it's a catch-and-log in extension code, skip
-(that's the correct pattern per CLAUDE.md guidelines).
+수정-First heuristic apply: 찾는 것은 파일 op의 주위에 빈 캐치, `safeUnlink()`를 가진 자동 고침입니다. 확장 코드에 있는 캐치 앤로인 경우에, 건너뛰기 (CLAUDE.md 가이드라인 당 정확한 본입니다).
 
-### /ship (Step 3.5, pre-landing review + PR body)
+## /ship (Step 3.5, 사전 착륙 검토 + PR 몸)
 
-Same integration as /review. Additionally, show a one-line summary in the PR body:
+/review와 동일한 통합. 또한 PR 몸에 있는 1 선 요약을 보여주십시오:
 
 ```markdown
 ## Pre-Landing Review
@@ -43,42 +36,41 @@ Same integration as /review. Additionally, show a one-line summary in the PR bod
 - AI Slop: +0 new / -3 removed ✓
 ```
 
-### Review Readiness Dashboard
+### 리뷰 Readiness 대시보드
 
-Do NOT add a row. Slop is a diagnostic on the diff, not a review that gets "run"
-independently. It shows up inside Eng Review output, not as its own dashboard entry.
+NOT 행을 추가하십시오. 사면은 diff에 진단, 독립적으로 "뛰기"를 얻는 검토가 아닙니다. 그것은 자체 대쉬보드 항목으로, Eng Review 출력 내부를 보여줍니다.
 
-## What to auto-fix vs what to skip
+## 자동 수정 대 건너뛰기
 
-Follow CLAUDE.md "Slop-scan" section. Summary:
+CLAUDE.md "Slop-scan"섹션을 따르십시오. 요약 :
 
-**Auto-fix (genuine quality improvements):**
-- Empty catch around `fs.unlinkSync` → replace with `safeUnlink()`
-- Empty catch around `process.kill` → replace with `safeKill()`
-- `return await` with no enclosing try → remove `await`
-- Untyped catch around URL parsing → add `instanceof TypeError` check
+**Auto-fix (질량 개선):**
+- `fs.unlinkSync`의 빈 캐치 → `safeUnlink()`로 대체
+- `process.kill`의 빈 캐치 → `safeKill()`로 대체
+- `return await` enclosing 시도 없이 → `await`를 제거하십시오
+- URL 파싱을 갖는 untyped 캐치 → `instanceof TypeError` 체크 추가
 
-**Skip (correct patterns that slop-scan flags):**
-- `.catch(() => {})` on fire-and-forget browser ops (page.close, bringToFront)
-- Catch-and-log in Chrome extension code (uncaught errors crash extensions)
-- `safeUnlinkQuiet` in shutdown/emergency paths (swallowing all errors is correct)
-- Pass-through wrappers that delegate to active session (API stability layer)
+**Skip (팔레트의 패턴은 슬로프 수 플래그):**
+- `.catch(() => {})` 불독 브라우저 ops (page.close, takeToFront)
+- Chrome 확장 코드에서 캐치 앤 로그 (실행 오류가 충돌 확장)
+- `safeUnlinkQuiet` 종료/emergency 경로 (모든 오류가 정확할 수 있도록)
+- 활성 세션에 delegate를 갖는 Pass-through 래퍼 (API 안정성 층)
 
-## Implementation notes
+## 구현 노트
 
-- `scripts/slop-diff.ts` already handles the heavy lifting (worktree-based base
-  comparison, line-number-insensitive fingerprinting, graceful fallback)
-- The review/ship skills run bash blocks. Integration is: run the script, parse
-  the output, include in the review findings
-- If slop-scan is not installed (`npx slop-scan` fails), skip silently
-- The script exits 0 always (diagnostic, never gates)
+- `scripts/slop-diff.ts` 이미 무거운 리프팅을 처리 (worktree 기반베이스
+  비교, 선 수 과민한 지문, 우아한 fallback)
+- review/ship 기술 실행 버쉬 블록. 통합은: 스크립트를 실행, 파스
+  출력은 검토 결과에 포함
+- 슬로프 수 없는 경우 (`npx slop-scan` 실패), 조용히 건너뛰기
+- 스크립트는 항상 0을 종료 (진료, 문이 없습니다)
 
-## Effort estimate
+## 노력 견적
 
-| Task | Human | CC+gstack |
+| Task | - 한국어 | CC+gstack |
 |------|-------|-----------|
-| Add to review/SKILL.md.tmpl | 2 hours | 10 min |
-| Add to ship/SKILL.md.tmpl | 2 hours | 10 min |
-| Add to review/checklist.md | 1 hour | 5 min |
-| Test with actual PRs | 2 hours | 15 min |
-| Regenerate SKILL.md files | — | 1 min |
+| review/SKILL.md.tmpl에 추가 | 2시간 | 10분 |
+| ship/SKILL.md.tmpl에 추가 | 2시간 | 10분 |
+| review/checklist.md에 추가 | 1시간 | 5분 |
+| 실제 PR을 통한 테스트 | 2시간 | 15분 |
+| 재생 SKILL.md 파일 | — | 1분 |

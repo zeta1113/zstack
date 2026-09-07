@@ -1,15 +1,15 @@
-# Weekend Project: Dependency Graph Visualizer
+# 주말 프로젝트 : 종속 그래프 Visualizer
 
-I want to build a tool that takes a codebase and visualizes its dependency graph — modules, imports, which files depend on which. For fun, for learning. Maybe open-source it.
+코드베이스를 가지고 있으며 의존성 그래프를 시각화 할 수있는 도구를 구축하고 싶습니다. - 모듈, 수입, 이는 파일이 어느 정도 달려 있습니다. 재미를 위해, 학습을 위해. 어쩌면 오픈 소스를 엽니 다.
 
-## What I have so far
+## 지금까지 어떤 걸
 
-- Rough idea: point it at a repo, get an interactive graph
-- Stack I'm leaning toward: TypeScript + D3 or Cytoscape for rendering
-- Potential: could work for JS/TS first, maybe Python later
+- 거친 아이디어 : repo에서 그것을 점, 대화 형 그래프를 얻으십시오
+- 쌓아가는 것은 다음과 같습니다. TypeScript + D3 또는 렌더링을 위한 Cytoscape
+- 잠재적인: JS/TS를 위해, 나중에 나중에 파이썬을 위해 일할 수 있었습니다
 
-## What I don't know yet
+## 아직 알 수 없는 것
 
-- How to make the visualization actually useful vs just pretty
-- Whether this should be a CLI, a web tool, or a VS Code extension
-- What would make someone else want to use it
+- 실제로 유용하게 시각화하는 방법 vs just pretty
+- CLI, 웹 도구 또는 VS 코드 확장자이어야 함
+- 다른 사람이 그것을 사용하려는 것

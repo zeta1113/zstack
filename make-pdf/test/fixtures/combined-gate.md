@@ -1,30 +1,23 @@
-# The Horizon
+# 호라이즌
 
-This is the combined-features fixture. Every feature turned on simultaneously.
-The gate asserts that all of these paragraphs extract cleanly from the PDF
-with pdftotext.
+이것은 결합 기능 정착물입니다. 각 특징은 동시에 켜집니다. 이 단락 전부가 pdftotext에 PDF에서 청결하게 추출하는 문 asserts.
 
-A paragraph with **bold**, *italic*, and `inline code` tokens — each of which
-gets a different HTML treatment. None should fragment text on copy-paste.
+**팟캐스트**, *italic*, `inline code` 토큰을 가진 단락은 — 다른 HTML 처리를 얻는 각각. 아무도 사본 파스에 원본을 파야 합니다.
 
-A paragraph with "curly quotes", 'single quotes', an em dash -- like this,
-and an ellipsis... All three get smartypants transforms.
+"통합"과 단락, '단일 인용', em dash -- 같은이, 그리고 ellipsis... 모든 세 가지는 smartypants 변환합니다.
 
-## A subsection heading
+## 하위 섹션 제목
 
-Lists must not break mid-item:
+리스트는 중간에 끊지 않아야 합니다:
 
-- First list item with some words that keep it on one line.
-- Second list item with more words.
-- Third list item.
+- 한 줄에 보관하는 단어를 가진 첫 번째 목록 항목.
+- 두 번째 목록 항목 더 많은 단어.
+- 제3자 목록 항목.
 
-> A blockquote from Van Dyke. Her diminished size is in me, not in her.
+> Van Dyke의 Blockquote. 그녀의 점감 된 크기는 저에, 그녀에 없습니다.
 
-# A second chapter
+# 두 번째 장
 
-This content begins on a fresh page because the default chapter-breaks rule
-fires. Extract must still find these paragraphs.
+이 콘텐츠는 기본 장 틈 규칙 불 때문에 신선한 페이지에 시작합니다. 추출은 여전히이 단락을 발견해야합니다.
 
-A final paragraph with enough words to trigger hyphenation across the line
-wrap boundary. Extraordinary words sometimes hyphenate. Interdisciplinary
-ones certainly do.
+선 랩 경계를 통해 혜정을 트리거하는 충분한 단어와 마지막 단락. 과도한 단어 때때로 혜정. 간섭은 확실히 할.

@@ -1,81 +1,77 @@
-# Fix #1671: `/office-hours` always reports SESSION_COUNT: 0
+# #1671 수정 : `/office-hours` 항상 SESSION_COUNT : 0을보고
 
-**Status:** SHIPPED
-**Branch:** fix-1671-profile-migration
-**Date:** 2026-05-23
-**Issue:** https://github.com/garrytan/gstack/issues/1671
-**Original PR that introduced the bug:** garrytan/gstack#1039 / commit `0a803f9` / v1.0.0.0 / 2026-04-18
+**상태:** SHIPPED **주요 특징:** Fix-1671-profile-migration **일:** 2026-05-23 **제품 설명:** https://github.com/garrytan/gstack/issues/1671 **버그를 도입한 PR:** garrytan/gstack#1039 / `0a803f9` / v1.0.0.0 / 2026-04-18
 
-## The problem
+## 문제
 
-`/office-hours` reports `SESSION_COUNT: 0` and `TIER: introduction` on every invocation, even for users who have run the skill many times. The `welcome_back` tier (`bin/gstack-developer-profile:165-169`) that exists to skip the closing pitch for returning users is unreachable. Live ~5 weeks on every fresh-`$HOME` user since v1.0.0.0.
+`/office-hours`는 `SESSION_COUNT: 0`와 `TIER: introduction`를 각 invocation에 보고하고, 많은 시간을 운영하고 있는 사용자를 위해 조차. 사용자가 불변할 수 없는 반환을 위한 닫히는 피치를 건너는 존재되는 `welcome_back` 층 (`bin/gstack-developer-profile:165-169`). v1.0.0.0부터 각 신선한`$HOME` 사용자에 살아있는 ~5 주.
 
-## Root cause
+## 뿌리 원인
 
-The v1.0.0.0 migration moved the read path to `~/.gstack/developer-profile.json` but left the writer in `office-hours/SKILL.md.tmpl` writing to the legacy `~/.gstack/builder-profile.jsonl`. The `ensure_profile` stub created on first read has `sessions: []`; subsequent writes go to a file the reader never re-reads. Reader and writer disagree on storage.
+v1.0.0.0 마이그레이션은 `~/.gstack/developer-profile.json`로 읽는 경로를 이동하지만 `office-hours/SKILL.md.tmpl`의 작가를 레거시 `~/.gstack/builder-profile.jsonl`로 남겼습니다. `ensure_profile`의 stub는 처음 읽는 `sessions: []`를 가지고 있습니다. 이후는 독자가 재읽을 수 없는 파일로 이동합니다. 독자와 작가는 저장에 불명합니다.
 
-Full root-cause analysis (including RC2/RC3 follow-ups): https://github.com/garrytan/gstack/issues/1671
+분석 (RC2/RC3 후속 포함): https://github.com/garrytan/gstack/issues/1671
 
-## The fix
+## 수정
 
-Make the writer use the same file the reader does.
+같은 파일이 독자를 사용합니다.
 
-### Changes
+### 변경
 
-1. **`bin/gstack-developer-profile`** — add `--log-session '<json>'` subcommand:
-   - Validates required fields (`date`, `mode`), silent-skip on invalid input (matches `bin/gstack-timeline-log:22-26`).
-   - Reads existing `developer-profile.json` via `bun -e`.
-   - Appends entry to `sessions[]`. Updates `signals_accumulated` (per-signal-string increment, same as `do_migrate:67-69`), unions `resources_shown` and `topics`.
-   - Atomic mktemp+mv write (matches existing pattern at line 54).
-   - Calls `gstack-brain-enqueue "developer-profile.json"` after write, mirroring `bin/gstack-timeline-log:40`.
+1. **`bin/gstack-developer-profile`** - `--log-session '<json>'` subcommand를 추가하십시오:
+   - 필수 필드 (`date`, `mode`), 잘못된 입력에 침묵 스키 (매트 `bin/gstack-timeline-log:22-26`).
+   - `bun -e`를 통해 기존 `developer-profile.json`를 읽습니다.
+   - `sessions[]`에 입력을 승인합니다. `signals_accumulated` (`do_migrate:67-69`와 동일), 조합 `resources_shown` 및 `topics`와 같은 갱신 `signals_accumulated` (표시 끈 증가).
+   - 원자 mktemp+mv 쓰기 (라인에 존재하는 패턴을 54).
+   - `gstack-brain-enqueue "developer-profile.json"` 을 씁니다.
 
-2. **`bin/gstack-developer-profile:do_read`** — filter `mode:"resources"` entries when picking LAST_PROJECT / LAST_ASSIGNMENT / LAST_DESIGN_TITLE / CROSS_PROJECT / DESIGN_*. The Phase 6 resources auto-append happens after the real session in the same /office-hours invocation; without the filter, that resources entry clobbers real-session state for the user's next session. Latent bug that was masked by the broken writer; activated by the fix.
+2. **`bin/gstack-developer-profile:do_read`** - `mode:"resources"`/ LAST_ASSIGNMENT/ LAST_DESIGN_TITLE/ CROSS_PROJECT/ DESIGN_*를 선택할 때 필터 `mode:"resources"` 항목. 단계 6 자원 자동 추가는 동일한 /office-hours invocation에 있는 실제 세션 후에 일어나; 여과기 없이, 자원 입장은 사용자의 다음 세션을 위한 진짜 소유 국가를 붙입니다. 부서진 작가에 의해 복종된 이른 버그; 수정에 의해 활성화.
 
-3. **`office-hours/SKILL.md.tmpl`** — swap writers at lines 490 and 893:
-   - From: `echo '{...}' >> "$GSTACK_STATE_ROOT/builder-profile.jsonl"`
+3. **`office-hours/SKILL.md.tmpl`** - 490과 893 라인의 스왑 작가:
+   - 에서: `echo '{...}' >> "$GSTACK_STATE_ROOT/builder-profile.jsonl"`
    - To: `~/.claude/skills/gstack/bin/gstack-developer-profile --log-session '{...}' 2>/dev/null || true`
-   - Run `bun run gen:skill-docs` to regenerate `office-hours/SKILL.md`.
+   - `bun run gen:skill-docs`를 실행하여 `office-hours/SKILL.md`를 재생합니다.
 
-### What's NOT in the fix (intentionally)
+## NOT 수정에서 (intentionally)
 
-- **No new binary.** The owner binary for `developer-profile.json` is `gstack-developer-profile`; the writer belongs there as a subcommand. `--log-session` joins the binary's existing `--migrate` / `--derive` write-side subcommand boundary, not the `gstack-*-log` event-writer family. Verb name still matches `gstack-*-log`.
-- **No mkdir-locks.** Concurrent /office-hours calls have a read-modify-write race on `developer-profile.json`. The codebase accepts the same race in `gstack-config` (r-m-w on YAML, no lock). Not introduced by this fix; out of scope.
-- **No schema bump.** Schema stays at `schema_version: 1`. The fix doesn't change the schema, just makes the writer use it.
-- **No auto-reconcile for affected users.** Existing users with stranded `builder-profile.jsonl` entries don't get their past history auto-merged into `developer-profile.json`. On their next /office-hours run, the first new session lands in `welcome_back`; past data stays in the legacy file (still readable by other tools during deprecation). Most affected users have only a handful of stranded sessions so the loss is mostly aesthetic. Dropped the one-release-only reconcile pathway as net noise — Garry's "right-sized diff" voice.
-- **No autoplan timeline rollup (RC2).** Separate concern, separate PR.
-- **No project-scope opt-in (RC3).** Separate concern, separate PR.
-- **No gbrain glob change.** The office-hours manifest still globs `~/.gstack/builder-profile.jsonl` for context; once new writes stop landing there, the snapshot goes cold. Update in a follow-up if it becomes a UX issue.
+- **새로운 바이너리 없음.** `developer-profile.json`의 소유자 이진은 `gstack-developer-profile`입니다. 작가는 하위 command로 속합니다. `--log-session`는 이진의 기존 `--migrate`/ `--derive` 쓰기 측 subcommand 경계를 결합합니다. `gstack-*-log` 사건 작가 가족이 아닙니다. Verb 이름은 여전히 `gstack-*-log` 일치합니다.
+- **mkdir-locks는 없습니다.** Concurrent /office-hours 호출은 `developer-profile.json`에 읽기 modify 쓰기 인종이 있습니다. codebase는 `gstack-config` (r-m-w on YAML, 자물쇠 없음)에서 동일한 레이스를 받아들입니다. 이 고침에 의해 소개되지 않기 위하여; 범위에서.
+- **삽입 없음** Schema는 `schema_version: 1`에 체재합니다. 고침은 schema를 바꾸지 않으며, 다만 작가가 그것을 이용합니다.
+- **영향을받는 사용자를 위한 자동 재조정 없음.** 가닥을 가진 기존 사용자는 `builder-profile.jsonl` 항목은 `developer-profile.json`로 자동 merged 그들의 과거 역사를 얻지 않습니다. 그 다음 /office-hours 실행에, `welcome_back`의 첫 번째 새로운 세션 땅; 과거 자료는 유산 파일에 체재합니다 (예를들면 다른 도구에 의해 읽기 쉬운). 대부분의 영향을 받은 사용자는 단지 좌초된 회의의 경편한이 이렇게 손실은 주로 미적. 하나의 릴리스 전용 리콘 멸망 통로를 순 잡음으로 떨어뜨렸다. - Garry의 "right-size diff" 목소리.
+- **autoplan 타임라인 롤업 없음 (RC2).** 분리된 관심사, 분리되는 PR.
+- **프로젝트-경쟁점 선택 없음 (RC3).** 분리된 관심사, 분리되는 PR.
+- **gbrain glob 변화 없음.** 사무실 시간은 아직도 글로브 `~/.gstack/builder-profile.jsonl`를 뜻합니다. 일단 새로운 쓰기는 거기 착륙을 멈추고, 스냅샷은 감기를 갑니다. UX 문제점이 되는 경우에 따라 위로에 있는 갱신.
 
-### Tests (all gate-tier, free, deterministic)
+## 시험 (모든 문 층, 무료, 세균성)
 
-1. **Regression test** in `test/gstack-developer-profile.test.ts`:
+1. **회귀 시험** `test/gstack-developer-profile.test.ts`:
    - Fresh `$HOME`.
-   - Run /office-hours preamble: gstack-developer-profile creates empty stub.
-   - Call `--log-session` with a startup-mode JSON.
-   - Run `--read` again. Assert `SESSION_COUNT: 1`, `TIER: welcome_back`.
-   - Fails on current main (subcommand doesn't exist). Passes with fix.
+   - /office-hours preamble: gstack-developer-profile은 빈 텁을 만듭니다.
+   - `--log-session`를 호출하여 시작 상태 JSON를 호출합니다.
+   - `--read`를 다시 실행하십시오. `SESSION_COUNT: 1`, `TIER: welcome_back`를 원조하십시오.
+   - 현재 메인 실패 (subcommand는 존재하지 않습니다). 수정을 통과합니다.
 
-2. **`do_read` mode filter test:** after recording a startup session followed by a resources entry, `--read` returns LAST_PROJECT / LAST_ASSIGNMENT / LAST_DESIGN_TITLE from the real session, not from the resources entry. RESOURCES_SHOWN still aggregates correctly.
+2. **`do_read` 형태 필터 시험:** 는 자원 항목에 따라 시작 세션을 기록한 후 `--read` 는 LAST_PROJECT / LAST_ASSIGNMENT / LAST_DESIGN_TITLE 을 실제 세션에서, 자원 항목에서 제외합니다. RESOURCES_SHOWN 는 여전히 올바르게 집계합니다.
 
-3. **Validation + aggregation tests:** `--log-session` silently skips invalid JSON / missing required fields, injects `ts` if missing, preserves user-set `ts`, correctly aggregates signals/resources/topics across multiple sessions.
+3. **검증 + 집계 시험:** `--log-session`는 JSON/가입된 필수 필드를 침묵적으로 건너뛰고, `ts`를 누락하면, 사용자가 `ts`를 보존하고, 여러 세션에 걸쳐 signals/resources/topics를 올바르게 집계합니다.
 
-4. **Static-grep invariant** in `test/static-no-legacy-writes.test.ts` (new): walks every skill dir, asserts no production code path writes to `builder-profile.jsonl` except allowlisted readers (`gstack-developer-profile`, `gstack-memory-ingest.ts`, `gstack-artifacts-init`, doc files). Prevents future writers from regressing onto the legacy file.
+4. **정체되는 윤활 invariant** (새로운): 각 기술 디디렉터를 걸고, 생산 코드 경로가 `builder-profile.jsonl`로 작성되지 않는 경우, 허용된 리더를 제외하고 (`gstack-developer-profile`, `gstack-memory-ingest.ts`, `gstack-artifacts-init`, doc 파일). 레거시 파일에 회귀하는 미래 작가를 방지합니다.
 
-### Acceptance criteria
+### 합격 기준
 
-- Second `/office-hours` invocation on a fresh `$HOME` returns `TIER: welcome_back`.
-- `bun test` passes on the touched files in isolation.
-- `bun run gen:skill-docs` produces clean diff matching the `.tmpl` edits.
+- 두번째 `/office-hours` 신선한 `$HOME`에 invocation는 `TIER: welcome_back`를 반환합니다.
+- `bun test`는 고립에 있는 접촉한 파일에 전달합니다.
+- `bun run gen:skill-docs`는 `.tmpl` 편집과 일치하는 청결한 디퓨밍을 일으킵니다.
 
-### Rollout
+## # 롤아웃
 
-- One commit. PATCH version bump per CHANGELOG style guide.
-- CHANGELOG entry written by `/ship`. User-facing voice: lead with what users experience now that they didn't before (welcome_back tier kicks in on second visit).
+- PATCH 버전의 범퍼 CHANGELOG 스타일 가이드.
+- CHANGELOG `/ship` 에 의해 작성된 항목. 사용자 직면 음성: 그들이 이전에 없었던 것을 경험하는 것을 가진 지도 (welcome_back 층은 두번째 방문에 킥).
 
-## Follow-up TODOs
+## 팔로우
 
-- Deprecate `builder-profile.jsonl` entirely (writer + shim + memory-ingest type) after one release.
-- Fix RC2 (autoplan inlines sub-skills, bypassing their timeline-log preambles).
-- Add `GSTACK_PROFILE_SCOPE` opt-in for power users with multiple agent identities (RC3).
-- /plan-tune doesn't currently call `--derive`, so `inferred`/`gap` can drift (pre-existing, unrelated to #1671).
-- `mode:"resources"` entries inflate SESSION_COUNT under the existing tier aggregator (pre-existing, unrelated to #1671 root cause).
+- `builder-profile.jsonl`를 전적으로 (작가 + shim + Memory-ingest type)를 1개의 릴리스 후에 전합니다.
+- RC2 (자동 계획 인라인 서브 스킬, 타임 라인 로그 preambles를 우회) 수정.
+- `GSTACK_PROFILE_SCOPE` 여러 에이전트 식별 (RC3)를 사용하여 전원 사용자에 대한 선택 인을 추가하십시오.
+- /plan-tune는 현재 `--derive`이라고 부릅니다, 그래서 `inferred`/`gap`는 (pre-existing, #1671와 관련이 없는)를 무능하게 할 수 있습니다.
+- `mode:"resources"` 항목은 #1671 루트 원인과 관련되지 않는 기존 계층 집단 (pre-existing, #1671)의 SESSION_COUNT를 포함.

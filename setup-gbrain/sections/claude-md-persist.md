@@ -1,8 +1,8 @@
 <!-- AUTO-GENERATED from claude-md-persist.md.tmpl — do not edit directly -->
 <!-- Regenerate: bun run gen:skill-docs -->
-Find-and-replace (or append) the section. Block format depends on mode:
+찾기 및 위치 (또는 부록) 섹션. 블록 형식은 모드에 따라 다릅니다.
 
-### Path 4 (Remote MCP)
+### 경로 4 (레모드 MCP)
 
 ```markdown
 ## GBrain Configuration (configured by /setup-gbrain)
@@ -17,11 +17,9 @@ Find-and-replace (or append) the section. Block format depends on mode:
 - Current repo policy: {read-write|read-only|deny|unset}
 ```
 
-The bearer token is **never** written to CLAUDE.md (CLAUDE.md is checked
-in to git in many projects). It lives only in `~/.claude.json` where
-`claude mcp add` placed it.
+The bearer token is **은지** written to CLAUDE.md (CLAUDE.md is checked in to git in many projects). It lives only in `~/.claude.json` where `claude mcp add` placed it.
 
-### Paths 1, 2a, 2b, 3 (Local stdio)
+## 경로 1, 2a, 2b, 3 (Local stdio)
 
 ```markdown
 ## GBrain Configuration (configured by /setup-gbrain)
@@ -34,17 +32,9 @@ in to git in many projects). It lives only in `~/.claude.json` where
 - Current repo policy: {read-write|read-only|deny|unset}
 ```
 
-**After Step 9 (smoke test) passes, also write the `## GBrain Search Guidance`
-block** so the coding agent learns when to prefer `gbrain` over Grep. This
-block is gated on the smoke test passing — write the Configuration block
-first (so the user knows what state they're in even if the smoke test fails),
-then return here after Step 9 and write the guidance block only if smoke
-test succeeded.
+**단계 9 (스무크 테스트) 패스 후, 또한 `## GBrain Search Guidance` 블록을 작성** 그래서 코딩 에이전트는 Grep에 `gbrain`를 선호할 때 배웁니다. 이 구획은 연기 시험 합격에 문질러 입니다 — 구성 구획을 첫째로 써 (그래서 사용자가 연기 시험이 실패하더라도 어떤 국가를 알고 있습니다), 그 후에 여기 단계 9 후에 돌려보내고 연기 시험이 성공한 경우에 지도 구획을 만 쓰십시오.
 
-When Step 9 passes, find-and-replace (or append) this block. Use HTML-comment
-delimiters so removal regex is unambiguous and never eats user content. The
-block content is machine-AGNOSTIC — no engine type, no page counts, no
-last-sync time. Machine state stays in the Configuration block above.
+단계 9 패스, 발견 및 장소 (또는 부록)이 블록. 사용 HTML-comment delimiters 그래서 제거 regex는 비명적이지 않으며 사용자 콘텐츠를 결코 먹지 않습니다. 블록 내용은 기계입니다-AGNOSTIC - 엔진 유형 없음, 페이지 수 없음, 마지막 동기화 시간. 기계 상태는 위의 구성 블록에 머물.
 
 ```markdown
 ## GBrain Search Guidance (configured by /sync-gbrain)
@@ -74,6 +64,4 @@ Run `/sync-gbrain` to force-refresh, `/sync-gbrain --full` for full reindex.
 <!-- gstack-gbrain-search-guidance:end -->
 ```
 
-If Step 9 smoke test fails, skip the guidance block write entirely. The user's
-next `/sync-gbrain` run will re-evaluate capability and write the block when
-the round-trip works.
+Step 9 연기 테스트가 실패하면 지도 블록이 완전히 쓰여집니다. 다음 `/sync-gbrain` 실행은 다시 평가 기능을하고 라운드 스트립 작동을 할 때 블록을 작성합니다.

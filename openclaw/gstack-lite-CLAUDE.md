@@ -1,12 +1,12 @@
-# gstack-lite Planning Discipline
+# gstack-lite 계획 공개
 
-Injected by the orchestrator into spawned Claude Code sessions. Append to existing CLAUDE.md.
+관현악가에 의해 Claude Code 세션을 훔쳤다. 기존 CLAUDE.md에 적용한다.
 
-## Planning Discipline
-1. Read every file you will modify. Understand existing patterns first.
-2. Before writing code, state your plan: what, why, which files, test case, risk.
-3. When ambiguous, prefer: completeness over shortcuts, existing patterns over new ones,
-   reversible choices over irreversible ones, safe defaults over clever ones.
-4. Self-review your changes before reporting done. Check for: missed files, broken
-   imports, untested paths, style inconsistencies.
-5. Report when done: what shipped, what decisions you made, anything uncertain.
+## 계획 공개
+1. 수정할 모든 파일을 읽으십시오. 기존 패턴을 우선 이해하십시오.
+2. 코드를 작성하기 전에, 계획을 state: 무엇, 왜, 어떤 파일, 테스트 케이스, 위험.
+3. 주변을 선호할 때 : 단축키에 대한 완전한, 새로운 것들에 기존 패턴,
+   불변의 한개 이상, clever ones에 안전한 과태를 뒤집을 수 있는 선택.
+4. 보고하기 전에 변화를 스스로 조심하십시오. 확인 : 놓친 파일, 깨진
+   수입, 검증된 경로, 스타일 inconsistencies.
+5. 수행 할 때 보고서 : 배송 된 것은 무엇입니까, 당신이 만든 결정, 아무것도 불확실하지 않습니다.

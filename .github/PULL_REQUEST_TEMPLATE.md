@@ -1,44 +1,42 @@
 <!--
-gstack is AI-coded and proud of it. The bar is EVIDENCE OF REAL USE, not lines
-of code. A PR with no proof behind it gets closed, no matter how clean it looks.
-Fill every section below. See CONTRIBUTING.md → "The evidence bar".
+gstack는 AI로 코딩되었고, 그 사실을 자랑스럽게 여깁니다. 기준은 코드 줄 수가 아니라
+실제 사용 증거입니다. 아무리 깔끔한 PR이라도 근거가 없으면 닫힙니다.
+아래 모든 섹션을 채우세요. CONTRIBUTING.md → "The evidence bar"를 참고하세요.
 -->
 
-## Why (in your own words)
+## 왜 (본인 말로)
 
-<!-- One paragraph: what breaks for a user today, and what this change does about
-it. Not a restatement of the diff. -->
+<!-- 현재 사용자에게 무엇이 깨져 있고, 이 변경이 그것을 어떻게 해결하는지 한 문단으로 적으세요.
+diff를 다시 설명하는 문장이 아니어야 합니다. -->
 
-## Live evidence
+## 라이브 증거
 
-<!-- REQUIRED. Paste the command(s) you ran and their real output — before and
-after. For a bug: the reproduction, failing then fixed. For a skill change: the
-actual transcript / `claude -p` output. For anything visual: before/after
-screenshots. "bun test passes" alone is not enough — show the behavior you
-changed. -->
+<!-- 필수. 실제로 실행한 command와 real output을 붙여 넣으세요. before와 after를 모두 포함합니다.
+bug라면 재현, 실패 상태, 수정 후 상태를 보여 주세요. skill 변경이라면 실제 transcript 또는
+`claude -p` output을 포함하세요. 시각 변경이라면 before/after screenshot을 첨부하세요.
+"bun test passes"만으로는 충분하지 않습니다. 바꾼 behavior를 보여 주세요. -->
 
 ```
-# what you ran + what it produced
+# 실행한 command와 그 결과
 ```
 
-## Scope
+## 범위
 
-- **Changed:**
-- **Verified live by:**
-- **Did NOT test:**
+- **변경됨:**
+- **실제 검증:**
+- **테스트하지 않음:**
 
-## Liveness proof (required)
+## Liveness Evidence (필수)
 
-<!-- Attach a screenshot of your own machine with the text `GSTACK PR` typed LIVE
-into a real surface — terminal prompt, a shell command, your browser
-address/search bar, an editor buffer. It must be TYPED INTO A LIVE UI, not drawn,
-overlaid, or edited onto the image. A painted-on `GSTACK PR` is an automatic
-close. This confirms a human opened this PR. -->
+<!-- 본인 machine에서 `GSTACK PR` text를 live로 입력한 screenshot을 첨부하세요.
+terminal prompt, shell command, browser address/search bar, editor buffer처럼 실제 surface에 직접 입력해야 합니다.
+image에 그리거나 overlay하거나 편집해 넣은 것은 안 됩니다. 덧칠된 `GSTACK PR`은 automatic close 대상입니다.
+이 PR을 사람이 열었다는 것을 확인하기 위한 절차입니다. -->
 
-## Checklist
+## 체크리스트
 
-- [ ] Liveness screenshot attached: `GSTACK PR` typed live into a real surface (not edited onto the image)
-- [ ] This is not a generated-file-only diff (I edited the source/template and regenerated)
-- [ ] No ETHOS.md edits, and no changes to voice / founder perspective / YC references
-- [ ] New public command / external service / host adapter has an accepted issue linked (or N/A)
-- [ ] Linked issue or reproduction: #
+- [ ] Liveness screenshot 첨부: `GSTACK PR`을 실제 live surface에 직접 입력함(image edit 아님)
+- [ ] generated file 전용 diff가 아님(source/template과 regenerated output을 함께 수정함)
+- [ ] ETHOS.md를 수정하지 않았고 voice/founder POV/YC reference를 변경하지 않음
+- [ ] 새 public command/external service/major adapter에는 연결된 accepted issue가 있음(또는 N/A)
+- [ ] 연결된 issue 또는 재현: #

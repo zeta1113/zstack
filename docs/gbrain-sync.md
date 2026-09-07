@@ -1,205 +1,162 @@
-# Cross-machine memory with GBrain sync
+# GBrain 동기화를 가진 교차 기계 기억
 
-gstack writes a lot of useful state to `~/.gstack/` — learnings, retros, CEO
-plans, design docs, developer profile. By default, all of that dies when you
-switch laptops. **GBrain sync** pushes a curated subset to a private git
-repo so your memory follows you across machines and becomes indexable by
-GBrain.
+gstack는 `~/.gstack/` - 학습, 복고풍, CEO 계획, 디자인 문서, 개발자 단면도에 유용한 국가를 많이 쓰입니다. 기본적으로, 노트북을 전환할 때 죽는 전부. **GBrain 동기화**는 개인 git repo에 curated subset를 밀어서 당신의 기억은 기계의 맞은편에 당신을 따르고 GBrain에 의해 색인을 붙이게 됩니다.
 
-## What you get
+## 당신이 얻는 무엇
 
-- Work on machine A, pick up seamlessly on machine B.
-- Your learnings, plans, and designs are visible in GBrain (if you use it).
-- A clean off-ramp (`gstack-brain-uninstall`) that never touches your data.
-- No daemon, no system service, no background process.
+- 기계 A에 일, 기계 B에 이음새가 없는 픽업.
+- 학습, 계획 및 설계는 GBrain (사용하면)에서 볼 수 있습니다.
+- 데이터를 결코 만지지 않는 깨끗한 오프 램프 (`gstack-brain-uninstall`).
+- 아무 daemon, 시스템 서비스 없음, 배경 과정 없음.
 
-## What does NOT leave your machine
+## NOT는 당신의 기계를 떠납니다
 
-By design, these stay local even when sync is on:
+디자인에 의해, 이 체류 로컬 심지어 동기화가 켜질 때:
 
-- Credentials: `.auth.json`, `auth-token.json`, `sidebar-sessions/`,
+- 종류: `.auth.json`, `auth-token.json`, `sidebar-sessions/`,
   `security/device-salt`
-- Machine-specific state: Chromium profiles, ONNX model weights,
-  caches, eval-cache, CDP-profile, one-time prompt markers
-  (`.welcome-seen`, `.telemetry-prompted`, `.vendoring-warned-*`, etc.)
-- Question-preferences: per-machine UX preferences
+- 기계 별 상태: Chromium 단면도, ONNX 모형 무게,
+  캐시, eval 캐시, CDP-profile, 한 번의 프롬프트 마커 (`.welcome-seen`, `.telemetry-prompted`, `.vendoring-warned-*`, 등)
+- 문제 환경: per-machine UX 환경
   (`question-preferences.json`, `question-log.jsonl`, `question-events.jsonl`).
 
-The exact allowlist lives in `~/.gstack/.brain-allowlist`. The CLI manages
-it; you can append your own entries below the marker line.
+정확한 수당은 `~/.gstack/.brain-allowlist`에 살고 있습니다. CLI는 그것을 처리합니다; 당신은 감적선의 밑에 당신의 자신의 입장을 부과할 수 있습니다.
 
-## First-run setup (30–90 seconds)
+## 첫 번째 실행 설정 (30-90 초)
 
 ```bash
 gstack-artifacts-init
 ```
 
-The command:
+명령:
 
-1. Turns `~/.gstack/` into a git repo.
-2. Asks for a remote URL (default: `gh repo create --private
-   gstack-artifacts-$USER`). Any git remote works — GitHub, GitLab, Gitea,
-   self-hosted.
-3. Pushes an initial commit with just the config.
-4. Writes `~/.gstack-artifacts-remote.txt` (URL-only, no secrets —
-   safe to copy to another machine).
-5. Prints the `gbrain sources add` hookup command for the brain host
-   (never auto-executed — run it yourself, or on your own machine
-   `bin/gstack-gbrain-source-wireup` does the same wiring) so
-   `gbrain search` can index your synced learnings, plans, and designs.
-   The old `gstack-brain-reader add --ingest-url ...` HTTP path was
-   removed in v1.15.1.0 — it depended on a `/ingest-repo` endpoint gbrain
-   never shipped.
+1. `~/.gstack/` git repo로 턴합니다.
+2. 리모트 URL (기본값: `gh repo create --private
+   gstack-artifacts-$USER`). 모든 git 리모트 작품 - GitHub, GitLab, JavaScript, 자체 호스팅.
+3. config를 초기 커밋을 밀어줍니다.
+4. `~/.gstack-artifacts-remote.txt` (URL-만, 비밀 없음 —
+   다른 기계에 사본에 안전한).
+5. 뇌 호스트의 `gbrain sources add` hookup 명령을 인쇄합니다.
+   (자동 실행 - 스스로 실행, 또는 자신의 기계 `bin/gstack-gbrain-source-wireup` 동일한 배선을 수행) 그래서 `gbrain search`는 동기화 된 학습, 계획 및 디자인을 색인할 수 있습니다. 이전 `gstack-brain-reader add --ingest-url ...` HTTP 경로는 v1.15.1.0에서 제거되었다 — 그것은 `/ingest-repo` 엔드 포인트 gbrain에 의존하지 않는.
 
-After init, the **next skill you run** will ask you ONE question about
-privacy mode:
+init 후, **다음 기술이 실행**는 개인 정보 보호 모드에 대해 ONE 질문을합니다.
 
-- **Everything allowlisted (recommended)**: learnings, reviews, plans,
-  designs, retros, timelines, and developer profile all sync.
-- **Only artifacts**: plans, designs, retros, learnings — skip
-  behavioral data (timelines, developer profile).
-- **Decline**: keep everything local. You can turn sync on later with
+- **모든 수당 (권장)**: 학습, 리뷰, 계획,
+  디자인, 복고풍, 타임라인, 개발자 프로필 모두 동기화.
+- **예술적**: 계획, 디자인, 복고풍, 학습 — Skip
+  행동 데이터 (timelines, 개발자 프로필).
+- **퀵메뉴**: 모든 로컬를 유지하십시오. 나중에 동기화를 나중에 다시 켜서 켤 수 있습니다
   `gstack-config set artifacts_sync_mode full`.
 
-Your answer is persisted. You won't be asked again.
+답변은 지속됩니다. 다시 물어볼 수 없습니다.
 
-## Cross-machine workflow
+## Cross-machine 워크플로우
 
-On machine A: run `gstack-artifacts-init` once. That's it — every skill
-invocation now drains the sync queue at its start and end boundaries
-(~200–800 ms network pause per skill).
+기계 A : 한 번 `gstack-artifacts-init`를 실행합니다. 즉, 모든 기술이 능숙하게 시작 및 끝 경계 (~200 ~ 800 ms 네트워크 일시 중지 기술 당)에서 동기화 큐를 배수합니다.
 
-On machine B:
+기계 B에:
 
 1. Copy `~/.gstack-artifacts-remote.txt` from machine A to machine B
-   (password manager, dotfile repo, USB stick — your call; the legacy
-   `~/.gstack-brain-remote.txt` name is still recognized).
-2. Run any gstack skill. The preamble sees the URL file and prints:
+   (password manager, dotfile repo, USB stick - 귀하의 전화; 레거시 `~/.gstack-brain-remote.txt` 이름은 여전히 인식됩니다).
+2. gstack 기술 실행. preamble은 URL 파일과 인쇄를 참조하십시오:
    ```
    BRAIN_SYNC: brain repo detected: <url>
    BRAIN_SYNC: run 'gstack-brain-restore' to pull your cross-machine memory
    ```
-3. Run `gstack-brain-restore`. That clones the repo, rehydrates your
-   learnings/plans/retros, and re-registers the git merge drivers.
-4. Next skill: your yesterday-on-machine-A learning surfaces. That's the
-   magical moment.
+3. `gstack-brain-restore`를 실행하십시오. 그것은 repo를, rehydrates 당신의 복제합니다
+   learnings/plans/retros, 및 git 병합 드라이버를 재등록합니다.
+4. Next Skill: 어제 기계 학습 표면. 즉
+   마법의 순간.
 
-## Status, health, and queue depth
+## 상태, 건강 및 대기 깊이
 
 ```bash
 gstack-brain-sync --status
 ```
 
-Shows: last successful push, pending queue depth, any sync blocks, and the
-current privacy mode.
+쇼: 마지막 성공적인 푸시, 보류 깊이, 어떤 동기화 블록 및 현재 개인 정보 보호 모드.
 
-Every skill run prints a `BRAIN_SYNC:` line near the top of the preamble
-output. Scan it for problems.
+모든 기술 실행은 출력의 상단의 `BRAIN_SYNC:` 선을 인쇄합니다. 문제를 검사하십시오.
 
-## Privacy modes in detail
+## 개인정보 보호정책
 
-| Mode | What syncs |
+| * 이름 | 동기화 기능 |
 |------|------------|
-| `off` | Nothing (default). |
-| `artifacts-only` | Plans, designs, retros, learnings, reviews. Skips timelines + developer-profile. |
-| `full` | Everything in the allowlist, including behavioral state. |
+| `off` | 아무것도 (과태). |
+| `artifacts-only` | 계획, 디자인, 복고풍, 학습, 리뷰. 타임 라인 + 개발자 프로필을 건너 뛰기. |
+| `full` | 관할구역을 포함한 모든 수당. |
 
-Change anytime with:
+언제든지 변경 :
 ```bash
 gstack-config set artifacts_sync_mode full
 gstack-config set artifacts_sync_mode off
 ```
 
-## Secret protection
+## 비밀 보호
 
-Every commit is scanned for credential-shaped content before it leaves
-your machine. Blocked patterns include:
+모든 커밋은 기계가 나기 전에 압도적인 모양의 콘텐츠를 스캔합니다. 블록 패턴은 다음과 같습니다.
 
-- AWS access keys (`AKIA…`)
-- GitHub tokens (`ghp_`, `gho_`, `ghu_`, `ghs_`, `ghr_`, `github_pat_`)
-- OpenAI keys (`sk-…`)
-- PEM blocks (`-----BEGIN …-----`)
+- AWS 접근 열쇠 (`AKIA…`)
+- GitHub 토큰 (`ghp_`, `gho_`, `ghu_`, `ghs_`, `ghr_`, `github_pat_`)
+- OpenAI 키 (`sk-…`)
+- PEM 블록 (`-----BEGIN …-----`)
 - JWTs (`eyJ…`)
-- Bearer tokens in JSON (`"authorization": "…"`, `"api_key": "…"`, etc.)
+- JSON (`"authorization": "…"`, `"api_key": "…"`, 등)의 Bearer 토큰
 
-If a scan hits, sync stops, the queue is preserved, and your preamble
-prints:
+스캔이 보이지 않는 경우, 동기화 중지, 큐는 보존되고, 당신의 preamble 인쇄:
 
 ```
 BRAIN_SYNC: blocked: <pattern-family>:<snippet>
 ```
 
-To remediate:
+관련 기사:
 
-1. Review the offending file.
-2. If the match is a false positive on content you explicitly want to
-   sync, run `gstack-brain-sync --skip-file <path>` to permanently
-   exclude that path.
-3. Otherwise, edit the file to remove the secret and re-run any skill.
+1. 파일 다운로드
+2. 일치하면 명시적으로 원하는 콘텐츠에 false 긍정적입니다.
+   동기화, 실행 `gstack-brain-sync --skip-file <path>` 영구적으로 그 경로 제외.
+3. 그렇지 않으면, 파일을 편집하여 비밀을 제거하고 모든 기술을 다시 실행하십시오.
 
-There's a defense-in-depth hook at `~/.gstack/.git/hooks/pre-commit` that
-runs the same scan if you manually `git commit` against the repo.
+`~/.gstack/.git/hooks/pre-commit`에서 방어형 인 심층 걸이가 있습니다.
 
-Separately (v1.63.0.0+), every push writes a tamper-evident receipt to the
-egress ledger (`~/.gstack/security/egress.jsonl`) *before* anything is
-sent, fail-closed: if the receipt can't be written, the push is refused
-and the queue is preserved. Inspect the ledger with `gstack-egress list`
-and verify its hash chain with `gstack-egress verify`.
+별도 (v1.63.0.0+), 각 푸시는 egress ledger (`~/.gstack/security/egress.jsonl`) *의 전*에 탐퍼 분명 영수증을 쓰며, 실패 닫히는 것은 실패합니다. 영수증이 작성되지 않는 경우, 푸시는 거부되며 큐는 보존됩니다. `gstack-egress list`를 가진 원장 검사하고 `gstack-egress verify`를 가진 해시 사슬을 확인합니다.
 
-## Two-machine conflicts
+## 2 기계 충돌
 
-If you write on machine A and machine B the same day, both will push
-append commits. Git's default would conflict at the file tail, but the
-`.jsonl` and markdown files are registered with custom merge drivers:
+기계 A 및 기계 B에 같은 날을 쓰는 경우 두 개의 부목이 투입됩니다. Git의 기본은 파일 꼬리에 충돌하지만 `.jsonl` 및 Markdown 파일은 사용자 정의 병합 드라이버에 등록됩니다.
 
-- JSONL files use a sort-and-dedup driver that orders appends by ISO
-  timestamp (falls back to SHA-256 hash of each line for determinism).
-- Markdown artifacts (retros, plans, designs) use a union merge driver
-  that concatenates both sides.
+- JSONL 파일 사용은 ISO에 의해 부과되는 분류 및 dedup 드라이버를 사용합니다.
+  타임 탬프 (세터미즘을 위한 각 선의 SHA-256 해시로 돌아가십시오).
+- Markdown artifacts (retros, 계획, 디자인)는 조합 병합 운전사를 이용합니다
+  그 양쪽을 넓히는 것.
 
-You shouldn't see conflict prompts. If you do (a real semantic conflict,
-like two machines editing the same plan), git will stop and prompt.
+충돌 프롬프트를 볼 수 없습니다. (실제적인 하수인 충돌, 같은 계획 편집 두 기계와 같은), git은 멈추고 신속한.
 
-## Cross-machine pull cadence
+## 크로스 머신 풀 캐비언
 
-The preamble runs `git fetch` + `git merge --ff-only` once per 24 hours
-(cached via `~/.gstack/.brain-last-pull`). You don't need to think about
-this — it happens automatically at the first skill invocation each day.
+전진은 24시간당 `git fetch` + `git merge --ff-only`를 한 번 실행합니다. 이 생각을 하지 않아도 됩니다. — 매일 첫 번째 기술인이 자동으로 발생합니다.
 
-Historical note (#2516): that daily pull refreshed only `~/.gstack` itself —
-NOT the detached worktree at `~/.gstack-brain-worktree` that gbrain actually
-indexes, so the brain silently served stale pages until the next
-setup-gbrain/sync-gbrain run. Since this fix, the daily sync also advances
-the brain worktree (`gstack-gbrain-source-wireup --advance-only`, throttled
-via `~/.gstack/.brain-worktree-last-advance`); a failed advance warns instead
-of failing silently, and never force-resets a dirty worktree.
+역사 참고 (#2516): 매일 풀은 `~/.gstack` 자체만 재생했습니다 — NOT는 `~/.gstack-brain-worktree`에 분리된 worktree에 gbrain 실제로 색인, 그래서 뇌는 다음 설정 GBrain/sync-gbrain 실행까지 stale 페이지를 침묵하게 봉사했습니다. 이 고침부터, 매일 동기화는 또한 뇌 worktree (`gstack-gbrain-source-wireup --advance-only`, `~/.gstack/.brain-worktree-last-advance`를 통해 throttled); 대신 경고를 실패했습니다.
 
-## Uninstall
+## 제거
 
 ```bash
 gstack-brain-uninstall
 ```
 
-This:
+이:
 
-- Removes `~/.gstack/.git/` and all `.brain-*` config files.
-- Clears `artifacts_sync_mode` in `gstack-config`.
-- Does NOT touch your learnings, plans, retros, or developer profile.
+- `~/.gstack/.git/` 및 `.brain-*` 구성 파일을 제거합니다.
+- `gstack-config`에서 `artifacts_sync_mode`를 지우십시오.
+- NOT 학습, 계획, 복고풍, 개발자 프로필을 만드세요.
 
-Add `--delete-remote` to also delete the private GitHub repo (GitHub only,
-uses `gh repo delete`).
+`--delete-remote`를 추가하여 GitHub를 삭제합니다. GitHub는 `gh repo delete`를 사용합니다.
 
-Re-init anytime with `gstack-artifacts-init`.
+`gstack-artifacts-init`를 가진 언제든지 재입력하십시오.
 
-## Troubleshooting
+## 문제 해결
 
-See [gbrain-sync-errors.md](gbrain-sync-errors.md) for an index of every
-error message gstack-brain may print, with problem / cause / fix for each.
+[gbrain-sync-errors.md](gbrain-sync-errors.md)를 참조하여 모든 오류 메시지의 인덱스를 위해 gstack-brain을 인쇄할 수 있으며 문제 / 원인 / 수정이 각각 있습니다.
 
-## Under the hood
+## 두건 아래
 
-The architectural decisions behind this feature: allowlist over denylist
-(unknown files stay local by default), preamble-boundary sync over a daemon
-(no background process to babysit), a JSONL merge driver so concurrent
-machines union their queues instead of conflicting, and a privacy stop-gate
-that asks once before anything syncs.
+이 기능 뒤에 건축 결정: denylist에 허용하는 (기본적으로 현지에 의하여 알려진 파일 체재), daemon (아기에게 배경 과정 없음)에 전방행동 sync, JSONL 병합 운전사를 결합하십시오 그래서 동시 기계는 충돌 대신에, 그리고 어떤 syncs의 앞에 한 번 요구한 개인 정보 보호 정지 문을 조합합니다.

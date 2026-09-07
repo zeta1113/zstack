@@ -1,3 +1,3 @@
-# Foreign host file
+# 외국 호스트 파일
 
-A skill-shaped file another host dropped into scanner scope (#1694).
+기술 모양 파일 다른 호스트는 스캐너 범위로 떨어졌다 (#1694).

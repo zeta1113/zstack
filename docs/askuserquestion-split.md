@@ -1,216 +1,160 @@
-# AskUserQuestion split rule — full reference
+# AskUserQuestion 분할 규칙 - 전체 참조
 
-Inline summary lives in the canonical preamble (`scripts/resolvers/preamble/generate-ask-user-format.ts`).
-That subsection is intentionally compressed because it injects into every
-tier-2+ skill's `SKILL.md`. This file is the deep reference the inline
-guidance points to — load it when N>4 options come up and you need
-worked examples or the full Hold / dependency / final-summary semantics.
+인라인 요약은 canonical preamble (`scripts/resolvers/preamble/generate-ask-user-format.ts`)에서 생활합니다. 그 하위 섹션은 모든 tier-2+ 기술 `SKILL.md`로 주사하기 때문에 의도적으로 압축됩니다. 이 파일은 인라인 지도 점을 참조하는 깊은 참조입니다. N>4 옵션이 올 때로드하면 전체 홀드 / 의존성 / 최종 수사성 경향이 필요합니다.
 
-## The bug this prevents
+## 이 버그가 방지
 
-Pre-rule failure mode (transcript verbatim from the user complaint that
-motivated this):
+Pre-rule 실패 모드 (사용자가이 동기를 부여하는 불만의 브랜디 틱) :
 
-> "I'm hitting Conductor's limit of 4 options in the AUQ, so I need to
-> cut one. E4 (the detect-mappings codegen) is the biggest lift and
-> probably beyond scope for v0.42 anyway — users can hand-author their
-> mapping rules for the 9 clusters. I'll drop that and keep E1, E2, E3,
-> and E5..."
+> "나는 AUQ에서 4 옵션의 지휘자의 한계를 타격하고있어 나는 필요
+> 절단 하나. E4 (감시 모자를 씌우는 코겐)는 가장 큰 상승이고
+> 아마도 v0.42의 범위를 넘어 - 사용자는 자신의 손을 잡고 할 수
+> 9개의 클러스터에 대한 매핑 규칙. 나는 그 떨어지고 E1, E2, E3,
+> E5..."
 >
-> "Conductor caps at 4 options. Trimming: E4 (detect-mappings codegen)
-> is the largest-effort item and a natural v0.43+ follow-up — moving it
-> to TODOS.md without asking. Re-firing with 4."
+> "콘덕터 캡 4 옵션. 트리밍 : E4 (검출 코드 생성기)
+> 가장 큰 불편함과 자연 v0.43+ 후속 - 이동
+> TODOS.md 요청없이. 4.로 재 작성
 
-The agent unilaterally cut a real option without user input. The option
-set is the user's decision space; shrinking it silently is the bug.
+에이전트는 사용자 입력없이 실제 옵션을 잘라. 옵션 세트는 사용자의 결정 공간입니다; 침묵으로 버그를 수축.
 
-## Which shape: batched vs. split
+## 어느 모양: 배치된 대. 쪼개지는
 
-Two compliant shapes. Pick by reading the options:
+2개의 고분고분한 모양. 선택권을 읽는에 의하여 후비십시오:
 
-1. **Batched into ≤4-groups** — the options are coherent alternatives,
-   one will be picked. Examples: "major / minor / patch / micro" for a
-   version bump, "5 layout variants where the user picks one", "which
-   framework: rspec / minitest / cucumber / none". Batch the top 4 into
-   one AskUserQuestion; surface the 5th as a follow-up if none of the
-   first 4 fit. This is the lower-friction path when applicable.
+1. **≤4-groups로 Batched** - 옵션은 일관성있는 대안입니다.
+   하나는 선택됩니다. 예 : "major / minor / patch / micro" 버전 범프에 "5 레이아웃 변형 사용자가 하나 선택" " 프레임 워크 : rspec / minitest / cucumber / none"를 "5 레이아웃 변형". 상단 4 하나 AskUserQuestion; 표면 첫 번째 4 적합의 none가 될 경우 후속으로 5th. 이것은 적용 가능한 경우 더 낮은 마찰 경로입니다.
 
-2. **Split per-option** — the options are independent scope items, each
-   carrying its own include/defer/cut decision. Examples: "E1..E6, which
-   do we ship?", "5 candidate integrations for Q3", "8 TODOs surfaced by
-   the audit — which do we land?". Fire N sequential AskUserQuestion
-   calls, one per option.
+2. **분할 per-option** - 옵션은 독립 범위 항목, 각
+   include/defer/cut 결정. 예: "E1..E6, 이는 우리가 배를 하였습니까? "5 후보는 Q3를 위한 통합", "8 TODOs는 감사에 의해 표면 처리했습니다.". Fire N 순차 AskUserQuestion는 선택권 당, 하나 칭합니다.
 
-**Default to split per-option when unsure.** Batching wrong options
-together — shoehorning orthogonal scope items into one question — is
-the same failure mode as dropping.
+**Default는 unsure 때 per-option를 나누기 위하여.** 함께 잘못된 옵션을 배팅 — 구두 직각 범위 항목 하나 개의 질문으로 - 드롭핑과 같은 실패 모드입니다.
 
-## Split per-option mechanics
+## 분할 per-option 기계
 
-### Before the chain
+## 체인의 앞에
 
-Check for dependencies between options. If E3 requires E1, or E5
-conflicts with E2, surface that in the per-option ELI10:
+옵션 사이의 의존성을 확인합니다. E3가 E1 또는 E5 충돌이 E2, per-option ELI10의 표면이 있는 경우:
 
-> "Cutting this orphans E3 — they're linked."
+> "이 안장 E3을 계산합니다. 그들은 연결됩니다."
 
-Without dependency surfacing, the chain produces incoherent picked sets
-(user picks Include for E3 + Cut for E1, ships an unbuildable scope).
+의존성 서핑 없이, 체인은 incoherent Picked set (E3 + E1를 위해 자르는 E1를 위해, unbuildable 범위)를 생성합니다.
 
-### D-numbering
+## # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
-- Parent decision: `D<N>` where N is the global question counter.
-- Each per-option call: `D<N>.k` for k=1..K children.
-- Final summary: `D<N>.final`.
-- Single-option revise: `D<N>.revise-<k>`.
+- 부모 결정: `D<N>` N은 글로벌 질문 카운터입니다.
+- 각 각 각 단위의 통화: `D<N>.k` k=1..K 아이들을 위해.
+- 최종 요약: `D<N>.final`.
+- 단 하나 선택권 개정: `D<N>.revise-<k>`.
 
-Example chain for 5 options at parent D3:
+부모 D3에서 5개의 선택권을 위한 예 사슬:
 
 ```
 D3.1 → D3.2 → D3.3 → D3.4 → D3.5 → D3.final
 ```
 
-### Per-option call shape
+## # Per-option 통화 모양
 
-For each option Eₖ, fire an AskUserQuestion with:
+각 옵션 Ek의 경우, AskUserQuestion를 불을 붙입니다.
 
-- `D<N>.k` header (e.g. D3.1, D3.2 ... D3.5)
-- ELI10 of just this option's scope, cost, and any dependency it carries
-- Recommendation: Include / Defer / Cut, with concrete reason
-- 4 buckets per option:
-  - **A) Include** in this scope (recommended/not)
-  - **B) Defer** to follow-up (TODOs / next version)
-  - **C) Cut** entirely
-  - **D) Hold** — stop the chain, discuss before deciding
-- Note: options differ in kind, not coverage — no completeness score.
-  (Include/Defer/Cut/Hold are decision actions, so the existing format
-  rule applies: omit `Completeness: N/10` and use the kind-note instead.)
+- `D<N>.k` 헤더 (예: D3.1, D3.2 ... D3.5)
+- ELI10 이 옵션의 범위, 비용, 어떤 의존도가 나옵니다.
+- 추천: 포함 / Defer / 절단, 콘크리트 이유
+- 선택권 당 4개의 물통:
+  - **A) 포함** 이 범위에서 (recommended/not)
+  - **B) Defer의** (TODOs / 다음 버전)
+  - **C) 커트** 전적으로
+  - **D) 파악** — 체인을 멈추고, 결정하기 전에 논의하십시오
+- 참고: 옵션은 종류와 다르지만, 적용되지 않습니다. - no 완전 점수.
+  (Include/Defer/Cut/Hold는 결정적인 행동이므로 기존의 형식 규칙은 다음과 같습니다. `Completeness: N/10`는 예로를 사용하며 대신 예로를 사용합니다.)
 
-### Hold means stop, not queue
+## # # # # # # 대기는 정지, 큐
 
-When the user picks Hold on any per-option call, **stop the chain
-immediately**. Do not continue asking later options behind the Hold —
-the user wants to discuss the picked option first. After discussion,
-the user resumes by saying "continue" or naming the next option to ask
-about.
+사용자의 선택은 모든 per-option 호출에 붙들 때, **체인을 즉시 중지**. 계속하지 마십시오 나중에 옵션 뒤에 붙들기 — 사용자는 먼저 선택된 옵션을 논의하고 싶어. 토론 후, 사용자는 "콘텐츠"또는 다음 옵션을 호출하여 다시 시작합니다.
 
-Wrong behavior: queue E4 and E5 behind a Hold on E3, then fire them
-later with stale context. Right behavior: stop, let the user reset the
-parent decision, resume from where they left off.
+잘못된 행동 : E4과 E5의 E3에 붙드는 뒤에, 그 후에 stale context로 그(것)들을 불. 권리 행동: 정지, 사용자가 부모 결정을 다시 놓을 수, 그들이 떠난 곳으로부터 이력서.
 
-### Final summary
+### 최종 요약
 
-After the chain resolves (without Hold), fire `D<N>.final` to confirm
-and validate the assembled set.
+체인이 (홀딩 없이), 불 `D<N>.final`를 해결하고 조립된 집합을 검증합니다.
 
-**Step 1 — validate dependencies.** If the picked set is incoherent
-(e.g. E3 picked Include but its required E1 was Cut), do NOT silently
-accept. Re-prompt the conflict as a single AskUserQuestion:
+**단계 1 - 유효성 검사.** 의 선택된 세트가 incoherent (예를들면 E3 의 선택은 포함하지만 필요한 E1 컷), NOT 을 침묵으로 받아들입니다. 단 하나 AskUserQuestion로 충돌을 재조정하십시오:
 
-> "E3 needs E1 but you cut E1. Revise:
+> "E3는 E1를 필요로 합니다 그러나 E1를 잘라냅니다. 개정:
 > A) keep E1
-> B) cut E3 too
-> C) leave as-is and accept the broken state"
+> B)는 E3 너무 삭감했습니다
+> C) 그대로 떠나고 깨진 상태"
 
-**Step 2 — confirm the assembled set.** If coherent:
+**Step 2 - 조립 된 세트를 확인합니다.** 공동창업자:
 
-> "Here's the assembled set: E1, E2, E5. Ship this scope?
-> A) Ship this scope (recommended)
-> B) Revise one option (you pick which)
-> C) Cut more"
+> "그는 조립 된 세트 : E1, E2, E5. 이 범위를 발송합니까?
+> A) 이 범위를 발송하십시오 (추천되는)
+> B) 한 옵션을 개정 (당신은 그것을 선택)
+> C) 더 많은 것을 삭감하십시오"
 
-**Step 3 — targeted revise.** If the user picks B, ask which option to
-revise, then fire ONE per-option AskUserQuestion at `D<N>.revise-<k>`
-to update just that option. Do **not** re-run the whole chain.
+**3 단계 - 타겟된 개정.** 사용자가 B를 선택하면, 수정할 옵션을 요청한 다음 ONE per-option AskUserQuestion at `D<N>.revise-<k>` to update just that option. **not** re-run 전체 체인을 다시 실행하십시오.
 
-## Sizing rules
+## 규칙을 정성화
 
-- **N ≤ 4**: use the normal single AskUserQuestion form. Don't split.
-- **N = 5 or 6**: split (or batch if a clean grouping exists).
-- **N > 6**: BEFORE the chain, fire a meta-AskUserQuestion at `D<N>.0`:
+- **N ≤ 4개**: 정상적인 단 하나 AskUserQuestion 모양을 사용하십시오. 쪼개지는 것은 아닙니다.
+- **N = 5 또는 6**: 분할 (또는 청결한 그룹화가 존재하는 경우에 배치).
+- **N > 6개**: BEFORE 사슬은 `D<N>.0`에 meta-AskUserQuestion를 불을 붙입니다:
 
-  > "About to ask N per-option questions. Options:
-  > A) Proceed with the full split (recommended only if every option is
-  >    independent)
-  > B) Narrow scope first — I'll propose a smaller set
-  > C) Batch into groups of 4 instead"
+  > "N per-option 질문을하는 방법에 대해. 옵션 :
+  > A) 전체 분할에 Proceed (각 옵션이면 권장)
+  >    자주하는 질문
+  > B) 좁은 범위는 첫번째 — 나는 더 작은 세트를 제안할 것입니다
+  > C) 4 대신 그룹으로 배치 "
 
-  This is itself an AskUserQuestion tool call, not prose — it counts as
-  the first prompt in the chain, not a violation of the "tool not prose"
-  rule.
+  이것은 AskUserQuestion 도구 호출, prose가 아니라 - 그것은 체인에서 첫 번째 프롬프트로 계산, "구두" 규칙의 위반하지.
 
-## question_id rules for split chains
+## 문제_id 규칙을 나누는 사슬
 
-Each per-option AskUserQuestion emits a unique `question_id` of the
-form `<skill>-split-<option-slug>` where `<option-slug>` is the option's
-key kebab-cased (lowercase, hyphens, ASCII only).
+각 per-option AskUserQuestion는 `<option-slug>`가 옵션의 키 kebab-cased (lowercase, hyphens, ASCII만) 인 `question_id`의 유일한 `question_id`를 방출합니다.
 
-Examples:
+예시:
 - `plan-ceo-review-split-e4-detect-mappings`
 - `ship-split-rspec`
 - `plan-eng-review-split-add-coverage-test`
 
-**Collision handling.** If two options would produce the same slug,
-suffix with `-2`, `-3`, etc.
+**충돌 처리.** 두 가지 옵션이 같은 슬러그를 생산할 경우 `-2`, `-3`, 등
 
-**Length.** Total length must be ≤64 chars (validated by
-`bin/gstack-question-preference --write`). Truncate the option slug if
-needed, preserving the `<skill>-split-` prefix.
+**길이.** 총 길이는 ≤64 숯이어야 합니다 (`bin/gstack-question-preference --write`에 의해 유효하게 함). 필요한 경우 옵션 슬러그를 전달하고 `<skill>-split-` 접두사 보존.
 
-## AUTO_DECIDE behavior with split chains
+## AUTO_DECIDE 분할 체인과의 행동
 
-Two-layer defense.
+2 층 방어.
 
-**Layer 1 — mechanism.** Each per-option `question_id` is unique to its
-option, so preferences set on one option's id cannot leak across the
-chain. A `never-ask` on `ship-split-rspec` does not silently approve
-`ship-split-minitest`.
+**레이어 1 - 메커니즘.** 각 per-option `question_id`는 옵션에 독특하므로, 하나의 옵션에 설정된 기본은 체인을 통해 누출할 수 없습니다. `never-ask` `ship-split-rspec` `ship-split-minitest`는 침묵적으로 `ship-split-minitest`를 적용하지 않습니다.
 
-**Layer 2 — runtime enforcement.** `bin/gstack-question-preference
---check` detects any id matching `*-split-*` (the canonical slug pattern
-emitted by split chains) and forces `ASK_NORMALLY` even when a
-`never-ask` or `ask-only-for-one-way` preference exists for that exact
-id. The check emits an explanatory note when this override fires:
+**레이어 2 — 실행 시간 시행.** `bin/gstack-question-preference --check`는 `never-ask` 또는 `ask-only-for-one-way` 환경이 그 정확한 ID를 위해 존재할 때 조차 어떤 ID 일치 `*-split-*` (통합적인 진창 본은 나누는 사슬에 의해 방출된) 및 힘 `ASK_NORMALLY`를 검출합니다. 체크는 이 과량 불이 불을 때 폭발주의를 방출합니다:
 
-> "split-chain per-option calls always ASK_NORMALLY; your never-ask
-> preference does not apply to options inside a sequential split."
+> "split-chain per-option은 항상 ASK_NORMALLY를 호출합니다. 결코 작업
+> 기본 설정은 순차적 분할 내에서 옵션에 적용되지 않습니다."
 
-**Result.** Split-chain per-option calls are NEVER AUTO_DECIDE-eligible.
-This is a runtime contract, not just collision-resistance by id
-uniqueness. The user's option set is sacred — restoring user
-sovereignty over the decision space is the entire point of splitting.
+**...** 분할 체인 per-option 호출은 NEVER AUTO_DECIDE-eligible입니다. 이것은 id 독특성에 의해 단지 충돌 저항이 아닙니다 실행 계약입니다. 사용자의 옵션 세트는 신성한 - 결정 공간에 사용자의 소위는 나누기의 전체 지점입니다.
 
-## Interaction with per-skill rules
+## per-skill 규칙과 상호 작용
 
-This rule **overrides any per-skill "batch decisions" guidance**.
-Per-skill templates that explicitly require one-issue-per-call (e.g.
-`plan-eng-review`) are already compatible — they're a stricter special
-case of this rule.
+이 규칙 **per-skill "배치 결정" 지도를 무시합니다.**. 명시적으로 한 번의 조직당 호출 (예를 들어 `plan-eng-review`)이 이미 호환되는 Per-skill 템플릿 - 이 규칙의 엄격한 특별한 경우입니다.
 
-## Worked example: 5 platform integrations
+## 작업 예: 5 플랫폼 통합
 
-Fixture used by `test/skill-e2e-plan-ceo-split-overflow.test.ts`. A plan
-has 5 independent chat-platform candidates:
+`test/skill-e2e-plan-ceo-split-overflow.test.ts`에 의해 사용되는 정착물. 계획에는 5개의 독립적인 잡담 플랫폼 후보가 있습니다:
 
-- E1) Slack DM bot (~2 weeks, ~40% of asks)
-- E2) Discord guild bot (~3 weeks, ~15%)
-- E3) Microsoft Teams (~4 weeks, ~5%)
-- E4) Telegram (~1 week, ~8%)
-- E5) Mattermost (~2 weeks, ~3%)
+- E1) 슬랙 DM 봇 (~2주, ~40%의 물)
+- E2) 디스코드 길드 봇 (~3주, ~15%)
+- E3) Microsoft 팀 (~4주, ~5%)
+- E4) 전보 (1주 ~8%)
+- E5) 매트 (~2주, ~3%)
 
-User wants individual decisions per candidate, not a bundled pick. The
-agent should:
+사용자는 후보자 당 개별 결정, 번들 된 선택하지. 에이전트은해야한다 :
 
-1. Recognize this is a 5-option independent-scope decision → split.
-2. Check dependencies (none here — each platform is standalone).
+1. 이 인식은 5-option 독립경쟁 결정 → 분할이다.
+2. 의존성 검사 (none here — 각 플랫폼은 독립형입니다.
 3. Fire `D3.1` through `D3.5`, one per platform, with Include / Defer /
-   Cut / Hold buckets and an effort+demand-grounded recommendation per
-   option.
-4. After the chain, fire `D3.final` summarizing the assembled scope
-   (e.g. "Ship E1 + E4 — Slack and Telegram pull most demand for least
-   build cost. Defer the rest. A) Ship / B) Revise / C) Cut more").
+   컷 / 홀드 버킷 및 옵션 당 노력 + 주문형 권고.
+4. 사슬 후에, 불 `D3.final`는 조립한 범위를 요약합니다
+   (예 : "Ship E1 + E4 - Slack 및 Telegram pull 최소 빌드 비용에 대한 가장 수요. 나머지를 디퍼. A) 선박 / B) Revise / C) 더 많은 것을 잘라.
 
-Pre-fix failure shape (the bug): agent constructs a single
-AskUserQuestion with E1..E4 as four options, drops E5 with prose like
-"E5 is the smallest revenue segment, moving to TODOs". The user never
-got to weigh in on E5. Floor-of-4 in the E2E test catches this.
+프리픽스 오류 모양 (버그) : 에이전트는 E1와 단일 AskUserQuestion를 구성합니다. E4 4 옵션으로, E5를 "E5와 같은 prose와 함께 떨어 뜨립니다. 사용자는 E5에 무게를 얻지 못했습니다. E2E 테스트에서 바닥 - 4는 이것을 잡습니다.

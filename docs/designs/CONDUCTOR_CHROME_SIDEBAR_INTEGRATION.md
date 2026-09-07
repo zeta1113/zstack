@@ -1,57 +1,57 @@
-# Chrome Sidebar + Conductor: What We Need
+# Chrome 사이드바 + 지휘자: 우리가 필요로 하는 무슨
 
-## What we're building
+## 우리가 건물을 닮은 것
 
-Right now when Claude is working in a Conductor workspace — editing files, running tests, browsing your app — you can only watch from Conductor's chat window. If Claude is doing QA on your website, you see tool calls scrolling by but you can't actually *see* the browser.
+Claude가 지휘자 작업 공간에서 작동할 때 지금 바로 - 파일 편집, 실행 테스트, 앱 검색 — 당신은 지휘자의 채팅 창에서만 볼 수 있습니다. Claude가 웹 사이트에 QA를 하고 있는 경우에, 당신은 도구 통화 스크롤을 보고 그러나 당신은 실제로 *see* 브라우저를 할 수 없습니다.
 
-We built a Chrome sidebar that fixes this. When you run `$B connect`, Chrome opens with a side panel that shows everything Claude is doing in real time. You can type messages in the sidebar and Claude acts on them — "click the signup button", "go to the settings page", "summarize what you see."
+Chrome sidebar를 내장하여 이것을 수정합니다. `$B connect`를 실행하면 Chrome는 모든 Claude가 실시간으로 수행되는 측면 패널과 열립니다. 사이드바와 Claude에서 메시지를 입력할 수 있습니다. "클릭 버튼"을 클릭하고 "설정 페이지로 이동" "당신이 보는 것을 요약하십시오."
 
-The problem: the sidebar currently runs its own separate Claude instance. It can't see what the main Conductor session is doing, and the main session can't see what the sidebar is doing. They're two separate agents that don't talk to each other.
+문제는 다음과 같습니다. 사이드바는 현재 자체 분리 된 Claude 인스턴스를 실행합니다. 주요 지휘자 세션이 수행되는 것을 볼 수 없으며, 메인 세션은 사이드바가 무엇을 할 수 없습니다. 그들은 서로 대화하지 않는 두 개의 별도의 에이전트입니다.
 
-The fix is simple: make the sidebar a *window into* the Conductor session, not a separate thing.
+수정은 간단합니다: 측바를 *창을*를 분리하지 않는 지휘자 회의를 만드십시오.
 
-## What we need from Conductor (3 things)
+## 우리가 지휘자 (3개의 것)에서 필요로 하는 무슨
 
-### 1. Let us watch what the agent is doing
+##1. 에이전트가 무엇을 하는지 볼 수
 
-We need a way to subscribe to the active session's events. Something like an SSE stream or WebSocket that sends us events as they happen:
+우리는 활성 세션의 이벤트에 가입하는 방법을 필요로합니다. 그들이 일어날 때 SSE 스트림 또는 WebSocket과 같은 것:
 
-- "Claude is editing `src/App.tsx`"
-- "Claude is running `npm test`"
-- "Claude says: I'll fix the CSS issue..."
+- "Claude 편집 `src/App.tsx`"
+- "Claude는 `npm test`를 실행하고 있습니다
+- "Claude 말한다: 나는 CSS 문제 수정 될 것입니다..."
 
-The sidebar already knows how to render these events — tool calls show as compact badges, text shows as chat bubbles. We just need a pipe from Conductor's session to our extension.
+sidebar는 이미이 이벤트를 렌더링하는 방법을 알고 있습니다. - 도구는 컴팩트 배지로 표시, 텍스트는 채팅 거품으로 보여줍니다. 우리는 단지 우리의 확장에 지휘자의 세션에서 파이프를 필요로합니다.
 
-### 2. Let us send messages into the session
+##2. 세션으로 메시지를 보내주세요.
 
-When the user types "click the other button" in the Chrome sidebar, that message should appear in the Conductor session as if the user typed it in the workspace chat. The agent picks it up on its next turn and acts on it.
+Chrome 사이드바에서 "다른 버튼을 클릭"을 사용자 유형이 작업 공간 채팅에서 입력 한 경우, 해당 메시지가 지휘자 세션에 나타야한다. 에이전트는 다음 차례로 올라갈 수 있으며, 행동한다.
 
-This is the magic moment: user is watching Chrome, sees something wrong, types a correction in the sidebar, and Claude responds — without the user ever switching windows.
+이것은 마법의 순간입니다: 사용자는 Chrome를 보고, 무언가를 잘못 참조하고, 측바에 있는 개정을 타자를 칩니다, 그리고 Claude는 — 사용자가 창문을 전환하지 않고 반응합니다.
 
-### 3. Let us create a workspace from a directory
+##3. 디렉토리에서 작업 영역을 만들 수 있습니다.
 
-When `$B connect` launches, it creates a git worktree for file isolation. We want to register that worktree as a Conductor workspace so the user can see the sidebar agent's file changes in Conductor's file tree. This also sets up the foundation for multiple browser sessions, each with their own workspace.
+`$B connect` 발사가 되면 파일 고립을 위한 git worktree를 생성합니다. 우리는 지휘자 작업 공간으로 worktree를 등록하고 있기 때문에 사용자는 지휘자의 파일 나무에 있는 sidebar 에이전트의 파일 변화를 볼 수 있습니다. 이것은 또한 다수 브라우저 회의를 위한 기초, 그들의 자신의 작업 공간으로 각각 설치합니다.
 
-## Why this matters
+## 왜 이 문제
 
-Today, `/qa` and `/design-review` feel like a black box. Claude says "I found 3 issues" but you can't see what it's looking at. With the sidebar connected to Conductor:
+오늘 `/qa`와 `/design-review`는 검은 상자처럼 느낍니다. Claude는 "나는 3개의 문제점을 발견했습니다" 그러나 당신은 그것을 보는 것을 볼 수 없습니다. 지휘자에 연결된 측바로:
 
-- **You watch Claude test your app** in real time — every click, every navigation, every screenshot appears in Chrome while you watch
-- **You can interrupt** — "no, test the mobile view" or "skip that page" — without switching windows
-- **One agent, two views** — the same Claude that's editing your code is also controlling the browser. No context duplication, no stale state
+- **Claude 앱을 테스트** 실시간 — 모든 클릭, 모든 탐색, 모든 스크린 샷은 Chrome에서 나타납니다.
+- **당신은 중단 할 수 있습니다** — "no, 모바일 뷰 테스트" 또는 "skip 그 페이지"- 전환 창없이
+- **한 에이전트, 두 개의 전망** — 같은 Claude 코드를 편집하는 것은 브라우저를 제어하는 것입니다. 컨텍스트 복제, stale 상태 없음
 
-## What's already built (gstack side)
+## 이미 내장된 것 (gstack 측)
 
-Everything on our side is done and shipping:
+우리의 측에 모두는 행하고 발송합니다:
 
-- Chrome extension that auto-loads when you run `$B connect`
-- Side panel that auto-opens (zero setup for the user)
-- Streaming event renderer (tool calls, text, results)
-- Chat input with message queuing
-- Reconnect logic with status banners
-- Session management with persistent chat history
-- Agent lifecycle (spawn, stop, kill, timeout detection)
+- Chrome 자동 로드가 실행될 때 `$B connect`
+- 자동 열림 (사용자를 위한 zero 체제) 측 패널
+- 스트리밍 이벤트 렌더링기 (tool call, text, result)
+- 메시지 할당과 채팅 입력
+- 상태 배너와 Reconnect 논리
+- 지속적 채팅 기록과 함께하는 Session Management
+- 에이전트 라이프 사이클 (스파이, 스톱, 킬, 타임 아웃 감지)
 
-The only change on our side: swap the data source from "local `claude -p` subprocess" to "Conductor session stream." The extension code stays the same.
+우리의 측에서만 변화하십시오: "local `claude -p` subprocess"에서 "Conductor session stream"에 자료 소스를 교환하십시오. 연장 코드는 동일하게 체재합니다.
 
-**Estimated effort:** 2-3 days Conductor engineering, 1 day gstack integration.
+**예상된 노력:** 2-3 일 지휘자 기술설계, 1 일 gstack 통합.

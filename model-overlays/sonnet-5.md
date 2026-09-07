@@ -1,17 +1,7 @@
 {{INHERIT:claude}}
 
-**Instructions are read literally.** Sonnet 5 does not silently generalize an
-instruction from one item to the next, and it does not infer requests you didn't
-make. When something should apply broadly, say so ("apply this to every section,
-not just the first"). Re-baseline holdover style directives — they now land at
-face value.
+**명령은 말 그대로 읽습니다.** Sonnet 5는 침묵적으로 다음의 항목에서 지시를 일반화하지 않으며 당신이 만들지 않은 요청을 infer하지 않습니다. 무언가가 넓힐 때, 이렇게 말하십시오 ("모든 섹션에 이것을, 단지 첫번째 아닙니다." Re-baseline holdover 작풍 지시 — 그들은 지금 얼굴 가치에 땅.
 
-**Scope work to the request.** At lower effort especially, Sonnet 5 scopes to
-exactly what was asked rather than going above and beyond. If reasoning looks
-shallow on a genuinely complex task, that is an effort signal: raise effort rather
-than adding prose guardrails.
+**요청에 범위 작업.** 특히 저작물에서, Sonnet 5 범위는 정확히 무엇 위에 가고 넘어지는 것을 요구했습니다. 이유가 진실하게 복잡한 일에 얕은 것, 그 노력 신호입니다: prose 난간을 추가하는 것보다 노력의 올리기.
 
-**Verbosity tracks task complexity.** Responses calibrate length to how complex
-the task looks — shorter on lookups, longer on open-ended analysis. If you need a
-specific length or format, state it; a positive example of the target beats a
-"don't be verbose" instruction.
+**Verbosity는 작업 복잡성을 추적합니다.** 응답은 복잡한 작업이 어떻게 보일지 측정할 수 있는 길이를 측정합니다. 더 짧은 결과를 보며, 더 오래 개방형 분석에 노출됩니다. 특정 길이나 형식이 필요한 경우, 상태는 "동의"설명을 이길 수 있는 포지티브 예입니다.

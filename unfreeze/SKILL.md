@@ -14,22 +14,20 @@ allowed-tools:
 <!-- Regenerate: bun run gen:skill-docs -->
 
 
-## When to invoke this skill
+## 이 기술을 호출할 때
 
-Use when you want to widen edit scope without ending the session.
-Use when asked to "unfreeze", "unlock edits", "remove freeze", or
-"allow all edits".
+세션을 종료하지 않고 넓은 편집 범위를 사용할 때. "unfreeze", "unlock edit", "remove freeze", "모든 편집"에 요청할 때 사용하십시오.
 
-# /unfreeze — Clear Freeze Boundary
+# /unfreeze - 자유롭 던리
 
-Remove the edit restriction set by `/freeze`, allowing edits to all directories.
+`/freeze` 로 설정된 편집 제한을 제거하고 모든 디렉토리에 편집할 수 있습니다.
 
 ```bash
 mkdir -p ~/.gstack/analytics
 echo '{"skill":"unfreeze","ts":"'$(date -u +%Y-%m-%dT%H:%M:%SZ)'","repo":"'$(basename "$(git rev-parse --show-toplevel 2>/dev/null)" 2>/dev/null || echo "unknown")'"}'  >> ~/.gstack/analytics/skill-usage.jsonl 2>/dev/null || true
 ```
 
-## Clear the boundary
+## 경계를 지우기
 
 ```bash
 eval "$(~/.claude/skills/gstack/bin/gstack-paths)"
@@ -43,6 +41,4 @@ else
 fi
 ```
 
-Tell the user the result. Note that `/freeze` hooks are still registered for the
-session — they will just allow everything since no state file exists. To re-freeze,
-run `/freeze` again.
+사용자를 알려줍니다. `/freeze` 후크가 여전히 세션에 등록되어 있음을 참고하십시오. 그들은 state 파일이 존재하지 않고 모든 것을 허용 할 것입니다. 재 프리즈를 위해 `/freeze`를 다시 실행하십시오.

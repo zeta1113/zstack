@@ -1,12 +1,9 @@
-# Emoji rendering gate 😀
+# Emoji 렌더링 게이트 😀
 
-This fixture exists to prove that emoji code points render as real color
-glyphs in the output PDF, not as `.notdef` tofu boxes (▯).
+이 정착물은 emoji 코드 점이 산출 PDF에 있는 진짜 색깔 glyphs로, `.notdef` tofu 상자 ( ⁇ )와 같은, 표를 증명하는 것을 존재합니다.
 
-Color emoji on one line: 😀 ❤️ 🚀 ✅ 💡
+😀 ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ♥ ❤️ ❤️ ❤️ ❤️ ❤️ ❤️ ❤️ ❤️ ❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤
 
-A variation-selector sequence (FE0F) renders color: ❤️ — the bare code point
-❤ is text-style. Both must come from a font in the cascade, never tofu.
+변형 선택 순서 (FE0F) 색상 렌더링: ❤️ — 베어 코드 포인트 ❤ 텍스트 스타일입니다. 두 가지는 캐스케이드의 글꼴에서 와서, 결코 두 번째.
 
-Non-emoji Unicode (unchanged, regression guard): em dash —, times ×, arrow →,
-bullet •, ellipsis …
+비 이모티콘 유니코드 (변경되지 않은, 회귀 가드) : 엠 돌진 -, 시간 ×, 화살표 →, 총알 •, ellipsis ...

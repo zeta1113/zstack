@@ -1,13 +1,13 @@
-# Our Idea: AI Tools for Product Managers
+# 우리의 아이디어 : AI 제품 관리자 도구
 
-We're building AI tools for product managers at mid-market SaaS companies. The product combines a bunch of the things PMs already do — writing PRDs, gathering user feedback, analyzing usage data, drafting roadmaps — and uses LLMs to speed each of them up.
+우리는 중반 시장 SaaS 회사에서 제품 관리자를위한 AI 도구를 구축하고 있습니다. 이 제품은 이미 PMs의 무리를 결합합니다. PRD를 작성하고 사용자 피드백을 수집하고 사용 데이터를 분석하고 로드맵을 초래하고 각각 LLM을 사용합니다.
 
-## Who we're targeting
+## 우리가 표적하는 누구
 
-Product managers at SaaS companies with 50-500 engineers. These PMs are stretched thin, juggle a lot of surface area, and would benefit from AI assistance.
+50-500 엔지니어를 가진 SaaS 회사에서 제품 관리자. 이 PM은 얇고, 많은 표면 영역을 점등하고, AI 지원 혜택을 누릴 수 있습니다.
 
-## What we've done so far
+## 우리가 지금까지 행한 것
 
-- Talked to a few PMs we know from prior jobs
-- Built a prototype that summarizes Zoom customer calls into a PRD stub
-- Got on a waitlist of about 40 signups from LinkedIn posts
+- 이전 구인에서 몇 PM에 대해 이야기했습니다.
+- Zoom 고객 통화를 PRD stub로 요약하는 프로토 타입
+- LinkedIn 게시물에서 약 40 가입자의 대기 목록에 가져 오기

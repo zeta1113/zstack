@@ -1,12 +1,8 @@
-# Adding a New Host to gstack
+# 새 호스트를 gstack에 추가
 
-gstack uses a declarative host config system. Each supported AI coding agent
-(Claude, Codex, Factory, Kiro, OpenCode, Slate, Cursor, OpenClaw, Hermes,
-GBrain) is defined as a typed TypeScript config object built by the
-`defineHost()` factory. Adding a new host means creating one file and
-re-exporting it. Zero code changes to the generator, setup, or tooling.
+gstack는 declarative 호스트 구성 시스템을 사용합니다. 각 지원 AI 코딩 에이전트 (Claude, Codex, 공장, Kiro, OpenCode, Slate, Cursor, OpenClaw, Hermes, GBrain)는 `defineHost()` 공장에 의해 건설된 유형 TypeScript 구성 객체로 정의됩니다. 새 호스트가 하나의 파일 생성을 의미하고 다시 내보내는 것을 의미합니다. Zerocode, 생성 도구 또는 도구로 변경하십시오.
 
-## How it works
+## 어떻게 작동합니까?
 
 ```
 hosts/
@@ -24,26 +20,21 @@ hosts/
 └── index.ts         # Registry: imports all, derives Host type
 ```
 
-Each config file calls `defineHost()` and exports the resulting `HostConfig`
-object, which tells the generator:
-- Where to put generated skills (paths)
-- How to transform frontmatter (allowlist/denylist fields)
-- What Claude-specific references to rewrite (paths, tool names)
-- What binary to detect for auto-install
-- What resolver sections to suppress
-- What assets to symlink at install time
+각 구성 파일 호출 `defineHost()` 그리고 생성기를 말하는 `HostConfig` 객체를 내보내기:
+- 생성된 기술을 넣는 곳 (paths)
+- frontmatter (allowlist/denylist 필드)를 변환하는 방법
+- 의문자에 대한 글을 읽는 것 (paths, tool name)
+- 자동 설치를 위해 검출하는 어떤 바이너리
+- 어떤 결선을 억제하는
+- 설치 시간에 symlink에 어떤 자산
 
-The generator, setup script, platform-detect, uninstall, health checks, worktree
-copy, and tests all read from these configs. None of them have per-host code.
+발전기, 설정 스크립트, 플랫폼 감지, 제거, 건강 검사, 워크 트리 복사, 그리고이 구성에서 모든 읽기 테스트. 그들 중 아무도 per-host 코드.
 
-## Step-by-step: add a new host
+## Step-by-step: 새로운 호스트 추가
 
-### 1. Create the config file
+##1. 설정파일 만들기
 
-Configs are built with the `defineHost()` factory in `hosts/define-host.ts`.
-You only write the fields that differ from the common external-host defaults;
-everything else is derived from the host name. A fully-default host is two
-fields (see `hosts/slate.ts` or `hosts/cursor.ts`):
+Configs는 `hosts/define-host.ts` 공장 `hosts/define-host.ts`에 내장되어 있습니다. 일반적인 외부 호스트 기본과는 달리 필드를 작성하고 다른 모든 것은 호스트 이름에서 파생됩니다. 완전히 기본 호스트는 두 개의 필드 (`hosts/slate.ts` 또는 `hosts/cursor.ts` 참조)입니다.
 
 ```typescript
 import { defineHost } from './define-host';
@@ -56,48 +47,39 @@ const myhost = defineHost({
 export default myhost;
 ```
 
-That expands to the full `HostConfig` with these defaults:
+이 기본값으로 `HostConfig` 으로 확장한다.
 
-- `cliCommand: 'myhost'` (the name; binary for `command -v` detection)
+- `cliCommand: 'myhost'` (이름; `command -v` 탐지를 위한 이진)
 - `cliAliases: []`
-- `defaultModel: 'claude'` (model overlay used when generation gets no explicit `--model`; codex overrides to `'gpt'`)
+- `defaultModel: 'claude'` (생물이 명시되지 않은 경우 사용 된 모델 오버레이 `--model`; `'gpt'`)에 코드 오버라이드
 - `globalRoot` / `localSkillRoot`: `.myhost/skills/gstack`, `hostSubdir`: `.myhost`
-- `usesEnvVars: true` (false only for Claude, which uses literal `~` paths)
-- `frontmatter`: allowlist keeping `name` + `description`, no description limit
-- `generation`: no metadata file, `skipSkills: ['codex']` (codex skill is Claude-only)
-- `pathRewrites`: the standard trio derived from the resolved paths
-  (`~/.claude/skills/gstack` → `~/{globalRoot}`, `.claude/skills/gstack` →
-  `{localSkillRoot}`, `.claude/skills` → `{hostSubdir}/skills`)
-- `suppressedResolvers`: the GBrain pair (`GBRAIN_CONTEXT_LOAD`, `GBRAIN_SAVE_RESULTS`)
-- `runtimeRoot`: the shared asset list (`bin`, `browse/dist`, `browse/bin`,
-  `gstack-upgrade`, `ETHOS.md` + review checklist files)
+- `usesEnvVars: true` (Claude만 사용), 리터럴 `~` 경로 사용)
+- `frontmatter`: `name` + `description`를 유지하는 수당은, 묘사 한계 없음
+- `generation`: 메타데이터 파일 없음, `skipSkills: ['codex']` (codex 기술은 Claude-only입니다)
+- `pathRewrites`: 해결된 경로에서 파생된 표준 trio
+  (`~/.claude/skills/gstack` → `~/{globalRoot}`, `.claude/skills/gstack` → `{localSkillRoot}`, `.claude/skills` → `{hostSubdir}/skills`)
+- `suppressedResolvers`: GBrain 쌍 (`GBRAIN_CONTEXT_LOAD`, `GBRAIN_SAVE_RESULTS`)
+- `runtimeRoot`: 공유 자산 목록 (`bin`, `browse/dist`, `browse/bin`,
+  `gstack-upgrade`, `ETHOS.md` + 리뷰 체크리스트 파일)
 - `install`: `{ linkingStrategy: 'symlink-generated' }`
 - `learningsMode: 'basic'`
 
-Override any field by passing it to `defineHost()`. Two path-rewrite options:
+`defineHost()`로 전달하여 필드를 무시합니다. 두 개의 경로로 변환 옵션:
 
-- `extraPathRewrites`: appends entries AFTER the derived trio (e.g. kiro's
-  codex-path cleanup, or `{ from: 'CLAUDE.md', to: 'AGENTS.md' }` for
-  AGENTS.md hosts). Use this when the standard trio is right but you need more.
-- `pathRewrites`: replaces the derived list entirely. Only for non-mechanical
-  cases — codex and factory rewrite the global path to `$GSTACK_ROOT` and add
-  an extra review-path rewrite; claude has an empty list.
+- `extraPathRewrites`: appends 항목 AFTER 파생된 트리오 (e.g. kiro's
+  codex-path cleanup, 또는 `{ from: 'CLAUDE.md', to: 'AGENTS.md' }` for AGENTS.md host). 표준 trio가 맞을 때 이것을 사용하지만 더 많은 것을 필요로 합니다.
+- `pathRewrites`: 전적으로 파생된 명부를 대체합니다. 비 기계성만을 위해
+  case - codex 및 공장은 `$GSTACK_ROOT`에 글로벌 경로를 다시 작성하고 추가 검토-path 리깅을 추가합니다. claude에는 빈 목록이 있습니다.
 
-The two are mutually exclusive (the factory throws if you pass both).
+두는 상호적으로 독점적입니다 (공장은 둘 다 통과하면 던집니다).
 
-Shared constants exported from `define-host.ts` for spread-composition:
-`CROSS_MODEL_RESOLVERS` (the five Codex-invoking resolvers suppressed on
-hosts that can't invoke other models), `GBRAIN_RESOLVERS` (the default
-suppression pair), and `EXEC_STYLE_TOOL_REWRITES` (the OpenClaw-style
-lowercase-tool rewrites shared by openclaw and gbrain).
+퍼짐 구획을 위해 `define-host.ts`에서 수출되는 공유 일정: `CROSS_MODEL_RESOLVERS` (다른 모형을 invoke 할 수 없는 주인에 억압된 5개의 코덱에서), `GBRAIN_RESOLVERS` (기본 억제 쌍), `EXEC_STYLE_TOOL_REWRITES` (OpenClaw 작풍 더 낮은 케이스 발판은 openclaw와 raingb에 의해 공유했습니다).
 
-Good examples: `hosts/opencode.ts` (path + runtimeRoot overrides),
-`hosts/factory.ts` (tool rewrites and conditional fields), `hosts/hermes.ts`
-(AGENTS.md host with custom tool rewrites and resolver composition).
+좋은 예 : `hosts/opencode.ts` (path + runtimeRoot overrides), `hosts/factory.ts` (tool rewrites and conditional field), `hosts/hermes.ts` (AGENTS.md 호스트 사용자 정의 도구 재 작성 및 해결 구성).
 
-### 2. Register in the index
+##2. 인덱스에 등록
 
-Edit `hosts/index.ts`:
+`hosts/index.ts` 편집:
 
 ```typescript
 import myhost from './myhost';
@@ -111,11 +93,11 @@ export const ALL_HOST_CONFIGS: HostConfig[] = [
 export { claude, codex, factory, kiro, opencode, slate, cursor, openclaw, hermes, gbrain, myhost };
 ```
 
-### 3. Add to .gitignore
+##3. .gitignore에 추가
 
-Add `.myhost/` to `.gitignore` (generated skill docs are gitignored).
+`.myhost/`를 `.gitignore` (진격된 기술 문서는 gitignored)에 추가하십시오.
 
-### 4. Generate and verify
+##4. 생성 및 검증
 
 ```bash
 # Generate skill docs for the new host
@@ -133,50 +115,47 @@ bun run gen:skill-docs --host all
 bun run skill:check
 ```
 
-### 5. Run tests
+##5. 실행 테스트
 
 ```bash
 bun test test/gen-skill-docs.test.ts
 bun test test/host-config.test.ts
 ```
 
-The parameterized smoke tests automatically pick up the new host. Zero test
-code to write. They verify: output exists, no path leakage, valid frontmatter,
-freshness check passes, codex skill excluded.
+매개 변수화된 연기 테스트는 새 호스트를 자동으로 선택합니다. 0 테스트 코드는 쓰기. 그들은 확인: 출력은 존재, 경로 누설 없음, 유효한 frontmatter, 신선도 체크 패스, 코덱 기술 제외.
 
-### 6. Update README.md
+##6 업데이트 README.md
 
-Add install instructions for the new host in the appropriate section.
+적절한 섹션에서 새로운 호스트에 대한 설치 지침을 추가합니다.
 
-## Config field reference
+## Config 필드 참조
 
-See `scripts/host-config.ts` for the full `HostConfig` interface with JSDoc
-comments on every field.
+`scripts/host-config.ts`를 참조하세요. `HostConfig` 인터페이스는 JSDoc의 모든 필드에 댓글을 보냅니다.
 
-Key fields:
+주요 분야:
 
-| Field | Purpose |
+| Field | 의논하기 |
 |-------|---------|
-| `defaultModel` | Model overlay rendered when generation gets no explicit `--model` (validated against `ALL_MODEL_NAMES` in `scripts/models.ts`) |
-| `frontmatter.mode` | `allowlist` (keep only listed) or `denylist` (strip listed) |
-| `frontmatter.descriptionLimit` | Max chars, `null` for no limit |
-| `frontmatter.descriptionLimitBehavior` | `error` (fail build), `truncate`, `warn` |
-| `frontmatter.conditionalFields` | Add fields based on template values (e.g., sensitive → disable-model-invocation) |
-| `frontmatter.renameFields` | Rename template fields (e.g., voice-triggers → triggers) |
-| `pathRewrites` | Literal replaceAll on content. Order matters. Replaces the derived trio. |
-| `extraPathRewrites` | (defineHost input only) Appended after the derived trio. |
-| `toolRewrites` | Rewrite Claude tool names (e.g., "use the Bash tool" → "run this command") |
-| `suppressedResolvers` | Resolver functions that return empty for this host |
-| `coAuthorTrailer` | Git co-author string for commits |
-| `boundaryInstruction` | Anti-prompt-injection warning for cross-model invocations |
+| `defaultModel` | 모델 오버레이 렌더링 때 세대가 명시되지 않은 `--model` (`scripts/models.ts`에서 `ALL_MODEL_NAMES`에 대해 유효) |
+| `frontmatter.mode` | `allowlist` (만 목록으로 만들어지는) 또는 `denylist` (목록으로 만들어지는 지구) |
+| `frontmatter.descriptionLimit` | 최대 차, 제한 없음을 위한 `null` |
+| `frontmatter.descriptionLimitBehavior` | `error` (실축), `truncate`, `warn` |
+| `frontmatter.conditionalFields` | 템플릿 값에 근거한 필드를 추가하십시오 (예: 민감하는 → disable-model-invocation) |
+| `frontmatter.renameFields` | 템플릿 필드를 이름 (예 : 음성 트리거 → 트리거) |
+| `pathRewrites` | 문학은 모든 콘텐츠를 대체합니다. 주문 문제. 파생 된 트리오를 대체합니다. |
+| `extraPathRewrites` | (defineHost 입력 전용) 파생 된 트리오 후 승인. |
+| `toolRewrites` | Claude 도구 이름 바꾸기 (예: "Bash 도구"를 사용함 → "이 명령 실행") |
+| `suppressedResolvers` | 이 호스트에 빈을 돌려주는 Resolver 함수 |
+| `coAuthorTrailer` | Git co-author string for 커밋 |
+| `boundaryInstruction` | 크로스 모델 인발 경고를 위한 항진출 |
 
-## Validation
+## 유효성
 
-The `validateHostConfig()` function in `scripts/host-config.ts` checks:
-- Name: lowercase alphanumeric with hyphens
-- CLI command: alphanumeric with hyphens/underscores
-- `defaultModel`: must be a known model family from `scripts/models.ts` `ALL_MODEL_NAMES`
-- Paths: safe characters only (alphanumeric, `.`, `/`, `$`, `{}`, `~`, `-`, `_`)
-- No duplicate names, hostSubdirs, or globalRoots across configs
+`validateHostConfig()` 함수는 `scripts/host-config.ts` 체크:
+- 이름: hyphens를 가진 Lowercase 알파누클
+- CLI 명령: hyphens/underscores를 가진 영숫자
+- `defaultModel`: `scripts/models.ts` `ALL_MODEL_NAMES`에서 알려진 모델 가족이어야 합니다.
+- 경로: 안전한 문자만 (경쟁, `.`, `/`, `$`, `{}`, `~`, `-`, `_`)
+- configs의 중복 이름, hostSubdirs, 또는 globalRoots 없음
 
-Run `bun run scripts/host-config-export.ts validate` to check all configs.
+`bun run scripts/host-config-export.ts validate`를 실행하여 모든 구성을 확인합니다.

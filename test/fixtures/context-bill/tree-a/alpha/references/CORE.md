@@ -1,3 +1,3 @@
-# Core
+# 핵심
 
-Forced-read reference number one. Read on every invocation of alpha.
+강제적인 참조 번호 하나. 알파의 각 invocation에 읽으십시오.

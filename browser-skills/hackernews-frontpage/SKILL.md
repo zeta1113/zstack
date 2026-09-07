@@ -13,13 +13,11 @@ triggers:
   - latest hacker news stories
 ---
 
-# Hacker News front-page scraper
+# 해커 뉴스 프론트 페이지 스크랩
 
-Scrapes the Hacker News (`news.ycombinator.com`) front page and returns the
-top 30 stories as JSON. Each story has its rank, title, link URL, point count,
-and comment count.
+해커 뉴스 (`news.ycombinator.com`) 프론트 페이지에 대한 스크랩과 JSON로 상위 30 이야기를 반환합니다. 각 이야기는 순위, 제목, 링크 URL, 포인트 카운트 및 코멘트 수를 가지고 있습니다.
 
-## Usage
+## 사용법
 
 ```
 $ $B skill run hackernews-frontpage
@@ -32,21 +30,16 @@ $ $B skill run hackernews-frontpage
 }
 ```
 
-## How it works
+## 어떻게 작동합니까?
 
-1. Navigates to `https://news.ycombinator.com` via the daemon.
-2. Reads the page HTML.
-3. Parses each story row (HN's stable `tr.athing` structure) into a typed
-   `Story` record.
-4. Emits a single JSON document on stdout.
+1. `https://news.ycombinator.com`으로 다몬을 통해 이동합니다.
+2. 페이지 HTML를 읽습니다.
+3. 각 이야기 행을 파기 (HN의 안정 `tr.athing` 구조) 타입으로
+   `Story` 기록.
+4. stdout에 단일 JSON 문서가 있습니다.
 
-## Why this is the reference skill
+## 왜 이 참조 기술입니다
 
-`hackernews-frontpage` is the smallest interesting browser-skill: no auth,
-stable HTML, deterministic output, file-fixture-friendly. Every Phase 1
-component (SDK, scoped tokens, three-tier lookup, spawn lifecycle) is
-exercised by `$B skill run hackernews-frontpage` and the bundled
-`script.test.ts`.
+`hackernews-frontpage`는 가장 작은 재미있는 브라우저 skill입니다: auth, 안정되어 있는 HTML, deterministic 산출, 파일 연결 친절한. 각 단계 1 성분 (SDK, 범위가 있는 토큰, 3 층 보기, spawn 생활 주기)는 `$B skill run hackernews-frontpage` 및 번들어진 `script.test.ts`에 의해 운동됩니다.
 
-When the HN HTML rotates and our selectors break, the test fails against the
-captured fixture before users notice. That's the point.
+HN HTML가 회전하고 우리의 선택자 틈이 때, 시험은 사용자의 고시의 앞에 붙잡힌 정착물에 대하여 실패합니다. 그것은 점입니다.

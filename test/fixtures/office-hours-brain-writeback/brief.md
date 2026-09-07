@@ -1,30 +1,22 @@
-# Founder pitch — pixel.fund
+# Founder Pitch - 픽셀.fund
 
-Founder: Maya Chen (CEO, ex-Stripe), co-founder Aria Patel (CTO,
-ex-Robinhood). YC W26.
+설립자: 마야 첸 (CEO, 전 지구), 공동 설립자 Aria Patel (CTO, 전 구). YC W26.
 
-## What
+## 무엇
 
-A donation-budget tool for solo creators. Set a monthly $ floor for
-causes you care about, pixel.fund auto-allocates each dollar across your
-chosen orgs (Direct Relief, GiveDirectly, etc.) the moment a Stripe
-payout lands. One-line embeddable receipt. 1% platform fee.
+솔로 제작자를위한 기부금 도구. 당신이 걱정하는 원인 월 $ 층을 설정, pixel.fund 자동 할당 각 달러를 선택된 orgs (직접 구호, GiveDirectly, etc.) 순간 줄무늬 지불금 토지. 하나의 라인 embeddable 영수증. 1% 플랫폼 수수료.
 
-## Traction
+## 트랙션
 
-- 2026-04-01 launched private beta with 14 creators from her newsletter
-- 2026-05-15 hit 51 paying creators, $4,200 MRR
-- Waitlist of 230 from a single tweet by a tech-Twitter influencer
-- Two creators asked about a "team plan" (multi-seat) unprompted
+- 2026-04-01는 뉴스레터에서 14명의 제작자와 함께 개인 베타를 출시했습니다.
+- 2026-05-15 명중 51 명 급여 제작자, $4,200 MRR
+- tech-Twitter 인플루언서가 단일 트윗에서 230의 대기 목록
+- 두 명의 제작자는 "팀 계획"(다중 좌석)에 대해 묻습니다.
 
-## Status quo
+## 상태 quo
 
-Creators today either (a) write checks ad-hoc and forget about it, or
-(b) use Patreon-style platforms where the "cause" is opaque (general
-fund). Maya talked to 40 creators in YC interviews — 31 said they "want
-to give more but it's mental overhead."
+오늘 창조자 (a)는 광고-공을 작성하고 그것에 대해 잊을 수, 또는 (b) "이기 때문에"가 불투명 (일반적인 기금) 인 Patreon-style 플랫폼을 사용합니다. Maya는 YC 인터뷰에서 40 제작자에 이야기했습니다. 31은 "더 많은 것을 포기하고 정신적 오버헤드입니다."라고 말했습니다.
 
-## What Maya wants from office hours
+## 사무실 시간에 어떤 Maya 원합니다
 
-Should she chase the team-plan signal, or go deeper on the solo flow
-first? She's two weeks from running out of YC dorm food.
+팀 계획 신호를 추적하거나 솔로 흐름에 더 깊은 것 먼저? 그녀는 YC 기숙사 음식에서 실행중인 두 주입니다.

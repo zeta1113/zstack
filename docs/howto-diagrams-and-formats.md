@@ -1,20 +1,14 @@
-# How to put diagrams in your documents (and export beyond PDF)
+# 문서에서 도표를 넣어하는 방법 (PDF를 넘어 수출)
 
-This guide covers the diagram + multi-format engine that ships with
-`/make-pdf` and `/diagram` (v1.58.0.0+). Everything here runs fully offline:
-the mermaid and excalidraw runtimes are vendored in `lib/diagram-render/`,
-loaded into the browse daemon's Chromium. No CDN, no network at render time.
+이 가이드는 `/make-pdf`와 `/diagram` (v1.58.0.0+)로 발송하는 도표 + 다 체재 엔진을 포함합니다. 여기에서 모두는 완전히 따로따로 달리습니다: mermaid와 excalidraw 주근깨는 `lib/diagram-render/`에서 납품되고, 찾아낸 찾아낸 daemon의 크롬. No CDN, 연출 시간에 no 네트워크.
 
-## Render a mermaid diagram inside a PDF
+## Render PDF 내부의 mermaid 다이어그램
 
-Put a fence in your markdown. That's it.
+당신의 마진에 있는 담을 두십시오. 그것은 그것입니다.
 
 ````markdown
 ```mermaid title="Render pipeline"
-graph LR
-  A[markdown] --> B[prepass]
-  B --> C[Chromium]
-  C --> D[PDF]
+그래프 LR A[markdown] --> B[prepass] B --> C[Chromium] C --> D[PDF]
 ```
 ````
 
@@ -22,43 +16,28 @@ graph LR
 make-pdf generate doc.md out.pdf
 ```
 
-The fence renders as a **vector** diagram (crisp at any zoom, selectable
-text), with the `title` as caption and accessibility label. The raw mermaid
-source is preserved base64-encoded in a `data-gstack-source` attribute on the
-figure for debugging and round-trips (an HTML comment would corrupt mermaid's
-`-->` arrows). One catch: the fence must start at **column 0** — indented
-fences (inside lists, for example) stay plain code blocks by design.
+울타리는 **벡터 벡터** 다이어그램 (모든 줌, 선택 가능한 텍스트에서 충돌)으로 렌더링됩니다. `title` 캡션 및 액세스성 라벨로. 원시 mermaid 소스는 `data-gstack-source` 디버깅 및 라운드 스트립에 대한 그림에 인코딩 된 base64-encoded입니다 (an HTML 코멘트는 mermaid의 `-->` 화살표를 손상시킬 것입니다). 한 캐치 : 울타리는 **열 0** (일반적으로)에 의해 시작된 코드에 따라 시작해야합니다.
 
-**Fence options** (space-separated in the info string):
+**울타리 옵션** (정보 문자열에 있는 공간 격리):
 
-| Option | Effect |
+| * * * | 의약 |
 |---|---|
-| `title="..."` | caption below the diagram + `aria-label` |
-| `render=false` | keep the fence as a plain code block |
-| `page=landscape` | force this diagram onto its own landscape page |
-| `page=portrait` | veto auto-landscape for this diagram |
+| `title="..."` | 도표의 밑에 caption + `aria-label` |
+| `render=false` | 일반 코드 블록으로 울타리를 유지 |
+| `page=landscape` | 그것의 자신의 풍경 페이지로이 도표를 강제하십시오 |
+| `page=portrait` | 이 다이어그램의 자동 조경 |
 
-A fence that fails to parse renders as a loud red diagnostic block with the
-parse error and source excerpt — your document still builds, and the error
-is impossible to miss.
+파스 오류와 소스 발췌를 가진 큰 빨간 진단 구획으로 파스 렌더링을 실패하는 울타리 - 문서는 여전히 빌드를 구축하고 오류는 놓치지 않습니다.
 
-` ```excalidraw ` fences work the same way; the body is a full `.excalidraw`
-scene file (what excalidraw.com saves with File → Save).
+` ```excalidraw ` fences work the same way; the body is a full `.excalidraw` 장면 파일 (excalidraw.com 파일과 저장 → 저장).
 
-## Control image size and orientation
+## 제어 이미지 크기 및 방향
 
-Local images are inlined automatically (relative paths resolve against the
-markdown file) and **never truncate** — every image caps at the content box.
-Oversized photos downscale to print resolution (300dpi at the content width),
-so a phone photo doesn't bloat the document.
+로컬 이미지는 자동으로 줄어듭니다 (문자 파일에 대한 해결) 그리고 **결코 truncate** - 콘텐츠 상자에 모든 이미지 캡. 해상도를 인쇄하기 위해 크기가 큰 사진 다운 스케일 (내용 폭 300dpi), 그래서 전화 사진은 문서에 bloat하지 않습니다.
 
-Image safety defaults: remote (http/https) images are **blocked with a
-visible placeholder** unless you pass `--allow-network`. An image path that
-resolves outside the markdown's directory (even through a symlink) still
-inlines but warns loudly. Files over 64MB and non-regular files (fifos,
-devices) degrade to a placeholder instead of hanging the render.
+이미지 안전 기본: 원격 (http/https) 이미지는 **눈에 보이는 위주로 차단**를 통과하지 않는 한 `--allow-network`입니다. 마크다운의 디렉토리 밖에서 해결하는 이미지 경로 (symlink를 통해 조차)는 아직도 inlines 그러나 크게 경고합니다. 64MB 이상 파일과 비 규칙 파일 (fifos, 장치)는 렌더링을 거는 대신 위주로 degrade.
 
-Per-image directives go immediately after the image:
+이미지가 끝난 후 즉시 이동:
 
 ```markdown
 ![quarterly chart](chart.png){width=full}
@@ -67,80 +46,57 @@ Per-image directives go immediately after the image:
 ![wide screenshot](shot.png){page=portrait}
 ```
 
-`width=` accepts `full`, a percentage (`50%`), or a dimension (`3in`, `8cm`,
-`200px`). `page=` forces or vetoes a dedicated landscape page.
+`width=`는 `full`, 비율 (`50%`), 또는 차원 (`3in`, `8cm`, `200px`)를 받아들입니다. `page=` 힘 또는 헌신적인 조경 페이지.
 
-**Auto-landscape:** a wide, small-text, diagram-like image gets its own
-vertically-centered landscape page automatically — inside an otherwise
-portrait document. The heuristic is deliberately conservative (aspect ratio
-≥ 1.8, intrinsic width over ~2.5x the content box, and a diagram-ish alt
-word: diagram / architecture / flowchart / chart / graph). If it doesn't
-fire when you want it, add `{page=landscape}`; if it fires when you don't,
-add `{page=portrait}`.
+**자동차 조경:**는 넓고 작은 텍스트, 다이어그램 같은 이미지는 다른 초상화 문서 안쪽에 그들의 수직으로 중심의 풍경 페이지를 자동적으로 가져옵니다. heuristic는 deliberately 보수 (경도 비율 ≥ 1.8, 내용 상자 이상 인trinsic 폭, 그리고 다이어그램-ish alt 단어: 도표/건축/흐름/전/ 그래프)입니다. 당신이 그것을 원할 때 불이거나, `{page=landscape}`를 추가하지 않는 경우에; 불이 불을 때 **자동차 조경:**를 추가하십시오.
 
-## Export single-file HTML or Word
+## 수출 단 하나 파일 HTML 또는 단어
 
 ```bash
 make-pdf generate doc.md out.html --to html
 make-pdf generate doc.md out.docx --to docx
 ```
 
-- **`--to html`** writes ONE self-contained file: diagrams as inline SVG,
-  images as data URIs, zero network references (under the default offline
-  posture — `--allow-network` deliberately keeps remote image tags live),
-  plus a screen-reading layer (centered measure, padding). Email it, attach
-  it, open it anywhere.
-- **`--to docx`** is a content-fidelity export: headings, tables, code
-  blocks, lists, and diagrams (embedded as 300dpi PNGs with alt text) carry
-  over. Page-perfect layout does not — that's Word's job once it's open.
+- **`--to html`**는 ONE 각자 달성한 파일을 씁니다: 인라인 SVG로 도표,
+  데이터 URI, 0 네트워크 참조 (default 오프라인 자세 - `--allow-network` deliberately 원격 이미지 태그 라이브 유지), 플러스 화면 읽기 레이어 (중앙 측정, 패딩). 이메일, 그것을 첨부, 어디로 엽니 다.
+- **`--to docx`**는 내용 불순 수출입니다: 표, 코드를 두는
+  블록, 목록 및 다이어그램 (alt 텍스트가있는 300dpi PNG로 조립 됨)이 수행됩니다. 페이지 결함 레이아웃은 없습니다. 즉, Word의 작업이 열립니다.
 
-Heads-up: `--to` is the output format. `--format` is an old alias for
-`--page-size` — different thing.
+Heads-up: `--to`는 출력 형식입니다. `--format`는 `--page-size`를 위한 오래된 별명입니다 — 다른 것.
 
-## Generate a diagram from English
+## 영어로 다이어그램 생성
 
 ```
 /diagram make a flowchart of our deploy pipeline: build, test, canary, promote
 ```
 
-The skill authors mermaid and emits a **triplet**:
+기술 저자는 mermaid를 방출하고 **triplet**를 방출합니다:
 
-| File | Use it for |
+| File | 사용하기 |
 |---|---|
-| `<slug>.mmd` | the source of truth — edit and re-render |
-| `<slug>.excalidraw` | open at excalidraw.com (File → Open), move boxes, hand back |
-| `<slug>.svg` / `<slug>.png` | docs, issues, READMEs, chat |
+| `<slug>.mmd` | 진실의 근원 — 편집과 재 렌더링 |
+| `<slug>.excalidraw` | excalidraw.com (파일 → 열기), 이동 상자, 손 뒤로 |
+| `<slug>.svg` / `<slug>.png` | docs, 문제, READMEs, 채팅 |
 
-Flowcharts convert to fully editable excalidraw scenes. Other mermaid types
-(sequence, state, gantt) render to SVG/PNG fine but skip the `.excalidraw`
-artifact — an upstream converter limitation the skill will tell you about.
+Flowcharts는 완전히 편집 가능한 excalidraw 장면으로 변환합니다. 다른 mermaid 유형 (수, 국가, gantt)는 SVG/PNG 벌금으로 렌더링하지만 `.excalidraw` artifact를 건너 뛰기 - 상류 변환기 제한 기술에 대해 알려줍니다.
 
-For documents, embed the `.mmd` source in your markdown instead of the PNG —
-`/make-pdf` renders it as vector and the diagram stays editable forever.
+문서의 경우 PNG 대신 `.mmd` 소스를 삽입합니다. `/make-pdf`는 벡터로 렌더링되며, 다이어그램은 영원히 편집할 수 있습니다.
 
-## CI: fail loud instead of shipping placeholders
+## CI: 운송주 대신 큰 실패
 
 ```bash
 make-pdf generate docs.md --strict
 ```
 
-Missing local images, blocked remote images, out-of-tree image reads (a path
-or symlink resolving outside the markdown's directory), oversized files
-(>64MB), and non-regular files all exit non-zero instead of degrading to a
-warning or placeholder — for docs pipelines where a broken image should
-break the build.
+로컬 이미지, 차단된 원격 이미지, 아웃-of-tree 이미지 읽기 (경우 또는 symlink는 마크 다운의 디렉토리 밖에 해결), 대형 파일 (>64MB) 및 비 규칙 파일이 경고 또는 위주로 분해하지 않고 모든 출구 비 소문 - 깨진 이미지가 빌드를 깨야 할 docs 파이프라인에 대한 문서.
 
-## Troubleshooting
+## 문제 해결
 
-- **"diagram-render bundle not found"** → run `bun run build:diagram-render`
-  in the gstack repo, or re-run `./setup`.
-- **Diagram renders but looks squished inline** → it's wide; give it room
-  with `page=landscape` on the fence.
-- **A two-row "racetrack" loop instead of one long line:** mermaid subgraph
-  trick — top-level `flowchart TB`, two subgraphs with `direction LR` and
-  `direction RL`, connect the *subgraphs* (node-level edges across subgraph
-  boundaries silently disable `direction`).
-- **"[remote image blocked]" placeholder** → remote images are never fetched
-  by default (offline posture); the tag is replaced with a visible
-  placeholder so Chromium can't fetch it at print time either. Pass
-  `--allow-network` to opt in.
+- **"배터리 묶음"** → `bun run build:diagram-render` 실행
+  gstack repo 또는 `./setup`를 재 실행하십시오.
+- **다이어그램 렌더링하지만 스쿼시 인라인보기** → 넓은; 그것을 방을 주십시오
+  담에 `page=landscape`로.
+- **두 줄 "racetrack" 루프 대신 한 긴 라인:** mermaid 하위
+  `flowchart TB`, `direction LR`와 `direction RL`를 가진 2개의 subgraphs는, *subgraphs* (미래 경계를 맞댄 끝 가장자리를 침묵하게 `direction`) 연결합니다.
+- **"[remote image blocked]"주저** → 원격 이미지는 결코 fetched
+  default (오프라인 자세); 태그는 표시된 위주자로 대체됩니다. Chromium는 인쇄 시간에 그것을 흠뻑 취할 수 없습니다. `--allow-network`를 선택하여 선택합니다.

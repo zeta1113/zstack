@@ -1,11 +1,10 @@
 <!-- AUTO-GENERATED from pretext-patterns.md.tmpl — do not edit directly -->
 <!-- Regenerate: bun run gen:skill-docs -->
-### Pretext Wiring Patterns
+## Pretext 배선 패턴
 
-Use these patterns based on the tier selected in Step 2. These are the correct
-Pretext API usage patterns. Follow them exactly.
+단계 2.에서 선택된 계층에 따라 이러한 패턴을 사용하십시오. 이것은 올바른 Pretext API 사용 패턴입니다. 정확히 따라.
 
-**Pattern 1: Basic height computation (Simple layout, Card/grid)**
+**패턴 1 : 기본 높이 계산 (간단한 레이아웃, 카드/grid)**
 ```js
 import { prepare, layout } from './pretext-inline.js'
 // Or if inlined: const { prepare, layout } = window.Pretext
@@ -45,7 +44,7 @@ for (const el of elements) {
 }
 ```
 
-**Pattern 2: Shrinkwrap / tight-fit containers (Chat bubbles)**
+**패턴 2 : 수축 랩 / 타이트 피트 컨테이너 (Chat Bubbles)**
 ```js
 import { prepareWithSegments, walkLineRanges } from './pretext-inline.js'
 
@@ -71,7 +70,7 @@ function shrinkwrap(text, font, maxWidth, lineHeight) {
 }
 ```
 
-**Pattern 3: Text around obstacles (Editorial layout)**
+**패턴 3 : 장애물 주위의 텍스트 (편집 레이아웃)**
 ```js
 import { prepareWithSegments, layoutNextLine } from './pretext-inline.js'
 
@@ -102,7 +101,7 @@ function layoutAroundObstacles(text, font, containerWidth, lineHeight, obstacles
 }
 ```
 
-**Pattern 4: Full line-by-line rendering (Complex editorial)**
+**패턴 4: 풀 라인-라인 렌더링 (Complex editorial)**
 ```js
 import { prepareWithSegments, layoutWithLines } from './pretext-inline.js'
 
@@ -121,7 +120,7 @@ for (const line of lines) {
 }
 ```
 
-### Pretext API Reference
+### Pretext API 참조
 
 ```
 PRETEXT API CHEATSHEET:

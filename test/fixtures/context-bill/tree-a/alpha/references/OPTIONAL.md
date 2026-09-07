@@ -1,3 +1,3 @@
-# Optional
+# 선택
 
-Conditional reference. Not part of the eager bill.
+조건 참조. eager 법안의 일부가 아닙니다.

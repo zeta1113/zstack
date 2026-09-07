@@ -5,17 +5,17 @@ triggers: a-key-the-upstream-router-DOES-read
 x-dead-key: a-key-no-router-reads
 ---
 
-# Alpha
+# 알파
 
-## Dispatch protocol
+## Dispatch 프로토콜
 
-1. Infer the mode from the request.
-2. Read `references/CORE.md` and `references/POLICY.md` for every invocation. Read `references/OPTIONAL.md` before public-web work.
-3. When the target is a repository, read `references/CORE.md` once before specialist work; it is already billed eagerly.
+1. 요청에서 모드를 입력합니다.
+2. `references/CORE.md` 및 `references/POLICY.md`를 각 invocation에 읽으십시오. `references/OPTIONAL.md`를 공공 웹 작업의 앞에 읽으십시오.
+3. 대상이 저장소일 때, 전문가 업무의 앞에 `references/CORE.md`를 한 번 읽습니다. 이미 eagerly 청구됩니다.
 
-## Top-level modes
+## 최고 수준 형태
 
-| Mode | Infer when | Candidate internal specialists |
+| * 이름 | 때 잉어 | Candidate 내부 전문가 |
 |---|---|---|
-| `Discovery` | The idea is fluid. | `references/legacy/office.md` |
-| `Full chain` | Everything at once. | `references/legacy/auto.md` |
+| `Discovery` | 아이디어는 유동성입니다. | `references/legacy/office.md` |
+| `Full chain` | 한 번에 모든 것. | `references/legacy/auto.md` |

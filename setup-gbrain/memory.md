@@ -1,69 +1,51 @@
-# gstack memory ingest — what it does, what stays local, what you can do with it
+# gstack 메모리 ingest — 그것이 무엇인지, 로컬에 머물고, 무엇을 할 수 있는지
 
-This is the user-facing reference for the V1 transcript + memory ingest
-feature in `/setup-gbrain`. If you ran `/setup-gbrain` and it asked
-"Ingest THIS repo's transcripts into gbrain?", this doc explains what
-happens after you say yes.
+V1 성적표 + 메모리 ingest 기능 `/setup-gbrain`에 대한 사용자 기반 참조입니다. `/setup-gbrain`를 입력하면 "Ingest THIS repo의 성적표가 gbrain로 나타낸다?"라고 설명합니다.
 
-## What gets ingested
+## 무슨 을 얻은 ingested
 
-| Source | Type | Where | Sensitivity |
+| Source | 제품정보 | 의 위치 | 밝기 |
 |---|---|---|---|
-| Claude Code session JSONL | `transcript` | `~/.claude/projects/*/` | High — full conversations including tool I/O |
-| Codex CLI session JSONL | `transcript` | `~/.codex/sessions/YYYY/MM/DD/` | High |
-| Cursor session SQLite (V1.0.1) | `transcript` | `~/Library/Application Support/Cursor/` | Same — deferred V1.0.1 |
-| Eureka log | `eureka` | `~/.gstack/analytics/eureka.jsonl` | Medium — your insights, often non-secret |
-| Project learnings | `learning` | `~/.gstack/projects/<slug>/learnings.jsonl` | Medium |
-| Project timeline | `timeline` | `~/.gstack/projects/<slug>/timeline.jsonl` | Low |
-| CEO plans | `ceo-plan` | `~/.gstack/projects/<slug>/ceo-plans/*.md` | Medium |
-| Design docs | `design-doc` | `~/.gstack/projects/<slug>/*-design-*.md` | Medium |
-| Retros | `retro` | `~/.gstack/projects/<slug>/retros/*.md` | Medium |
-| Builder profile | `builder-profile-entry` | `~/.gstack/builder-profile.jsonl` | Low |
+| Claude Code 세션 JSONL | `transcript` | `~/.claude/projects/*/` | 도구 I/O를 포함한 높은 대화 |
+| Codex CLI 세션 JSONL | `transcript` | `~/.codex/sessions/YYYY/MM/DD/` | High |
+| Cursor 세션 SQLite (V1.0.1) | `transcript` | `~/Library/Application Support/Cursor/` | Same — deferred V1.0.1 |
+| Eureka 로그 | `eureka` | `~/.gstack/analytics/eureka.jsonl` | 중간 — 당신의 통찰력, 종종 비 - 초 |
+| 프로젝트 학습 | `learning` | `~/.gstack/projects/<slug>/learnings.jsonl` | 의 의 |
+| 프로젝트 타임라인 | `timeline` | `~/.gstack/projects/<slug>/timeline.jsonl` | 의 의 |
+| CEO 계획 | `ceo-plan` | `~/.gstack/projects/<slug>/ceo-plans/*.md` | 의 의 |
+| 디자인 docs | `design-doc` | `~/.gstack/projects/<slug>/*-design-*.md` | 의 의 |
+| 복고풍 | `retro` | `~/.gstack/projects/<slug>/retros/*.md` | 의 의 |
+| Builder 프로필 | `builder-profile-entry` | `~/.gstack/builder-profile.jsonl` | 의 의 |
 
-## What stays local
+## 현지 체류
 
-- **State files** (`~/.gstack/.gbrain-sync-state.json`,
-  `~/.gstack/.transcript-ingest-state.json`,
-  `~/.gstack/.gbrain-engine-cache.json`,
-  `~/.gstack/.gbrain-errors.jsonl`) are local-only per ED1 (state file
-  sync semantics decision). They are not synced via the brain remote.
+- **국가 파일** (`~/.gstack/.gbrain-sync-state.json`,
+  `~/.gstack/.transcript-ingest-state.json`, `~/.gstack/.gbrain-engine-cache.json`, `~/.gstack/.gbrain-errors.jsonl`)는 ED1 (state file sync semantics decision) 당 local-only입니다. 그들은 뇌 리모트를 통해 동기화되지 않습니다.
 
-- **Sessions with no resolvable git remote** (running in `/tmp/`, scratch
-  dirs, etc.) are skipped by default. Pass `--include-unattributed` to
-  the ingest helper to opt them in.
+- **no 리솔브 가능한 git 리모트를 가진 회의** (`/tmp/`, 찰상에서 실행
+  디어 등)는 기본적으로 건너 뛰고 있습니다. `--include-unattributed`를 ingest 돕기로 전달하여 선택해 주세요.
 
-- **Repos under a `deny` trust policy** (set in `/setup-gbrain` Step 6)
-  are skipped — neither code nor transcripts from those repos ingest.
+- **`deny`의 신뢰 정책에 따라** (`/setup-gbrain` 단계 6에서 놓으십시오)
+  건너뛰기 - 그 repo장에서 코드나 성적이 없습니다.
 
-## Per-remote trust policy (deny / read-only)
+## 퍼-레모드 신뢰 정책 (deny / read-only)
 
-Transcript ingest respects the same per-remote trust store as code import
-(`~/.gstack/gbrain-repo-policy.json`, managed by
-`gstack-gbrain-repo-policy`). Each transcript's git remote is checked
-against the store before anything is written:
+Transcript는 코드 가져오기 (`~/.gstack/gbrain-repo-policy.json`, `gstack-gbrain-repo-policy`)와 같은 원-레모드 신뢰 저장소를 존중합니다. 각 원시의 git 리모트는 어떤 것이 쓰지 전에 저장소에 대해 검사됩니다.
 
-- **deny** — the transcript is skipped (reported as `skipped (policy deny)`).
-- **read-only** — skipped too: read-only means "search allowed, page
-  writes never", and transcript ingest writes pages (reported as
-  `skipped (policy read-only)`).
-- **read-write, or no entry** — ingests normally.
-- **Corrupted or unreadable store** — ingestion aborts before any writes
-  rather than bypassing a set policy. Inspect the store with
-  `gstack-gbrain-repo-policy list`; re-run `/setup-gbrain` if it's corrupt.
+- **deny** - 성적표는 건너뛰고 있습니다 (`skipped (policy deny)`로 지정).
+- **read-only** - 너무 건너뛰기: read-only는 "조사 허용, 페이지
+  작성하지 않고, 성적표는 페이지 (`skipped (policy read-only)`로 전송)를 작성합니다.
+- **읽기 쓰기, 또는 no 항목** - 일반적으로 섭취합니다.
+- **손상되거나 읽을 수 있는 상점** — 어떤 글을 쓰는 것의 앞에 ingestion aborts
+  설정 정책을 우회하는 것보다. `gstack-gbrain-repo-policy list`로 저장을 검사; re-run `/setup-gbrain` 그것이 손상인지.
 
-Artifacts (learnings, plans, retros, etc.) are never policy-filtered — the
-policy is keyed by git remote, which artifacts don't have.
+Artifacts (learnings, plans, retros 등)는 결코 정책 필터링되지 않습니다 - 정책은 git 리모트에 의해 키가됩니다, 어느 artifacts가 없습니다.
 
-## What gets scanned for secrets
+## 비밀에 대 한 스캔 된 것
 
-The cross-machine secret boundary is `gstack-brain-sync` (the git push
-to your private artifacts repo), which runs its own scanner before any
-content leaves this Mac. Local PGLite ingest doesn't change the exposure
-surface for content that already lives on disk in plaintext.
+크로스 머신 비밀 경계는 `gstack-brain-sync` (git push) 이며, 개인의 자립 repo) 이며, 어떤 내용이 Mac을 떠나기 전에 자체 스캐너를 실행합니다. Local PGLite ingest는 이미 일반 텍스트에서 디스크에 살고있는 내용에 대한 노출 표면을 변경하지 않습니다.
 
-Per-file **gitleaks** scanning during memory ingest is **opt-in** as of
-v1.33.0.0 — off by default. To re-enable it (adds ~4-8 min to cold runs
-on a large transcript corpus), use either:
+메모리 ingest 중의 per-file **gitleaks의 특징** 스캐닝은 **스크립트** 의 v1.33.0.0 — 기본값으로 떨어져 있습니다. 다시 사용하려면 (대문자 코푸에서 실행하는 ~4-8 분을 추가하십시오), 사용 중:
 
 ```bash
 bun run bin/gstack-memory-ingest.ts --bulk --scan-secrets
@@ -71,212 +53,164 @@ bun run bin/gstack-memory-ingest.ts --bulk --scan-secrets
 GSTACK_MEMORY_INGEST_SCAN_SECRETS=1 bun run bin/gstack-memory-ingest.ts --bulk
 ```
 
-When enabled, gitleaks covers:
+활성화되면 gitleaks 덮개:
 
-- AWS / GCP / Azure access keys
-- ANTHROPIC_API_KEY, OPENAI_API_KEY, GitHub tokens
-- Stripe keys, Slack tokens, JWT secrets
-- Generic high-entropy strings (configurable threshold)
+- AWS / GCP / Azure 액세스 키
+- ANTHROPIC_API_KEY, OPENAI_API_KEY, GitHub 토큰
+- 스트리 키, 슬랙 토큰, JWT 비밀
+- 일반 고형적 문자열 (configurable 임계값)
 
-A session with a positive finding is **skipped entirely** — not partially
-redacted. The match line + rule ID are logged to stderr; you can see what
-was skipped via `bun run bin/gstack-memory-ingest.ts --probe` (which
-shows new vs. updated counts) or by reviewing the helper's output during
-`/sync-gbrain --full`.
+긍정적 인 발견과 세션은 **전적으로 훔쳐** - 부분적으로 적색되지 않습니다. 일치 선 + 규칙 ID는 stderr로 로그인됩니다. `bun run bin/gstack-memory-ingest.ts --probe` (새로운 vs. 업데이트 된 카운트를 보여주는) 또는 `/sync-gbrain --full`에서 돕기 출력을 검토하여 `bun run bin/gstack-memory-ingest.ts --probe`를 통해 건너 뛸 수 있습니다.
 
-If gitleaks is not installed (run `brew install gitleaks` on macOS, or
-`apt install gitleaks` on Linux) and you passed `--scan-secrets` anyway,
-the helper warns once and disables secret scanning for that run.
+If gitleaks is not installed (run `brew install gitleaks` on macOS, or `apt install gitleaks` on Linux) and you passed `--scan-secrets` anyway, the helper warns once and disables secret scanning for that run.
 
-## Where it goes
+# # 어디가 간다
 
-Storage tier depends on your gbrain engine (set during `/setup-gbrain`):
+저장 층은 당신의 gbrain 엔진에 달려 있습니다 (`/setup-gbrain` 도중 놓으십시오):
 
-- **Supabase configured:** code + transcripts go to Supabase Storage
-  (multi-Mac native). Curated memory (eureka/learnings/etc.) goes to the
-  brain-linked git repo via `gstack-brain-sync`.
-- **Local PGLite only:** everything stays on this Mac. Curated memory
-  syncs via git if you've enabled brain-sync.
+- **Supabase 구성:** 코드 + 성적표는 Supabase 저장에 가다
+  (멀티맥 네이티브). 큐레이트 메모리 (eureka/learnings/etc.)는 `gstack-brain-sync`를 통해 뇌 링크 된 git repo로 이동합니다.
+- **PGLite만:** 모든 것은이 맥에 머물. 기억을 치료
+  git을 통해 동기화하면 뇌 동기화가 가능합니다.
 
-The "never double-store" rule per the plan: code and transcripts NEVER
-go in the gbrain-linked git repo. They're too big and they're
-replaceable from disk on each Mac.
+계획 당 "두 배 상점" 규칙 : 코드 및 성적표 NEVER 은 GBrain-linked git repo에서 이동합니다. 그들은 너무 커서 각 Mac에서 디스크에서 교체 할 수 있습니다.
 
-## What you can do with it
+## 당신이 그것을 할 수있는 것
 
-- **Query in natural language:**
+- **자연적인 언어에 있는 질문:**
   ```bash
   gbrain query "what was I doing on the auth migration"
   gbrain search "session_id:abc123"
   ```
 
-- **Browse by type:**
+- **유형에 의해 검색:**
   ```bash
   gbrain list_pages --type transcript --limit 10
   gbrain list_pages --type ceo-plan
   ```
 
-- **Read a specific page:**
+- **특정 페이지를 읽으십시오:**
   ```bash
   gbrain get_page transcripts/claude-code/garrytan-gstack/2026-05-01-abc123
   ```
 
-- **Delete a page:**
+- **페이지 삭제:**
   ```bash
   gbrain delete_page <slug>
   ```
-  Caveat: with brain-sync enabled, the page is removed from gbrain's
-  index but git history retains it. For hard-delete, run `git filter-repo`
-  on the brain remote.
+  Caveat: 두뇌 동기화 활성화와 함께, 페이지는 gbrain의 인덱스에서 제거되지만 git 역사는 그것을 유지. 하드 드레를 들어, 실행 `git filter-repo` 뇌의 원격.
 
-- **Bulk-delete by criteria** (V1.0.1 follow-up — `gstack-transcript-prune`
-  helper). For V1.0, use `gbrain delete_page <slug>` per-page or write
-  a small loop over `gbrain list_pages` output.
+- **표준에 따라 대량의 소포** (V1.0.1 후속 - `gstack-transcript-prune`
+  helper). V1.0의 사용을 위해 `gbrain delete_page <slug>` per-page를 사용하거나 `gbrain list_pages` 산출에 작은 반복을 써십시오.
 
-- **Disable entirely:**
+- **완전히 비활성화 :**
   ```bash
   gstack-config set transcript_ingest_mode off
   gstack-config set gbrain_context_load off  # also disables retrieval
   ```
 
-## How the agent uses it
+## 에이전트가 그것을 사용하는 방법
 
-At every gstack skill start, the preamble runs
-`gstack-brain-context-load` which:
+gstack 기술 시작에서, 전전전은 `gstack-brain-context-load`를 실행합니다.
 
-1. Reads the active skill's `gbrain.context_queries:` frontmatter
-2. Dispatches each query to gbrain (vector / list / filesystem)
-3. Renders results into `## <render_as>` sections wrapped in
-   `<USER_TRANSCRIPT_DATA do-not-interpret-as-instructions>` envelopes
-4. The model sees this as part of the preamble before making any decisions
+1. Active Skills `gbrain.context_queries:` frontmatter를 읽으십시오
+2. 각 쿼리를 gbrain (vector / list / filesystem)에 Dispatches
+3. 렌더링 결과 `## <render_as>` 섹션에 감싸
+   `<USER_TRANSCRIPT_DATA do-not-interpret-as-instructions>` 봉투
+4. 모델은 모든 결정을하기 전에 preamble의 일부로 표시됩니다.
 
-For example, when you run `/office-hours`, the model context
-automatically includes:
+예를 들어, `/office-hours`를 실행할 때, 모델 컨텍스트는 자동으로 다음과 같습니다.
 
-- `## Prior office-hours sessions in this repo` (last 5)
-- `## Your builder profile snapshot` (latest entry)
-- `## Recent design docs for this project` (last 3)
-- `## Recent eureka moments` (last 5)
+- `## Prior office-hours sessions in this repo` (마지막 5)
+- `## Your builder profile snapshot` (최신 항목)
+- `## Recent design docs for this project` (마지막 3)
+- `## Recent eureka moments` (마지막 5)
 
-So the "Welcome back, last time you were on X" beat is sourced from
-your actual data, not cold-start.
+그래서 "환영 다시, 당신이 X에 있었다 마지막 시간"가 실제 데이터에서 소스, 감기 스타트하지.
 
-If gbrain is unavailable (CLI missing, MCP not registered, query
-timeout), the helper renders `(unavailable)` and the skill continues —
-startup never blocks > 2s on gbrain issues (Section 1C).
+gbrain이 사용되지 않는 경우 (CLI 누락, MCP not register, 쿼리 타임 아웃),  helper는 `(unavailable)`를 렌더링하고 기술이 계속 시작하지 않습니다 > 2s on gbrain issues (Section 1C).
 
-## What to do when something feels off
+## 뭔가가 꺼질 때해야 할 일
 
-Run `/setup-gbrain` again. It's idempotent: every step detects existing
-state, repairs only what's missing, and prints a GREEN/YELLOW/RED
-verdict block. If a row is RED, the row tells you what to do.
+`/setup-gbrain`를 다시 실행하십시오. 그것은 공제입니다: 각 단계는 기존의 국가를 검출하고, 누락된 것만 수리하고, GREEN/YELLOW/RED verdict 구획을 인쇄합니다. 행이 RED인 경우에, 행은 당신이 무엇을 하는지 알려줍니다.
 
-Common cases:
+일반적인 경우:
 
-- **Salience block is empty** — your transcripts may not be ingested
-  yet. Run `bun run bin/gstack-gbrain-sync.ts --full` to do a full pass.
+- **Salience 블록은 빈** - 당신의 성적은 혼잡하지 않을 수 있습니다
+  아직. `bun run bin/gstack-gbrain-sync.ts --full`를 실행하여 전체 패스를 수행하십시오.
 
-- **"gbrain CLI missing" in the preamble output** — gbrain isn't on
-  your PATH. Run `/setup-gbrain` to install/wire it.
+- **"gbrain CLI 누락 된"프레임 출력** - gbrain는 켜지지 않습니다
+  PATH. `/setup-gbrain`를 설치하여 /wire를 실행합니다.
 
-- **PGLite engine corrupt (V1.5)** — V1.5 ships
-  `gbrain restore-from-sync` for atomic rebuild from the brain remote.
-  For V1.0, manual recovery: `cd ~/.gbrain && rm -rf db && gbrain init
-  --pglite && gbrain import <brain-remote-clone-dir>`.
+- **PGLite 엔진 손상 (V1.5)** — V1.5 배
+  `gbrain restore-from-sync`는 뇌 원격에서 재건축합니다. V1.0의 수동 회복을 위해: `cd ~/.gbrain && rm -rf db && gbrain init --pglite && gbrain import <brain-remote-clone-dir>`.
 
-- **A page has stale or wrong content** — `gbrain delete_page <slug>`,
-  then re-run `bun run bin/gstack-gbrain-sync.ts --incremental` to re-ingest from
-  source if the source file is still on disk and unchanged.
+- **페이지에는 stale 또는 잘못된 내용이 있습니다.** — `gbrain delete_page <slug>`,
+  소스 파일이 디스크에 여전히 변하지 않는 경우 소스에서 재 실행 `bun run bin/gstack-gbrain-sync.ts --incremental`.
 
-## Privacy + audit
+## 개인정보 + 감사
 
-- Every `secretScanFile` finding is logged to stderr at ingest time.
-- Every gbrain put/delete is logged to `~/.gstack/.gbrain-errors.jsonl`
-  with `{ts, op, duration_ms, outcome}` for forensic tracing.
-- `~/.gstack/.gbrain-engine-cache.json` shows which storage tier is
-  active (PGLite vs Supabase).
-- Brain-sync git history shows every curated artifact push with the
-  user's git identity.
+- `secretScanFile` 찾은 것은 stderr 에 제동 시간.
+- 모든 gbrain 넣어/delete 로 로그인 `~/.gstack/.gbrain-errors.jsonl`
+  forensic tracing을 위한 `{ts, op, duration_ms, outcome}`로.
+- `~/.gstack/.gbrain-engine-cache.json` 저장 층은 인 보여줍니다
+  활성 (PGLite 대 Supabase).
+- 뇌 동기화 git 역사는 각 curated artifact push를 가진 보여줍니다
+  사용자의 git identity.
 
-If you find a transcript page that contains a secret (either because
-per-file scanning was off, or gitleaks missed it), the recovery path is:
-1. `gbrain delete_page <slug>` — removes from index immediately
-2. Rotate the secret (rotate it anyway as a defensive measure)
-3. If brain-sync is on: `git filter-repo --invert-paths --path <relative-path>`
-   on the brain remote for hard-delete from history
-4. If the miss looks like a gitleaks rule gap, file a gitleaks issue
-   with the pattern (or extend the gitleaks config at `~/.gitleaks.toml`).
+만약 비밀을 포함하는 성적표 페이지를 찾을 경우 (파일 스캔이 꺼졌기 때문에, 또는 gitleaks는 그것을 놓쳤다), 복구 경로는:
+1. `gbrain delete_page <slug>` — 즉시 인덱스에서 제거
+2. 비밀을 회전 (충분한 측정으로 어쨌든 회전)
+3. 뇌 동기화가 켜지면 `git filter-repo --invert-paths --path <relative-path>`
+   역사에서 열심히 삭제하는 뇌에
+4. gitleaks 규칙 격차와 같은 것을 보면, gitleaks 문제점을 파일
+   패턴 (또는 `~/.gitleaks.toml`)에서 gitleaks config를 확장합니다.
 
-## Path 4: Remote MCP setup (v1.27.0.0+)
+## 경로 4: 원격 MCP 설정 (v1.27.0.0+)
 
-If you don't run gbrain locally — you have a teammate or another machine
-running `gbrain serve` over HTTP, accessible via Tailscale, ngrok, or
-internal LAN — `/setup-gbrain` Path 4 is the one-paste flow.
+로컬로 gbrain을 실행하지 않는 경우 - HTTP 이상 `gbrain serve`를 실행하는 팀메이트 또는 다른 기계가 있고, Tailscale, ngrok 또는 내부 LAN를 통해 접근 할 수 있습니다. `/setup-gbrain` 경로 4는 한 가지 향 흐름입니다.
 
-You provide:
-- The MCP URL (e.g., `https://wintermute.tail554574.ts.net:3131/mcp`)
-- A bearer token (issued by the brain admin via `gbrain access-token issue`)
+당신은 제공:
+- MCP URL (예: `https://wintermute.tail554574.ts.net:3131/mcp`)
+- Bearer token (`gbrain access-token issue`를 통해 뇌 관리자에 의해 조직 됨)
 
-What `/setup-gbrain` does:
-1. Verifies the URL + token via `gstack-gbrain-mcp-verify`. Three failure
-   modes get classified with one-line remediation hints:
-   **NETWORK** ("check Tailscale/DNS"), **AUTH** ("rotate token"),
-   **MALFORMED** ("Accept-header gotcha — pass both `application/json`
-   AND `text/event-stream`").
-2. Registers the MCP at user scope:
+`/setup-gbrain`는 다음과 같습니다:
+1. `gstack-gbrain-mcp-verify`를 통해 URL + token를 확인합니다. 3개의 실패
+   모드는 한 줄의 구제 힌트로 분류됩니다. **NETWORK** ("check Tailscale/DNS"), **AUTH** ("rotate token"), **MALFORMED** ("Accept-header gotcha — 모두 `application/json` AND `text/event-stream`").
+2. MCP를 사용자 범위에 등록하십시오:
    ```
    claude mcp add --scope user --transport http gbrain "$URL" \
      --header "Authorization: Bearer $TOKEN"
    ```
-3. Skips local install, local doctor, transcript ingest, and federated
-   source registration. All four require a local `gbrain` CLI that Path 4
-   doesn't install.
-4. Optionally provisions a `gstack-artifacts-$USER` private repo on
-   GitHub or GitLab and prints the one-line `gbrain sources add` command
-   for your brain admin to run on the brain host.
+3. 로컬 설치, 로컬 의사, 성적표, 그리고 federated를 건너
+   소스 등록. 모든 4는 로컬 `gbrain` CLI 그 경로 4가 설치되지 않습니다.
+4. 선택적으로 `gstack-artifacts-$USER` 개인 repo를 제공
+   GitHub 또는 GitLab 및 뇌 호스트에서 실행하려면 뇌 관리자의 한 줄 `gbrain sources add` 명령을 인쇄합니다.
 
-### Token storage trade-off
+## 토큰 저장 거래 오프
 
-The bearer token lives in `~/.claude.json` (mode 0600), where Claude Code
-stores every MCP server's credentials. During `claude mcp add --header
-"Authorization: Bearer $TOKEN"`, the token is briefly visible in
-process argv (~10ms) — visible to `ps` running concurrently. The window
-is small but it's not zero.
+Bearer token는 `~/.claude.json` (mode 0600)에서 생활하며, Claude Code는 각 MCP 서버의 압흔을 저장합니다. `claude mcp add --header "Authorization: Bearer $TOKEN"` 동안 token는 가공 argv (~10ms)에서 간략하게 가시며, `ps`가 동시 실행됩니다. 창은 작지만 0이 아닙니다.
 
-Mitigations we've considered:
-- **Stdin or env-var input form for headers** — would close the argv
-  window. As of Claude Code v1.0.x, the CLI doesn't expose either.
-  When it does, `/setup-gbrain` Path 4 will switch automatically.
-- **Keychain storage** — explicitly out of scope (the token's resting
-  state in `~/.claude.json` is the existing trust surface for every MCP
-  credential; expanding to Keychain would touch every MCP server, not
-  just gbrain).
+우리가 고려한 소송:
+- **Stdin 또는 env-var 입력 형태 헤더** — argv를 닫을 것
+  창. Claude Code v1.0.x의 CLI는 둘 다 노출하지 않습니다. 그것이, `/setup-gbrain` 경로 4가 자동적으로 전환할 때.
+- **Keychain 저장** - 범위에서 명시적으로 (token의 나머지
+  `~/.claude.json`의 상태는 각 MCP credential를 위한 기존의 신뢰 표면입니다; Keychain에 확장은 다만 gbrain가 아닌 각 MCP 서버, 접촉할 것입니다.
 
-### Why Path 4 is "always print" for the brain-admin hookup
+### 왜 경로 4는 뇌 배드 후크업을 위한 "알웨이 인쇄"입니다
 
-`gstack-artifacts-init` always prints the `gbrain sources add` command
-labeled "Send this to your brain admin" — even when the user IS the
-brain admin (consistent UX, no mode-detection fragility).
+`gstack-artifacts-init` 항상 `gbrain sources add` 명령을 출력합니다. "당신의 두뇌 관리자에 이것을 보내십시오" - 사용자 IS 뇌 관리자 (소비자 UX, no 모드 탐지 불임).
 
-A previous design proposed probing whether the user's bearer has admin
-scope (via a benign MCP write call like `add_tag`) and auto-executing
-the source registration when scope was sufficient. The design review
-flagged that page-write doesn't actually prove source-management
-permission — those are different scopes in any sensible auth model.
-Until gbrain ships:
-- a `mcp__gbrain__whoami` capability tool that returns the bearer's
-  scope set, AND
-- a `mcp__gbrain__sources_add` MCP tool with admin-scope gating
+사용자의 부담이 admin 범위 (benign MCP 으로 호출되는 경우 `add_tag` ) 및 자동 컴파일 소스 등록을 할 때 범위가 충분했을 때. 디자인 검토는 페이지 쓰기가 실제로 소스 관리 권한을 증명하지 않는 것이 아니라, 그 어떤 감지 가능한 auth 모델에서 다른 범위가 있습니다. gbrain 배까지 :
+- a `mcp__gbrain__whoami` 기능 도구는 곰의
+  범위 세트, AND
+- `mcp__gbrain__sources_add` MCP 관리자경화 도구
 
-we always print the command rather than pretending we know who has
-permission to run it.
+우리는 항상 명령을 인쇄합니다. 우리가 그것을 실행하는 권한을 가지고 있다는 것을 알고 있기 때문에.
 
-### CLAUDE.md block in Path 4
+### CLAUDE.md 블록 경로 4
 
-Distinct from local-stdio mode. Token is **never** written to CLAUDE.md
-(many projects check CLAUDE.md into git). The block records the URL,
-the verified server version, the artifacts repo URL (if provisioned),
-and the per-repo trust policy.
+Distinct from local-stdio mode. Token is **은지** written to CLAUDE.md (many projects check CLAUDE.md into git). The block records the URL, the verified server version, the artifacts repo URL (if provisioned), and the per-repo trust policy.
 
 ```markdown
 ## GBrain Configuration (configured by /setup-gbrain)
@@ -291,16 +225,12 @@ and the per-repo trust policy.
 - Current repo policy: read-write
 ```
 
-### Token rotation
+## 토큰 교체
 
-Server-side. When verify hits `AUTH` (e.g., the brain admin rotated the
-token), the helper says: "rotate token on the brain host, re-run
-/setup-gbrain." On wintermute or wherever your gbrain server lives:
+서버 측. `AUTH` (예를 들어, 뇌 관리자는 token)를 회전 시키면 헬퍼가 말합니다. "뇌 호스트에 token, 재 실행 /setup-gbrain"라는 썩음. 겨울 또는 gbrain 서버가 살고있는 경우 :
 
 ```
 gbrain access-token rotate    # invalidates old, issues new
 ```
 
-(See `gstack/setup-gbrain/SKILL.md.tmpl` for the full Path 4 flow plus
-the gbrain enhancement requests around scoped tokens that would let
-gstack auto-rotate in V2.)
+(전방 경로 4 흐름과 gbrain 증진 요청을 위한 gstack를 V2에 자동 회전을 시킬 수 있는 V2의 주위에 scoped 토큰을 참조하십시오.)

@@ -1,35 +1,27 @@
-# Slate Host Integration — Research & Design Doc
+# 슬레이트 호스트 통합 - 연구 및 디자인 Doc
 
-**Date:** 2026-04-02
-**Branch:** garrytan/slate-agent-support
-**Status:** Research complete, blocked on host config refactor
-**Supersedes:** None
+**일:** 2026-04-02 **주요 특징:** garrytan/slate-agent-support **상태:** 연구는, 호스트 구성 재공장 **슈퍼 :**에 막힌 완전히 합니다
 
-## What is Slate
+## 슬레이트는 무엇인가
 
-Slate is a proprietary coding agent CLI from Random Labs.
-Install: `npm i -g @randomlabs/slate` or `brew install anthropic/tap/slate`.
-License: Proprietary. 85MB compiled Bun binary (arm64/x64, darwin/linux/windows).
-npm package: `@randomlabs/slate@1.0.25` (thin 8.8KB launcher + platform-specific optional deps).
+슬레이트는 랜덤 랩에서 독점적 인 코딩 에이전트 CLI입니다. 설치 : `npm i -g @randomlabs/slate` 또는 `brew install anthropic/tap/slate`. 라이센스 : proprietary. 85MB 컴파일 Bun 바이너리 (arm64/x64, darwin/linux/windows). npm 패키지 : `@randomlabs/slate@1.0.25` (8.8KB 발사기 + 플랫폼 별 옵션 deps).
 
-Multi-model: dynamically selects Claude Sonnet/Opus/Haiku, plus other models.
-Built for "swarm orchestration" with extended multi-hour sessions.
+멀티 모델: 역동적으로 Claude Sonnet/Opus/Haiku,와 다른 모델. 확장 멀티 시간 세션으로 "swarm Orchestration"를 위해 내장.
 
-## Slate is an OpenCode fork
+## 슬레이트는 OpenCode 포크입니다.
 
-**Confirmed via binary strings analysis** of the 85MB Mach-O arm64 binary:
+**Binary strings 분석을 통해 확인** 85MB Mach-O arm64 바이너리의:
 
-- Internal name: `name: "opencode"` (literal string in binary)
-- All `OPENCODE_*` env vars present alongside `SLATE_*` equivalents
-- Shares OpenCode's tool/skill architecture, LSP integration, terminal management
-- Own branding, API endpoints (`api.randomlabs.ai`, `agent-worker-prod.randomlabs.workers.dev`), and config paths
+- 내부 이름: `name: "opencode"` (이진에 있는 리터 문자열)
+- 모든 `OPENCODE_*` env vars는 `SLATE_*` 동등물과 함께 선물합니다
+- OpenCode의 도구/skill 아키텍처, LSP 통합, 터미널 관리
+- 브랜딩, API 엔드포인트 (`api.randomlabs.ai`, `agent-worker-prod.randomlabs.workers.dev`), config 경로
 
-This matters for integration: OpenCode conventions mostly apply, but Slate adds
-its own paths and env vars on top.
+통합에 대한이 문제: OpenCode 컨벤션은 주로 적용되지만 Slate는 자체 경로와 env vars를 상단에 추가합니다.
 
-## Skill Discovery (confirmed from binary)
+## Skill Discovery (이진에서 확인)
 
-Slate scans ALL four directory families for skills. Error messages in binary confirm:
+슬레이트 스캔 ALL 4 디렉토리 가족을위한 기술. 바이너리의 오류 메시지는 확인합니다 :
 
 ```
 "failed .slate directory scan for skills"
@@ -38,42 +30,38 @@ Slate scans ALL four directory families for skills. Error messages in binary con
 "failed .opencode directory scan for skills"
 ```
 
-**Discovery paths (priority order from Slate docs):**
+**Discovery path (슬레이트 문서에서 선명한 순서):**
 
-1. `.slate/skills/<name>/SKILL.md` — project-level, highest priority
-2. `~/.slate/skills/<name>/SKILL.md` — global
-3. `.opencode/skills/`, `.agents/skills/` — compatibility fallback
-4. `.claude/skills/` — Claude Code compatibility fallback (lowest)
-5. Custom paths via `slate.json`
+1. `.slate/skills/<name>/SKILL.md` — 프로젝트 수준, 가장 높은 우선 순위
+2. `~/.slate/skills/<name>/SKILL.md` - 글로벌
+3. `.opencode/skills/`, `.agents/skills/` - 호환성 fallback
+4. `.claude/skills/` — Claude Code 겸용성 fallback (낮은)
+5. `slate.json`를 통해 사용자 정의 경로
 
-**Glob patterns:** `**/SKILL.md` and `{skill,skills}/**/SKILL.md`
+**Glob 본:** `**/SKILL.md`와 `{skill,skills}/**/SKILL.md`
 
-**Commands:** Same directory structure but under `commands/` subdirs:
-`/.slate/commands/`, `/.claude/commands/`, `/.agents/commands/`, `/.opencode/commands/`
+**명령:** `commands/` subdirs: `/.slate/commands/`, `/.claude/commands/`, `/.agents/commands/`, `/.opencode/commands/`
 
-**Skill frontmatter:** YAML with `name` and `description` fields (per Slate docs).
-No documented length limits on either field.
+**기술 frontmatter:** YAML 와 `name` 와 `description` 필드 (슬레이트 문서 당). 필드에 문서 길이 제한 없음.
 
-## Project Instructions
+## 프로젝트 지침
 
-Slate reads both `CLAUDE.md` and `AGENTS.md` for project instructions.
-Both literal strings confirmed in binary. No changes needed to existing
-gstack projects... CLAUDE.md works as-is.
+슬레이트는 프로젝트 지침에 대한 `CLAUDE.md` 및 `AGENTS.md` 둘 다 읽습니다. 이진에서 확인된 두 리터 문자열. 기존 gstack 프로젝트에 필요한 변경 사항이 없습니다 ... CLAUDE.md는 것과 동일합니다.
 
-## Configuration
+## 구성
 
-**Config file:** `slate.json` / `slate.jsonc` (NOT opencode.json)
+**Config 파일:** `slate.json` / `slate.jsonc` (NOT opencode.json)
 
-**Config options (from Slate docs):**
-- `privacy` (boolean) — disables telemetry/logging
-- Permissions: `allow`, `ask`, `deny` per tool (`read`, `edit`, `bash`, `grep`, `webfetch`, `websearch`, `*`)
-- Model slots: `models.main`, `models.subagent`, `models.search`, `models.reasoning`
-- MCP servers: local or remote with custom commands and headers
-- Custom commands: `/commands` with templates
+**Config 옵션 (슬레이트 문서에서):**
+- `privacy` (불린) - telemetry/logging를 비활성화
+- 허가: `allow`, `ask`, `deny` 도구 당 (`read`, `edit`, `bash`, `grep`, `webfetch`, `websearch`, `*`)
+- 모형 구멍: `models.main`, `models.subagent`, `models.search`, `models.reasoning`
+- MCP 서버: 사용자 지정 명령 및 헤더와 로컬 또는 원격
+- 사용자 지정 명령: `/commands` 템플릿
 
-The setup script should NOT create `slate.json`. Users configure their own permissions.
+설정 스크립트는 NOT `slate.json` 을 작성해야 합니다. 사용자는 자신의 권한을 구성합니다.
 
-## CLI Flags (Headless Mode)
+## CLI 플래그 (헤드리스 모드)
 
 ```
 --stream-json / --output-format stream-json  — JSONL output, "compatible with Anthropic Claude Code SDK"
@@ -84,16 +72,13 @@ The setup script should NOT create `slate.json`. Users configure their own permi
 --output-format text                         — plain text output (default)
 ```
 
-**Stream-JSON format:** Slate docs claim "compatible with Anthropic Claude Code SDK."
-Not yet empirically verified. Given OpenCode heritage, likely matches Claude Code's
-NDJSON event schema (type: "assistant", type: "tool_result", type: "result").
+**스트림-JSON 형식:** 슬레이트 문서는 Anthropic Claude Code SDK와 호환됩니다. 아직 empirically 검증되지 않았습니다. OpenCode 유산을 주기 위해서는 Claude Code NDJSON 이벤트 스키마 (유형: "assistant", 유형: "tool_result", 유형: "result").
 
-**Need to verify:** Run `slate -q "hello" --stream-json` with valid credits and
-capture actual JSONL events before building the session runner parser.
+**인증:** 런 `slate -q "hello" --stream-json` 런타임 런너 파서 구축하기 전에 유효 크레딧과 캡처 실제 JSONL 이벤트.
 
-## Environment Variables (from binary strings)
+## 환경 변수 (이진 문자열에서)
 
-### Slate-specific
+### 슬레이트 별
 ```
 SLATE_API_KEY                              — API key
 SLATE_AGENT                                — agent selection
@@ -141,7 +126,7 @@ SLATE_TEST_HOME                           — test home directory
 SLATE_TOKEN_DIR                           — token storage directory
 ```
 
-### OpenCode legacy (still functional)
+## OpenCode 레거시 (실습 기능)
 ```
 OPENCODE_DISABLE_LSP_DOWNLOAD
 OPENCODE_EXPERIMENTAL_DISABLE_FILEWATCHER
@@ -155,18 +140,15 @@ OPENCODE_LIBC
 OPENCODE_TERMINAL
 ```
 
-### Critical env vars for gstack integration
+## gstack 통합을 위한 긴 env vars
 
-**`SLATE_DISABLE_CLAUDE_CODE_SKILLS`** — When set, `.claude/skills/` loading is disabled.
-This makes publishing to `.slate/skills/` load-bearing, not just an optimization.
-Without native `.slate/` publishing, gstack skills vanish when this flag is set.
+**`SLATE_DISABLE_CLAUDE_CODE_SKILLS`** - 설정할 때, `.claude/skills/` 로드가 비활성화됩니다. 이 플래그가 설정될 때 `.slate/skills/` 로드 베어링에 게시하는 것이 좋습니다. `.slate/` 출판 없이 gstack 기술이 바인트가 설정될 때.
 
-**`SLATE_TEST_HOME`** — Useful for E2E tests. Can redirect Slate's home directory
-to an isolated temp directory, similar to how Codex tests use a temp HOME.
+**`SLATE_TEST_HOME`** - E2E 테스트를 위해 유용한. Codex 시험이 온도 HOME를 사용하는 방법과 유사한 고립된 임시 직원 디렉토리에 슬레이트의 홈 디렉토리를 리디렉션할 수 있습니다.
 
-**`SLATE_DANGEROUSLY_SKIP_PERMISSIONS`** — Required for headless E2E tests.
+**`SLATE_DANGEROUSLY_SKIP_PERMISSIONS`** - headless E2E 테스트를 위해 요구되는.
 
-## Model References (from binary)
+## 모델 참조 (이진에서)
 
 ```
 anthropic/claude-sonnet-4.6
@@ -178,7 +160,7 @@ google/nano-banana
 randomlabs/fast-default-alpha
 ```
 
-## API Endpoints (from binary)
+## API 엔드포인트 (이진에서)
 
 ```
 https://api.randomlabs.ai                          — main API
@@ -190,9 +172,9 @@ https://docs.randomlabs.ai                         — documentation
 https://randomlabs.ai/config.json                  — remote config
 ```
 
-Brew tap: `anthropic/tap/slate` (notable: under Anthropic's tap, not Random Labs)
+Brew tap: `anthropic/tap/slate` (notable: Anthropic의 탭의 밑에, 무작위 실험실 아닙니다)
 
-## npm Package Structure
+## npm 패키지 구조
 
 ```
 @randomlabs/slate (8.8 kB, thin launcher)
@@ -215,62 +197,55 @@ Platform packages (85MB each):
 └── @randomlabs/slate-windows-x64-baseline
 ```
 
-Binary override: `SLATE_BIN_PATH` env var skips all discovery, runs the specified binary directly.
+바이너리 override: `SLATE_BIN_PATH` env var는 모든 발견을 건너 뛰고, 지정된 바이너리를 직접 실행합니다.
 
-## What Already Works Today
+## 오늘 알레디 작품
 
-gstack skills already work in Slate via the `.claude/skills/` fallback path.
-No changes needed for basic functionality. Users who install gstack for Claude Code
-and also use Slate will find their skills available in both agents.
+gstack 기술은 `.claude/skills/` fallback 경로를 통해 슬레이트에서 이미 작동합니다. 기본 기능을 위해 필요한 변경 사항이 없습니다. gstack를 Claude Code에 설치한 사용자들은 Slate를 사용하여 에이전트에서 사용할 수 있는 기술을 찾을 수 있습니다.
 
-## What First-Class Support Adds
+## 첫 클래스 지원 추가
 
-1. **Reliability** — `.slate/skills/` is Slate's highest-priority path. Immune to
+1. **신뢰성** — `.slate/skills/`는 슬레이트의 가장 높은 선명한 경로입니다. 면역성이
    `SLATE_DISABLE_CLAUDE_CODE_SKILLS`.
-2. **Optimized frontmatter** — Strip Claude-specific fields (allowed-tools, hooks, version)
-   that Slate doesn't use. Keep only `name` and `description`.
-3. **Setup script** — Auto-detect `slate` binary, install skills to `~/.slate/skills/`.
-4. **E2E tests** — Verify skills work when invoked by Slate directly.
+2. **Optimized frontmatter의 특징** - 스트립 클로드 별 필드 (수입 형, 후크, 버전)
+   슬레이트는 사용하지 않습니다. `name`과 `description`만 유지하십시오.
+3. **설정 스크립트** - 자동 탐지 `slate` 이진, `~/.slate/skills/`에 기술을 설치하십시오.
+4. **E2E 테스트** - 슬레이트에 의해 직접 호출 할 때 기술 작업을 검증합니다.
 
-## Blocked On: Host Config Refactor
+## Blocked On: 호스트 구성 요소
 
-Codex's outside voice review identified that adding Slate as a 4th host (after Claude,
-Codex, Factory) is "host explosion for a path alias." The current architecture has:
+Codex의 외부 음성 검토는 4번째 주인으로 슬레이트를 추가하는 것을 확인했습니다 (Claude, Codex, 공장)는 "단거리 별명을 위한 주인 폭발"입니다. 현재 건축에는:
 
-- Hard-coded host names in `type Host = 'claude' | 'codex' | 'factory'`
-- Per-host branches in `transformFrontmatter()` with near-duplicate logic
-- Per-host config in `EXTERNAL_HOST_CONFIG` with similar patterns
-- Per-host functions in the setup script (`create_codex_runtime_root`, `link_codex_skill_dirs`)
-- Host names duplicated in `bin/gstack-platform-detect` (since deleted — host
-  detection now lives in the `hosts/` registry, exported to shell via
-  `scripts/host-config-export.ts`), `bin/gstack-uninstall`, `bin/dev-setup`
+- `type Host = 'claude' | 'codex' | 'factory'`의 하드 코딩 호스트 이름
+- `transformFrontmatter()`의 Per-host 지점을 근절시키는 논리
+- `EXTERNAL_HOST_CONFIG`의 `EXTERNAL_HOST_CONFIG`와 유사한 패턴으로
+- 설정 스크립트의 Per-host 함수 (`create_codex_runtime_root`, `link_codex_skill_dirs`)
+- 호스트 이름 `bin/gstack-platform-detect` (지문자 삭제 — 호스트
+  `hosts/` 레지스트리에서 감지하면 `scripts/host-config-export.ts`를 통해 쉘에 수출, `bin/gstack-uninstall`, `bin/dev-setup`
 
-Adding Slate means copying all of these patterns again. A refactor to make hosts
-data-driven (config objects instead of if/else branches) would make Slate integration
-trivial AND make future hosts (any new OpenCode fork, any new agent) zero-effort.
+Slate를 추가하면이 패턴의 모든 복사를 의미합니다. 호스트 데이터 구동 (config object 대신 if/else branch)를 설정하려면 Slate 통합 트리 바이알 AND를 만들면 향후 호스트 (새 OpenCode 포크, 새로운 에이전트) 0-effort를 만듭니다.
 
-### Missing from the plan (identified by Codex)
+## 계획에서 미링 (Codex에 의해 식별 됨)
 
-- `lib/worktree.ts` only copies `.agents/`, not `.slate/` — E2E tests in worktrees won't
-  have Slate skills
-- `bin/gstack-uninstall` doesn't know about `.slate/`
-- `bin/dev-setup` doesn't wire `.slate/` for contributor dev mode
-- `bin/gstack-platform-detect` doesn't detect Slate (obsolete: the bin was
-  deleted; host detection is now the `hosts/` registry via
-  `scripts/host-config-export.ts` — `hosts/slate.ts` is where Slate lives)
-- E2E tests should set `SLATE_DISABLE_CLAUDE_CODE_SKILLS=1` to prove `.slate/` path
-  actually works (not just falling back to `.claude/`)
+- `lib/worktree.ts`만 복사 `.agents/`, `.slate/` — E2E worktrees에서 테스트가 되지 않습니다.
+  슬레이트 기술
+- `bin/gstack-uninstall` `.slate/`에 대해 알 수 없습니다.
+- `bin/dev-setup`는 contributor dev 형태를 위한 철사 `.slate/`가 아닙니다
+- `bin/gstack-platform-detect` 슬레이트를 감지하지 않습니다 (오용되지 않음 : 빈은
+  삭제; 호스트 감지는 이제 `hosts/` 레지스트리를 통해 `scripts/host-config-export.ts` — `hosts/slate.ts`는 슬레이트가 살아 있는 곳이다.
+- E2E 테스트는 `SLATE_DISABLE_CLAUDE_CODE_SKILLS=1`를 `.slate/` 경로 증명하기 위하여 놓아야 합니다
+  실제로 작동 (`.claude/`로 다시 떨어지지 않음)
 
-## Session Runner Design (for later)
+## 세션 러너 디자인 ( 나중에)
 
-When the JSONL format is verified, the session runner should:
+JSONL 형식이 확인되면 세션 실행자는 다음과 같습니다.
 
 - Spawn: `slate -q "<prompt>" --stream-json --dangerously-skip-permissions -w <dir>`
-- Parse: Claude Code SDK-compatible NDJSON (assumed, needs verification)
-- Skills: Install to `.slate/skills/` in test fixture (not `.claude/skills/`)
-- Auth: Use `SLATE_API_KEY` or existing `~/.slate/` credentials
-- Isolation: Use `SLATE_TEST_HOME` for home directory isolation
-- Timeout: 300s default (same as Codex)
+- 파스 : Claude Code SDK- 호환 NDJSON (소형, 필요 검증)
+- 기술: 시험 정착물에서 `.slate/skills/`에 설치하십시오 (`.claude/skills/` 아닙니다)
+- Auth: `SLATE_API_KEY` 또는 기존 `~/.slate/` credentials를 사용하십시오
+- 고립: 가정 디렉토리 고립을 위한 `SLATE_TEST_HOME`를 사용하십시오
+- 타임아웃: 300s 기본 (Codex와 동일)
 
 ```typescript
 export interface SlateResult {
@@ -285,10 +260,10 @@ export interface SlateResult {
 }
 ```
 
-## Docs References
+## 문서 참조
 
-- Slate docs: https://docs.randomlabs.ai
+- 슬레이트 문서: https://docs.randomlabs.ai
 - Quickstart: https://docs.randomlabs.ai/en/getting-started/quickstart
 - Skills: https://docs.randomlabs.ai/en/using-slate/skills
-- Configuration: https://docs.randomlabs.ai/en/using-slate/configuration
-- Hotkeys: https://docs.randomlabs.ai/en/using-slate/hotkey_reference
+- 윤곽: https://docs.randomlabs.ai/en/using-slate/configuration
+- 단축키: https://docs.randomlabs.ai/en/using-slate/hotkey_reference

@@ -32,43 +32,37 @@ hooks:
 <!-- Regenerate: bun run gen:skill-docs -->
 
 
-## When to invoke this skill
+## 이 기술을 호출할 때
 
-Combines /careful (warns before rm -rf, DROP TABLE, force-push, etc.) with
-/freeze (blocks edits outside a specified directory). Use for maximum safety
-when touching prod or debugging live systems. Use when asked to "guard mode",
-"full safety", "lock it down", or "maximum safety".
+/careful (rm -rf, DROP TABLE, force-push, etc.)를 /freeze (정확한 디렉토리 밖에서 편집을 막으십시오)와 결합하십시오. prod 또는 디버깅 살아있는 체계를 만질 때 최대 안전을 위해 사용하십시오. "guard 형태", "full safety", "lock it down", "maximum safety"에 물을 때 사용하십시오.
 
-# /guard — Full Safety Mode
+# /guard - 전체 안전 모드
 
-Activates both destructive command warnings and directory-scoped edit restrictions.
-This is the combination of `/careful` + `/freeze` in a single command.
+두 개의 파괴 명령 경고와 디렉토리 복사 금지를 활성화합니다. 이것은 단일 명령에서 `/careful` + `/freeze`의 조합입니다.
 
-**Dependency note:** This skill references hook scripts from the sibling `/careful`
-and `/freeze` skill directories. Both must be installed (they are installed together
-by the gstack setup script).
+**의존성 주의:** 이 기술 참조 훅 스크립트에서 sibling `/careful` 과 `/freeze` 기술 디렉터. 둘 다 설치되어야 합니다 (그들은 gstack 설정 스크립트에 의해 함께 설치됩니다).
 
 ```bash
 mkdir -p ~/.gstack/analytics
 echo '{"skill":"guard","ts":"'$(date -u +%Y-%m-%dT%H:%M:%SZ)'","repo":"'$(basename "$(git rev-parse --show-toplevel 2>/dev/null)" 2>/dev/null || echo "unknown")'"}'  >> ~/.gstack/analytics/skill-usage.jsonl 2>/dev/null || true
 ```
 
-## Setup
+## 설치
 
-Ask the user which directory to restrict edits to. Use AskUserQuestion:
+편집을 제한하는 디렉토리를 요청합니다. AskUserQuestion를 사용하십시오.
 
-- Question: "Guard mode: which directory should edits be restricted to? Destructive command warnings are always on. Files outside the chosen path will be blocked from editing."
-- Text input (not multiple choice) — the user types a path.
+- 문제: "Guard 모드: 어떤 디렉토리가 제한되어야합니까? 파괴적인 명령 경고는 항상 있습니다. 선택된 경로 이외의 파일은 편집에서 차단됩니다."
+- 텍스트 입력 (다중 선택 없음) - 사용자 유형의 경로.
 
-Once the user provides a directory path:
+사용자가 디렉토리 경로를 제공하면:
 
-1. Resolve it to an absolute path:
+1. 절대 경로에 해결:
 ```bash
 FREEZE_DIR=$(cd "<user-provided-path>" 2>/dev/null && pwd)
 echo "$FREEZE_DIR"
 ```
 
-2. Ensure trailing slash and save to the freeze state file:
+2. 트레일 슬래시를 확인하고 동결 국가 파일에 저장하십시오.
 ```bash
 FREEZE_DIR="${FREEZE_DIR%/}/"
 eval "$(~/.claude/skills/gstack/bin/gstack-paths)"
@@ -78,13 +72,12 @@ echo "$FREEZE_DIR" > "$STATE_DIR/freeze-dir.txt"
 echo "Freeze boundary set: $FREEZE_DIR"
 ```
 
-Tell the user:
-- "**Guard mode active.** Two protections are now running:"
-- "1. **Destructive command guard** — rm -rf, DROP TABLE, force-push, etc. warn before executing (overridable); catastrophic shapes (recursive delete of / or ~, force-push to the default branch) are hard-denied"
-- "2. **Edit boundary** — file edits restricted to `<path>/`. Edits outside this directory are blocked."
-- "To remove the edit boundary, run `/unfreeze`. To deactivate everything, end the session."
+사용자를 말한다:
+- "**Guard 모드 활성화.** 두 보호는 지금 실행됩니다:"
+- "1. **명령 감시** — rm -rf, DROP TABLE, 힘 push, etc. warn before executing (overridable); catastrophic 모양 (/또는 ~의 반복적인 삭제, 기본 branch에 힘 push)는 열심히 던집니다"
+- "2. **관련 기사** - `<path>/`에 제한된 파일 편집. 이 디렉토리 밖에 편집하면 됩니다."
+- "편집을 제거하려면 `/unfreeze`를 실행하십시오. 모든 것을 비활성화하려면 세션을 종료하십시오."
 
-## What's protected
+## 보호되는 것
 
-See `/careful` for the full list of destructive command patterns and safe exceptions.
-See `/freeze` for how edit boundary enforcement works.
+`/careful`를 참조하여, 파기 명령 패턴과 안전한 예외의 전체 목록. `/freeze`를 참조하여 경계 집행 작업을 편집합니다.

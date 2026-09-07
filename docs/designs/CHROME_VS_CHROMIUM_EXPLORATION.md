@@ -1,58 +1,58 @@
-# Chrome vs Chromium: Why We Use Playwright's Bundled Chromium
+# Chrome vs Chromium: 왜 우리는 Playwright의 번들 Chromium를 사용합니다.
 
-## The Original Vision
+## 원래 비전
 
-When we built `$B connect`, the plan was to connect to the user's **real Chrome browser** — the one with their cookies, sessions, extensions, and open tabs. No more cookie import. The design called for:
+`$B connect`를 구축하면, 플랜은 사용자 **Chrome 브라우저**에 연결하기 위해 계획되어, 쿠키, 세션, 확장 및 열린 탭과 함께. 더 많은 쿠키 수입이 없습니다.
 
-1. `chromium.connectOverCDP(wsUrl)` connecting to a running Chrome via CDP
+1. `chromium.connectOverCDP(wsUrl)` CDP를 통해 Chrome를 실행하는 연결
 2. Quit Chrome gracefully, relaunch with `--remote-debugging-port=9222`
-3. Access the user's real browsing context
+3. 사용자의 실제 검색 컨텍스트에 액세스
 
-This is why `chrome-launcher.ts` existed (361 LOC of browser binary discovery, CDP port probing, and runtime detection) and why the method was called `connectCDP()`.
+`chrome-launcher.ts`가 존재한 이유입니다 (361 LOC 브라우저 이진 발견의, CDP 항구 probing, 및 runtime 탐지) 그리고 왜 방법 `connectCDP()`이라고 불렸습니다.
 
-## What Actually Happened
+## 실제로 Happened가
 
-Real Chrome silently blocks `--load-extension` when launched via Playwright's `channel: 'chrome'`. The extension wouldn't load. We needed the extension for the side panel (activity feed, refs, chat).
+Real Chrome 침묵으로 블록 `--load-extension` Playwright의 `channel: 'chrome'`를 통해 시작될 때. 연장은 로드하지 않을 것입니다. 우리는 사이드 패널 (activity feed, refs, chat)의 확장을 필요로 합니다.
 
 The implementation fell back to `chromium.launchPersistentContext()` with Playwright's bundled Chromium — which reliably loads extensions via `--load-extension` and `--disable-extensions-except`. But the naming stayed: `connectCDP()`, `connectionMode: 'cdp'`, `BROWSE_CDP_URL`, `chrome-launcher.ts`.
 
-The original vision (access user's real browser state) was never implemented. We launched a fresh browser every time — functionally identical to Playwright's Chromium, but with 361 lines of dead code and misleading names.
+원래의 비전 (사용자의 실제 브라우저 상태)는 결코 구현되지 않았습니다. 우리는 매번 신선한 브라우저를 출시했습니다. - Playwright의 Chromium와 동일하지만, 죽은 코드와 미주리 이름의 361 줄이 있습니다.
 
-## The Discovery (2026-03-22)
+## 디스커버리 (2026-03-22)
 
-During a `/office-hours` design session, we traced the architecture and discovered:
+`/office-hours` 디자인 세션 중, 우리는 건축과 발견을 추적했습니다.
 
-1. `connectCDP()` doesn't use CDP — it calls `launchPersistentContext()`
-2. `connectionMode: 'cdp'` is misleading — it's just "headed mode"
-3. `chrome-launcher.ts` is dead code — its only import was in an unreachable `attemptReconnect()` method
-4. `preExistingTabIds` was designed for protecting real Chrome tabs we never connect to
-5. `$B handoff` (headless → headed) used a different API (`launch()` + `newContext()`) that couldn't load extensions, creating two different "headed" experiences
+1. `connectCDP()`는 CDP를 사용하지 않습니다. `launchPersistentContext()`를 호출합니다.
+2. `connectionMode: 'cdp'`는 misleading입니다 — 그것은 다만 "긴 형태"입니다
+3. `chrome-launcher.ts`는 죽은 코드입니다. 그 유일한 수입은 `attemptReconnect()` 메소드에 속했습니다.
+4. `preExistingTabIds`는 우리가 결코 연결하지 않는 진짜 Chrome 탭을 보호하기를 위해 디자인되었습니다
+5. `$B handoff` (헤드리스 → 헤드)는 다른 API (`launch()` + `newContext()`)를 사용하여 확장을로드 할 수 없으므로 두 가지 다른 "머리" 경험을 만들 수 있습니다.
 
-## The Fix
+## 수정
 
-### Renamed
+## 이름
 - `connectCDP()` → `launchHeaded()`
 - `connectionMode: 'cdp'` → `connectionMode: 'headed'`
 - `BROWSE_CDP_URL` → `BROWSE_HEADED`
 
-### Deleted
+### 삭제
 - `chrome-launcher.ts` (361 LOC)
-- `attemptReconnect()` (dead method)
-- `preExistingTabIds` (dead concept)
-- `reconnecting` field (dead state)
-- `cdp-connect.test.ts` (tests for deleted code)
+- `attemptReconnect()` (드래드 방법)
+- `preExistingTabIds` (드래드 개념)
+- `reconnecting` 필드 (드레드 상태)
+- `cdp-connect.test.ts` (노출 코드 테스트)
 
-### Converged
-- `$B handoff` now uses `launchPersistentContext()` + extension loading (same as `$B connect`)
-- One headed mode, not two
-- Handoff gives you the extension + side panel for free
+## # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+- `$B handoff`는 `launchPersistentContext()` + 연장 선적 (`$B connect`와 같)를 사용합니다
+- 1개의 머리로 한 형태, 2개 아닙니다
+- Handoff는 당신에게 연장 + 측 패널을 무료로 제공합니다
 
-### Gated
-- Sidebar chat behind `--chat` flag
-- `$B connect` (default): activity feed + refs only
-- `$B connect --chat`: + experimental standalone chat agent
+#### 등급
+- `--chat` 플래그 뒤에 사이드바 채팅
+- `$B connect` (과태): 활동 급식 + refs만
+- `$B connect --chat`: + 실험 독립 채 로봇
 
-## Architecture (after)
+## 건축 (후)
 
 ```
 Browser States:
@@ -71,14 +71,14 @@ Data Bridge (sidebar → workspace):
   Workspace reads via $B inbox
 ```
 
-## Why Not Real Chrome?
+## 왜 진짜 Chrome?
 
-Real Chrome blocks `--load-extension` when launched by Playwright. This is a Chrome security feature — extensions loaded via command-line args are restricted in Chromium-based browsers to prevent malicious extension injection.
+Real Chrome 블록 `--load-extension` Playwright에 의해 시작될 때. 이것은 Chrome 보안 기능 - 명령 줄 args를 통해 로드된 확장은 악성 확장 주사를 방지하기 위해 크롬 기반 브라우저에서 제한됩니다.
 
-Playwright's bundled Chromium doesn't have this restriction because it's designed for testing and automation. The `ignoreDefaultArgs` option lets us bypass Playwright's own extension-blocking flags.
+Playwright의 번들 Chromium는 테스트 및 자동화를 위해 디자인되기 때문에 이 제한이 없습니다. `ignoreDefaultArgs` 선택권은 Playwright의 자신의 연장 차단 깃발을 우회할 수 있습니다.
 
-If we ever want to access the user's real cookies/sessions, the path is:
-1. Cookie import (already works via `$B cookie-import`)
-2. Conductor session injection (future — sidebar sends messages to workspace agent)
+사용자의 실제 쿠키/sessions에 접속하려면, 경로는 다음과 같습니다.
+1. 쿠키 가져오기 (`$B cookie-import`를 통해 알레디 작품)
+2. 지휘자 세션 주입 (future — sidebar는 workspace 에이전트에 메시지를 보냅니다)
 
-Not reconnecting to real Chrome.
+실제 크롬에 연결하지 마십시오.

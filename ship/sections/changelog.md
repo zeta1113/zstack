@@ -1,45 +1,43 @@
 <!-- AUTO-GENERATED from changelog.md.tmpl — do not edit directly -->
 <!-- Regenerate: bun run gen:skill-docs -->
-## Step 13: CHANGELOG (auto-generate)
+## 단계 13: CHANGELOG (자동 생성)
 
-1. Read `CHANGELOG.md` header to know the format.
+1. `CHANGELOG.md` 헤더를 읽어 형식을 알 수 있습니다.
 
-2. **First, enumerate every commit on the branch:**
+2. **먼저, 각 지점에 대한 명령을 enumerate:**
    ```bash
    git log <base>..HEAD --oneline
    ```
-   Copy the full list. Count the commits. You will use this as a checklist.
+   전체 목록을 복사합니다. 커밋을 계산합니다. 체크리스트로 이것을 사용할 것입니다.
 
-3. **Read the full diff** to understand what each commit actually changed:
+3. **전체 diff 읽기** 각 커밋이 실제로 변경된 것을 이해하기 위해:
    ```bash
    git diff <base>...HEAD
    ```
 
-4. **Group commits by theme** before writing anything. Common themes:
-   - New features / capabilities
-   - Performance improvements
-   - Bug fixes
-   - Dead code removal / cleanup
-   - Infrastructure / tooling / tests
-   - Refactoring
+4. **그룹은 테마에 의해 커밋** 모든 것을 쓰기 전에. 일반적인 테마:
+   - 새로운 기능 / 기능
+   - 성능 향상
+   - 버그 수정
+   - 죽은 코드 제거 / cleanup
+   - 인프라 / 툴링 / 테스트
+   - 관련 기사
 
-5. **Write the CHANGELOG entry** covering ALL groups:
-   - If existing CHANGELOG entries on the branch already cover some commits, replace them with one unified entry for the new version
-   - Categorize changes into applicable sections:
-     - `### Added` — new features
-     - `### Changed` — changes to existing functionality
-     - `### Fixed` — bug fixes
-     - `### Removed` — removed features
-   - Write concise, descriptive bullet points
-   - Insert after the file header (line 5), dated today
-   - Format: `## [X.Y.Z.W] - YYYY-MM-DD`
-   - **Voice:** Lead with what the user can now **do** that they couldn't before. Use plain language, not implementation details. Never mention TODOS.md, internal tracking, or contributor-facing details.
+5. **CHANGELOG 입력을 씁니다** 덮음 ALL 그룹:
+   - 기존 CHANGELOG 항목이 이미 몇 가지 커밋을 커버하면 새 버전에 대한 통합 된 항목으로 교체하십시오.
+   - 분류는 적용 가능한 단면도로 변화합니다:
+     - `### Added` - 새로운 기능
+     - `### Changed` - 기존의 기능 변경
+     - `### Fixed` - 버그 수정
+     - `### Removed` - 제거된 특징
+   - 간결, 신중한 총알점
+   - 파일 헤더 (라인 5) 후 삽입, 오늘 날짜
+   - 체재: `## [X.Y.Z.W] - YYYY-MM-DD`
+   - **음성:** 사용자가 이전 할 수 없었던 **으로**를 통해 리드합니다. 일반 언어를 사용해서, 구현 세부 정보를 사용하지 마십시오. TODOS.md, 내부 추적, 또는 기여자 세부 정보를 언급하지 마십시오.
 
-6. **Cross-check:** Compare your CHANGELOG entry against the commit list from step 2.
-   Every commit must map to at least one bullet point. If any commit is unrepresented,
-   add it now. If the branch has N commits spanning K themes, the CHANGELOG must
-   reflect all K themes.
+6. **크로스 체크:** 단계 2에서 커밋 리스트에 대한 CHANGELOG 항목을 비교합니다.
+   모든 커밋은 적어도 하나의 총알 지점으로 맵을 해야 합니다. 어떤 커밋이 비정상되지 않은 경우, 지금 추가하십시오. 지점이 N 커밋이 K 테마를 펼칠 경우, CHANGELOG는 모든 K 테마를 반영해야 합니다.
 
-**Do NOT ask the user to describe changes.** Infer from the diff and commit history.
+**NOT는 사용자가 변경을 설명하도록 요청합니다.** diff에서 Infer와 커밋 역사.
 
 ---

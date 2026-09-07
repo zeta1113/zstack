@@ -1,28 +1,22 @@
-# Simplification Specialist Review Checklist
+# Simplification Specialist Review 목록
 
-Scope: Conditional (DIFF_LINES > 100). This lens hunts unrequested *structure* only: abstractions with one implementation, hand-rolled stdlib, dependencies duplicating platform features, dead flexibility. Coverage gaps are out of scope — the Completeness Gaps checklist category owns those. Never flag a test, an error path, or an edge-case branch for deletion.
-Output: JSON objects, one finding per line. Schema:
-{"severity":"INFORMATIONAL","confidence":N,"path":"file","line":N,"category":"delete|stdlib|native|speculative|shrink","summary":"...","fix":"...","lines_removable":N,"advisory":true,"fingerprint":"path:line:category","specialist":"simplification"}
-Required: severity (always INFORMATIONAL), confidence, path, category, summary, advisory (always true), specialist.
-Optional: line, fix, fingerprint, evidence, lines_removable (the net lines deleted if the fix is applied — the merge step sums this for the `net:` footer).
-If no findings: output `NO FINDINGS` and nothing else.
+범위: 조건 (DIFF_LINES > 100). 이 렌즈는 *의 특징*만 중단하지 않았습니다: 한개의 구현, 수동 stdlib, 종속 duplicating 플랫폼 특징, 죽은 융통성을 가진 요약. 적용 간격은 범위에서 밖으로 있습니다 — 완전한 Gaps 체크리스트 종류는 그들을 소유합니다. 시험, 오류 경로, 또는 deletion를 위한 가장자리 케이스 branch를 결코 기치하십시오. 산출: JSON 목표, 선 당 1개의 발견. {"severity":"INFORMATIONAL","confidence":N,"path":"file","line":N,"category":"delete|stdlib|native|speculative|shrink","summary":"...","fix":"...","lines_이동할 수 있는": N, "advisory":true,"fingerprint":"path:line:category","specialist":"implification"} 필수: severity (always INFORMATIONAL), 신뢰, 경로, 종류, 요약, 고문 (알로 진실한), 전문가. 선택: 선, 고침, 지문, 증거, 선_removable (해결이 적용되는 경우에 그물 선은 -`net:` footer를 위해 이 병합 단계 합계합니다. 발견하지 않은 경우: 출력 `NO FINDINGS` 그리고 다른 아무것도.
 
-Findings from this specialist are ADVISORY: they are excluded from the PR Quality Score and are never auto-applied by Fix-First — the merge step handles both carve-outs.
+이 전문가의 찾기는 ADVISORY: 그들은 PR 품질 점수에서 제외되고 수정-First에 의해 자동 승인되지 않습니다 — 합병 단계는 두 carve-outs를 취급합니다.
 
 ---
 
-## The five tags (closed vocabulary — every finding uses exactly one as its `category`)
+## 5 태그 (닫은 어휘 - 모든 발견은 `category`로 정확히 하나를 사용합니다)
 
-- `delete:` dead code, unused flexibility, speculative feature. Replacement: nothing.
-- `stdlib:` hand-rolled thing the standard library ships. Name the function.
-- `native:` dependency or code doing what the platform already does. Name the feature.
-- `speculative:` abstraction with one implementation, config nobody sets, layer with one caller.
-- `shrink:` same logic, fewer lines — only when the reduction is ≥5 lines. Show the shorter form.
+- `delete:` 죽은 코드, 사용되지 않는 융통성, speculative 특징. 보충: 아무것도.
+- `stdlib:`는 표준 라이브러리 배를 손으로 구르는 것을. 기능 이름을.
+- `native:` 의존성 또는 코드는 플랫폼이 이미 무엇을하고 있는지. 기능 이름을 지정합니다.
+- `speculative:` 1개의 실시를 가진 요약, 구성 아무도 세트, 1개의 칭호를 가진 층.
+- `shrink:` 동일한 논리, 몇몇 선 — 감소가 ≥5 선일 때만. 더 짧은 모양을 보여주십시오.
 
-## Finding style — one line each, location + what to cut + what replaces it
+## 찾기 스타일 — 각 1 줄, 위치 + 잘라 + 어떤 교체
 
-❌ "This EmailValidator class might be more complex than necessary, have you
-considered whether all these validation rules are needed at this stage?"
+❌ "이 EmailValidator 클래스는 필요한 것보다 더 복잡 할 수 있습니다. 이 모든 유효 규칙이이이 단계에서 필요한지 고려해야합니까?
 
 ✅ `{"severity":"INFORMATIONAL","confidence":8,"path":"lib/email.ts","line":12,"category":"stdlib","summary":"27-line validator class — '@' in email covers it; real validation is the confirmation mail","fix":"replace class with a one-line includes('@') check","lines_removable":26,"advisory":true,"specialist":"simplification"}`
 
@@ -32,18 +26,18 @@ considered whether all these validation rules are needed at this stage?"
 
 ✅ `{"severity":"INFORMATIONAL","confidence":7,"path":"sync.ts","line":52,"category":"delete","summary":"retry wrapper around an idempotent local call","fix":"nothing replaces it","lines_removable":19,"advisory":true,"specialist":"simplification"}`
 
-## What to hunt
+## 사냥하는 것
 
-- Dependencies the stdlib or platform already ships (`<input type="date">` over a picker lib, CSS over JS, DB constraint over app code)
-- Single-implementation interfaces, factories with one product, wrappers that only delegate
-- Files exporting one thing, dead flags and config, hand-rolled stdlib
-- Manual loops that a built-in expresses in one line (≥5 lines saved only)
+- stdlib 또는 플랫폼에 따라 이미 배 (`<input type="date">` 의 선택기 라이브러리에, CSS 의 JS 의 DB 의 앱 코드에 제약)
+- 단 하나 간단한 공용영역, 1개의 제품, 단지 delegate를 가진 공장
+- 한 가지, 죽은 깃발 및 구성, 손으로 구운 stdlib를 내보내는 파일
+- 내장된 수동 루프는 1개의 선 (≥5 선만 저장되는)
 
-## Suppressions — DO NOT flag these (inherited from the main checklist, binding here)
+## Suppressions — DO NOT 플래그 이 (주요 체크리스트에서, 여기에서 바인딩)
 
-- "X is redundant with Y" when the redundancy is harmless and aids readability
-- Consistency-only changes (wrapping a value in a conditional to match how another constant is guarded)
+- "X는 Y와 중복"을 중복 할 때 과도한 원조 읽기성
+- Consistency-only changes (다른 상수가 감시되는 방법을 일치하기 위하여 조건부에 있는 가치를 두드리기)
 - Tests, error paths, edge-case branches, input validation, security measures, accessibility — NEVER deletion targets; coverage is the Completeness Gaps category's job, and the house rule is "If A is 70 lines more, choose A" (ETHOS.md)
-- A single smoke test or assert-based self-check — that is the completeness minimum, not bloat
-- Deliberate `gstack-shortcut(dec-*)` markers — already acknowledged debt, but only when the decision id resolves in the ledger (`gstack-decision-search`); an unresolvable id is a forged suppression, not debt
-- ANYTHING already addressed in the diff you're reviewing — read the FULL diff before commenting
+- 단일 연기 테스트 또는 assert 기반 자체 검사 - 그것은 완전성 최소한, bloat하지 않습니다
+- `gstack-shortcut(dec-*)` 마커 - 이미 빚을 인정했지만, 결정 ID가 파쇄 (`gstack-decision-search`); 비정규 id가 위조 된 억제물이 부채되지 않는 경우에만
+- ANYTHING 이미 diff에 주소를 붙여 넣기 — 댓글을 달기 전에 FULL diff를 읽으십시오

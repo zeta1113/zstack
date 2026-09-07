@@ -3,6 +3,6 @@ name: beta
 description: Clean fixture tool skill with no forced reads and no mode table.
 ---
 
-# Beta
+# 베타
 
-One-command tool skill. Nothing eager beyond this file, nothing lazy.
+하나의 도구 기술. 이 파일을 넘어 아무것도 eager, 아무것도 게으른.

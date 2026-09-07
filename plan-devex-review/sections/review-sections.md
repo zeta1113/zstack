@@ -1,14 +1,14 @@
 <!-- AUTO-GENERATED from review-sections.md.tmpl — do not edit directly -->
 <!-- Regenerate: bun run gen:skill-docs -->
-## Review Sections (8 passes, after Step 0 is complete)
+## 리뷰 섹션 (8 패스, 단계 0이 완료된 후)
 
-**Anti-skip rule:** Never condense, abbreviate, or skip any review pass (1-8) regardless of plan type (strategy, spec, code, infra). Every pass in this skill exists for a reason. "This is a strategy doc so DX passes don't apply" is always wrong — DX gaps are where adoption breaks down. If a pass genuinely has zero findings, say "No issues found" and move on — but you must evaluate it.
+**반대로 스키 규칙:** 결코 집광, 약어, 또는 계획 유형 (전략, spec, 코드, infra)에 관계없이 모든 리뷰 패스를 건너 뛰십시오. 이 모든 패스는 이유에 대한 기술이 존재합니다. "이것은 전략 문서이므로 DX 패스가 적용되지 않습니다"는 항상 잘못 - DX 간격은 채택이 중단되는 곳입니다. 패스가 실제로 0 개의 발견을 가지고 있다면, "문제가 발견되지 않음"라고 말하지만, 평가해야 합니다.
 
-**Anti-shortcut clause:** The plan file is the OUTPUT of the interactive review, not a substitute for it. Writing every finding into one plan write and calling ExitPlanMode without firing AskUserQuestion is the precise failure mode of the May 2026 transcript bug — the model explored, found issues, and dumped them into a deliverable rather than walking the user through them. If you have ANY non-trivial finding in any review section, the path from finding to ExitPlanMode goes THROUGH AskUserQuestion. Zero findings in every section is the only path to ExitPlanMode that bypasses AskUserQuestion. If you find yourself wanting to write a plan with findings before asking, stop and call AskUserQuestion now — that's the bug, recognize it.
+**반대로 단락:** The plan file is the OUTPUT of the interactive review, not a substitute for it. Writing every finding into one plan write and calling ExitPlanMode without firing AskUserQuestion is the precise failure mode of the May 2026 transcript bug — the model explored, found issues, and dumped them into a deliverable rather than walking the user through them. If you have ANY non-trivial finding in any review section, the path from finding to ExitPlanMode goes THROUGH AskUserQuestion. 모든 섹션에서 Zero 찾기는 AskUserQuestion을 우회하는 ExitPlanMode의 유일한 경로입니다. 요청하기 전에 발견 계획을 작성하고, 중지하고 AskUserQuestion를 호출하기 위해 원하는 경우, 버그가 인식됩니다.
 
-## Prior Learnings
+## 사전 학습
 
-Search for relevant learnings from previous sessions:
+이전 세션에서 관련 학습 검색:
 
 ```bash
 _CROSS_PROJ=$(~/.claude/skills/gstack/bin/gstack-config get cross_project_learnings 2>/dev/null || echo "unset")
@@ -20,40 +20,37 @@ else
 fi
 ```
 
-If `CROSS_PROJECT` is `unset` (first time): Use AskUserQuestion:
+`CROSS_PROJECT`는 `unset` (첫번째로): AskUserQuestion를 사용하십시오:
 
-> gstack can search learnings from your other projects on this machine to find
-> patterns that might apply here. This stays local (no data leaves your machine).
-> Recommended for solo developers. Skip if you work on multiple client codebases
-> where cross-contamination would be a concern.
+> gstack는 이 기계에 당신의 다른 프로젝트에서 학습을 찾아낼 수 있습니다
+> 여기에 적용 할 수있는 패턴. 이 지방을 유지 (데이터가 기계를 나타낸다).
+> 개인 개발자를 위해 추천. 여러 클라이언트 codebase에서 작동하면 Skip
+> 교차 오염이 우려가 될 것입니다.
 
-Options:
-- A) Enable cross-project learnings (recommended)
-- B) Keep learnings project-scoped only
+옵션:
+- A) 크로스 프로젝트 학습 (추천)
+- B) 프로젝트-경쟁을 만드세요
 
-If A: run `~/.claude/skills/gstack/bin/gstack-config set cross_project_learnings true`
-If B: run `~/.claude/skills/gstack/bin/gstack-config set cross_project_learnings false`
+A: `~/.claude/skills/gstack/bin/gstack-config set cross_project_learnings true` B: 실행 `~/.claude/skills/gstack/bin/gstack-config set cross_project_learnings false`
 
-Then re-run the search with the appropriate flag.
+그런 다음 적절한 플래그를 검색하십시오.
 
-If learnings are found, incorporate them into your analysis. When a review finding
-matches a past learning, display:
+학습이 발견되면 분석에 통합됩니다. 검토 결과가 과거 학습과 일치할 때 표시:
 
-**"Prior learning applied: [key] (confidence N/10, from [date])"**
+**"Prior Learning apply: [key] (confidence N/10, from [date])"**
 
-This makes the compounding visible. The user should see that gstack is getting
-smarter on their codebase over time.
+이것은 합성을 볼 수 있습니다. 사용자는 gstack가 시간에 그들의 코디베이스에 더 똑똑하게 얻고 있다는 것을 볼 수 있습니다.
 
-### DX Trend Check
+### DX 동향 검사
 
-Before starting review passes, check for prior DX reviews on this project:
+리뷰 시작 전에, 이 프로젝트에 대한 사전 DX 리뷰 확인:
 
 ```bash
 eval "$(~/.claude/skills/gstack/bin/gstack-slug 2>/dev/null)"
 ~/.claude/skills/gstack/bin/gstack-review-read 2>/dev/null | grep plan-devex-review || echo "NO_PRIOR_DX_REVIEWS"
 ```
 
-If prior reviews exist, display the trend:
+사전 리뷰가 존재하는 경우, 추세를 표시하십시오:
 ```
 DX TREND (prior reviews):
   Dimension        | Prior Score | Notes
@@ -61,193 +58,175 @@ DX TREND (prior reviews):
   ...
 ```
 
-### Pass 1: Getting Started Experience (Zero Friction)
+## Pass 1: 시작된 경험 (Zero Friction)
 
-Rate 0-10: Can a developer go from zero to hello world in under 5 minutes?
+0-10 비율: 개발자가 5 분 미만에서 hello world로 이동할 수 있습니까?
 
-**Evidence recall:** Reference the competitive benchmark from 0C (target tier), the
-magical moment from 0D (delivery vehicle), and any Install/Hello World friction
-points from 0F.
+**증거 회신:** 0C (target tier)에서 경쟁적인 벤치 마크를 참조하고, 0D (delivery 차량)에서 마술 순간, 그리고 0F에서 설치/Hello 세계 마찰 점.
 
-Load reference: Read the "## Pass 1" section from `~/.claude/skills/gstack/plan-devex-review/dx-hall-of-fame.md`.
+짐 참고: `~/.claude/skills/gstack/plan-devex-review/dx-hall-of-fame.md`에서 "## Pass 1"섹션을 읽으십시오.
 
-Evaluate:
-- **Installation**: One command? One click? No prerequisites?
-- **First run**: Does the first command produce visible, meaningful output?
-- **Sandbox/Playground**: Can developers try before installing?
-- **Free tier**: No credit card, no sales call, no company email?
-- **Quick start guide**: Copy-paste complete? Shows real output?
-- **Auth/credential bootstrapping**: How many steps between "I want to try" and "it works"?
-- **Magical moment delivery**: Is the vehicle chosen in 0D actually in the plan?
-- **Competitive gap**: How far is the TTHW from the target tier chosen in 0C?
+에바루이트:
+- **설치하기**: 한 개의 명령? 한 번 클릭? 사전 예약이 없습니까?
+- **첫 번째 실행**: 첫번째 명령은 눈에 보이는, 의미 있는 산출을 일으키는 원인이 되었습니까?
+- **Sandbox/Playground**: 개발자가 설치하기 전에 시도할 수 있습니까?
+- **무료 계층**: 신용 카드 없음, 판매 외침, 회사 이메일 없음?
+- **빠른 시작 가이드**: 복사 효력은 완료합니까? 진짜 산출을 보여주십시오?
+- **Auth/credential 부츠 스트랩**: "나는 시도하고 싶다"와 "그 작품"의 몇 단계는?
+- **매직 순간 납품**: 실제로 계획에서 0D에서 선택된 차량은입니까?
+- **경쟁 갭**: 0C에서 선택된 대상 계층에서 TTHW는 얼마입니까?
 
-FIX TO 10: Write the ideal getting started sequence. Specify exact commands,
-expected output, and time budget per step. Target: 3 steps or fewer, under the
-time chosen in 0C.
+FIX TO 10: 이상적인 얻은 시작 순서 쓰기. 정확한 명령, 예상된 산출 및 단계 당 시간 예산을 지정하십시오. 표적: 3 단계 또는 몇몇, 0C에서 선택된 시간의 밑에.
 
-Stripe test: Can a [persona from 0A] go from "never heard of this" to "it worked"
-in one terminal session without leaving the terminal?
+줄무늬 테스트 : [0A에서 사람]에서 이동 "이"에 "그런 말은 끝을 떠나지 않고 한 터미널 세션에서 작동합니까?
 
-**STOP.** AskUserQuestion once per issue. Recommend + WHY. Reference the persona.
+**STOP.** AskUserQuestion 문제가 발생하면 됩니다. 추천 + WHY. 참고 인사를 참조하세요.
 
-### Pass 2: API/CLI/SDK Design (Usable + Useful)
+## Pass 2: API/CLI/SDK 디자인 (사용 가능한 + 유용한)
 
-Rate 0-10: Is the interface intuitive, consistent, and complete?
+비율 0-10: 직관적이고, 일관된, 그리고 완료하는 공용영역은입니까?
 
-**Evidence recall:** Does the API surface match [persona from 0A]'s mental model?
-A YC founder expects `tool.do(thing)`. A platform engineer expects
-`tool.configure(options).execute(thing)`.
+**증거 회신:** API 표면 일치 [0A에서 사람]의 정신 모델? YC 설립자는 `tool.do(thing)`를 예상합니다. 플랫폼 엔지니어는 `tool.configure(options).execute(thing)`를 예상합니다.
 
-Load reference: Read the "## Pass 2" section from `~/.claude/skills/gstack/plan-devex-review/dx-hall-of-fame.md`.
+짐 참고: `~/.claude/skills/gstack/plan-devex-review/dx-hall-of-fame.md`에서 "## 통행 2" 단면도를 읽으십시오.
 
-Evaluate:
-- **Naming**: Guessable without docs? Consistent grammar?
-- **Defaults**: Every parameter has a sensible default? Simplest call gives useful result?
-- **Consistency**: Same patterns across the entire API surface?
-- **Completeness**: 100% coverage or do devs drop to raw HTTP for edge cases?
-- **Discoverability**: Can devs explore from CLI/playground without docs?
-- **Reliability/trust**: Latency, retries, rate limits, idempotency, offline behavior?
-- **Progressive disclosure**: Simple case is production-ready, complexity revealed gradually?
-- **Persona fit**: Does the interface match how [persona] thinks about the problem?
+에바루이트:
+- **Naming**: 문서 없이 구제 가능? 일관된 문법?
+- **기본 사항**: 각 모수에는 민감하는 과태가 있습니까? 가장 간단한 전화는 유용한 결과를 줍니다?
+- **관련 제품**: 전체 API 표면의 맞은편에 동일한 본?
+- **의성**: 100% 적용 또는 가장자리 케이스를 위한 익지않는 HTTP에 하락합니까?
+- **의 특징**: docs 없이 CLI/playground에서 탐구할 수 있습니까?
+- **Reliability/trust**: 지연, 정지, 속도 제한, idempotency, 오프라인 행동?
+- **진보적인 disclosure**: 간단한 케이스는 생산 ready, 복잡성 점차적으로 계시됩니까?
+- **Persona 적합**: 인터페이스는 어떻게 일치합니까 [persona] 문제에 대해 생각합니까?
 
-Good API design test: Can a [persona] use this API correctly after seeing one example?
+좋은 API 디자인 시험: [persona]는 1개의 보기를 보자마자 이것을 API 올바르게 사용할 수 있습니까?
 
-**STOP.** AskUserQuestion once per issue. Recommend + WHY.
+**STOP.** AskUserQuestion 문제가 발생하면 됩니다. 추천 + WHY.
 
-### Pass 3: Error Messages & Debugging (Fight Uncertainty)
+## 패스 3: 오류 메시지 및 디버깅 (Fight Uncertainty)
 
-Rate 0-10: When something goes wrong, does the developer know what happened, why,
-and how to fix it?
+비율 0-10: 뭔가 잘못되면, 개발자는 무슨 일이 있었는지 알고, 왜, 그리고 어떻게 그것을 해결?
 
-**Evidence recall:** Reference any error-related friction points from 0F and confusion
-points from 0G.
+**증거 회신:** 0F에서 오류 관련 마찰점 및 0G에서 혼동점 참조.
 
-Load reference: Read the "## Pass 3" section from `~/.claude/skills/gstack/plan-devex-review/dx-hall-of-fame.md`.
+짐 참고: `~/.claude/skills/gstack/plan-devex-review/dx-hall-of-fame.md`에서 "## 통행 3" 단면도를 읽으십시오.
 
-**Trace 3 specific error paths** from the plan or codebase. For each, evaluate against
-the three-tier system from the Hall of Fame:
-- **Tier 1 (Elm):** Conversational, first person, exact location, suggested fix
-- **Tier 2 (Rust):** Error code links to tutorial, primary + secondary labels, help section
-- **Tier 3 (Stripe API):** Structured JSON with type, code, message, param, doc_url
+**Trace 3 특정 오류 경로** 플랜 또는 코디베이스에서. 각각, 명예의 홀에서 세 계층 시스템에 대한 평가:
+- **층 1 (Elm):** 대화, 첫 번째 사람, 정확한 위치, 제안 된 수정
+- **층 2 (Rust):** 튜토리얼, 1 차 + 이차 라벨에 오류 코드 링크, 도움말 섹션
+- **Tier 3 (Stripe API):** 구조 JSON 유형, 코드, 메시지, param, doc_url
 
-For each error path, show what the developer currently sees vs. what they should see.
+각 오류 경로에 대한, 개발자가 현재 vs. 그들이 볼 것을 볼 수 있는지 보여줍니다.
 
-Also evaluate:
-- **Permission/sandbox/safety model**: What can go wrong? How clear is the blast radius?
-- **Debug mode**: Verbose output available?
-- **Stack traces**: Useful or internal framework noise?
+또한 평가:
+- **Permission/sandbox/safety 모델**: 무엇이 잘못될 수 있습니까? 명확한 것은 폭발 반경입니까?
+- **Debug 모드**: 유효한 Verbose 산출?
+- **쌓기 추적**: 유용한 내부 기구 소음?
 
-**STOP.** AskUserQuestion once per issue. Recommend + WHY.
+**STOP.** AskUserQuestion 문제가 발생하면 됩니다. 추천 + WHY.
 
-### Pass 4: Documentation & Learning (Findable + Learn by Doing)
+## Pass 4: 문서 및 학습 (Findable + Doing에서 알아보세요)
 
-Rate 0-10: Can a developer find what they need and learn by doing?
+0-10 비율: 개발자가 필요한 것을 찾아서 공부할 수 있습니까?
 
-**Evidence recall:** Does the docs architecture match [persona from 0A]'s learning
-style? A YC founder needs copy-paste examples front and center. A platform engineer
-needs architecture docs and API reference.
+**증거 회신:** docs 아키텍처는 0A에서 [persona]의 학습 스타일입니까? YC 설립자는 사본 파스 예를 정면과 센터 필요로 합니다. 플랫폼 엔지니어는 건축 문서와 API 참조를 필요로 합니다.
 
-Load reference: Read the "## Pass 4" section from `~/.claude/skills/gstack/plan-devex-review/dx-hall-of-fame.md`.
+짐 참고: `~/.claude/skills/gstack/plan-devex-review/dx-hall-of-fame.md`에서 "## Pass 4"섹션을 읽으십시오.
 
-Evaluate:
-- **Information architecture**: Find what they need in under 2 minutes?
-- **Progressive disclosure**: Beginners see simple, experts find advanced?
-- **Code examples**: Copy-paste complete? Work as-is? Real context?
-- **Interactive elements**: Playgrounds, sandboxes, "try it" buttons?
-- **Versioning**: Docs match the version dev is using?
-- **Tutorials vs references**: Both exist?
+에바루이트:
+- **정보 건축**: 2 분 미만의 필요는 무엇입니까?
+- **진보적인 disclosure**: 초보자는 간단하고 전문가가 고급을 찾는다?
+- **코드 예제**: 복사 - 파스 ? 완전? 일 as-is? 실제 상황에?
+- **대화 형 요소**: 운동장, 사면함, "try it" 단추?
+- **Command**: Docs는 버전 dev를 사용합니까?
+- **튜토리얼 vs 참고**: 둘 다 존재합니까?
 
-**STOP.** AskUserQuestion once per issue. Recommend + WHY.
+**STOP.** AskUserQuestion 문제가 발생하면 됩니다. 추천 + WHY.
 
-### Pass 5: Upgrade & Migration Path (Credible)
+## Pass 5: 업그레이드 및 마이그레이션 경로 (수용 가능)
 
-Rate 0-10: Can developers upgrade without fear?
+비율 0-10: 공포 없이 개발자 향상할 수 있습니까?
 
-Load reference: Read the "## Pass 5" section from `~/.claude/skills/gstack/plan-devex-review/dx-hall-of-fame.md`.
+짐 참고: `~/.claude/skills/gstack/plan-devex-review/dx-hall-of-fame.md`에서 "## 통행 5" 단면도를 읽으십시오.
 
-Evaluate:
-- **Backward compatibility**: What breaks? Blast radius limited?
-- **Deprecation warnings**: Advance notice? Actionable? ("use newMethod() instead")
-- **Migration guides**: Step-by-step for every breaking change?
-- **Codemods**: Automated migration scripts?
-- **Versioning strategy**: Semantic versioning? Clear policy?
+에바루이트:
+- **Backward 호환성**: 어떤 틈? 폭발 반경 한정?
+- **경고 경고**: 사전 통지? 행동? (" 대신 newMethod()를 사용)
+- **기타 관련**: 각 끊는 변화를 위한 단계 별 단계?
+- **Command**: 자동화된 이동 스크립트?
+- **버전 전략**: Semantic versioning? 명확한 정책?
 
-**STOP.** AskUserQuestion once per issue. Recommend + WHY.
+**STOP.** AskUserQuestion 문제가 발생하면 됩니다. 추천 + WHY.
 
-### Pass 6: Developer Environment & Tooling (Valuable + Accessible)
+## Pass 6: 개발자 환경 & 도구로 만들기 (유효한 + 접근 가능)
 
-Rate 0-10: Does this integrate into developers' existing workflows?
+0-10 비율: 개발자의 기존 워크플로우에 통합합니까?
 
-**Evidence recall:** Does local dev setup work for [persona from 0A]'s typical
-environment?
+**증거 회신:**는 0A에서 [persona]의 전형적인 환경에서 국부적으로 dev 체제 일을 합니까?
 
-Load reference: Read the "## Pass 6" section from `~/.claude/skills/gstack/plan-devex-review/dx-hall-of-fame.md`.
+짐 참고: `~/.claude/skills/gstack/plan-devex-review/dx-hall-of-fame.md`에서 "## 통행 6" 단면도를 읽으십시오.
 
-Evaluate:
-- **Editor integration**: Language server? Autocomplete? Inline docs?
-- **CI/CD**: Works in GitHub Actions, GitLab CI? Non-interactive mode?
-- **TypeScript support**: Types included? Good IntelliSense?
-- **Testing support**: Easy to mock? Test utilities?
-- **Local development**: Hot reload? Watch mode? Fast feedback?
-- **Cross-platform**: Mac, Linux, Windows? Docker? ARM/x86?
-- **Local env reproducibility**: Works across OS, package managers, containers, proxies?
-- **Observability/testability**: Dry-run mode? Verbose output? Sample apps? Fixtures?
+에바루이트:
+- **Editor 통합**: 언어 서버? 자동 완성? 인라인 문서?
+- **CI/CD**: GitHub 활동, GitLab CI에서 작동합니까? 비동기 형태?
+- **TypeScript 지원**: 포함되는 유형? 좋은 IntelliSense?
+- **시험 지원**: 쉽게 모이는? utilities를 시험하십시오?
+- **지역 개발**: 뜨거운 재부하? 시계 형태? 빠른 의견?
+- **크로스 플랫폼**: 맥, 리눅스, 윈도우? 도커? ARM/x86?
+- **지역 env 재현성**: OS, 패키지 관리자, 컨테이너, 프록시를 통해 작동?
+- **관찰성/testability**: 건조한 달리는 형태? Verbose 산출? 표본 앱? 정착물?
 
-**STOP.** AskUserQuestion once per issue. Recommend + WHY.
+**STOP.** AskUserQuestion 문제가 발생하면 됩니다. 추천 + WHY.
 
-### Pass 7: Community & Ecosystem (Findable + Desirable)
+## Pass 7: 커뮤니티 & 생태계 (Findable + Desirable)
 
-Rate 0-10: Is there a community, and does the plan invest in ecosystem health?
+0-10 비율 : 커뮤니티가 있고, 생태계 건강에 투자 할 계획입니까?
 
-Load reference: Read the "## Pass 7" section from `~/.claude/skills/gstack/plan-devex-review/dx-hall-of-fame.md`.
+짐 참고: `~/.claude/skills/gstack/plan-devex-review/dx-hall-of-fame.md`에서 "## Pass 7"섹션을 읽으십시오.
 
-Evaluate:
-- **Open source**: Code open? Permissive license?
-- **Community channels**: Where do devs ask questions? Someone answering?
-- **Examples**: Real-world, runnable? Not just hello world?
-- **Plugin/extension ecosystem**: Can devs extend it?
-- **Contributing guide**: Process clear?
-- **Pricing transparency**: No surprise bills?
+에바루이트:
+- **관련 기사**: 코드가 열리나요? 허용된 라이센스?
+- **커뮤니티 채널**: devs는 질문합니까? 누군가 대답?
+- **예시**: 현실 세상, 실행할 수 있습니까? 그냥 hello world?
+- **Plugin/extension 생태계**: 그것을 확장할 수 있습니까?
+- **관련 기사**: 프로세스가 명확합니까?
+- **가격 투명성**: 놀람 청구서 없음?
 
-**STOP.** AskUserQuestion once per issue. Recommend + WHY.
+**STOP.** AskUserQuestion 문제가 발생하면 됩니다. 추천 + WHY.
 
-### Pass 8: DX Measurement & Feedback Loops (Implement + Refine)
+## Pass 8: DX 측정 & 피드백 루프 (Implement + Refine)
 
-Rate 0-10: Does the plan include ways to measure and improve DX over time?
+요금 0-10 : 계획은 시간이 지남에 DX을 측정하고 개선하는 방법을 포함합니까?
 
-Load reference: Read the "## Pass 8" section from `~/.claude/skills/gstack/plan-devex-review/dx-hall-of-fame.md`.
+짐 참고: `~/.claude/skills/gstack/plan-devex-review/dx-hall-of-fame.md`에서 "## Pass 8"섹션을 읽으십시오.
 
-Evaluate:
-- **TTHW tracking**: Can you measure getting started time? Is it instrumented?
-- **Journey analytics**: Where do devs drop off?
-- **Feedback mechanisms**: Bug reports? NPS? Feedback button?
-- **Friction audits**: Periodic reviews planned?
-- **Boomerang readiness**: Will /devex-review be able to measure reality vs. plan?
+에바루이트:
+- **TTHW 추적**: 당신은 시작 시간을 측정할 수 있습니까? 그것은 기계로 가공됩니까?
+- **여행 분석**: 어디 devs 떨어져 떨어지는?
+- **관련 기사**: 버그 보고서? NPS? 피드백 버튼?
+- **마찰 감사**: 정기적인 리뷰 계획?
+- **붐 랑 읽기**: /devex-review는 현실 대를 측정할 수 있을 것입니까?
 
-**STOP.** AskUserQuestion once per issue. Recommend + WHY.
+**STOP.** AskUserQuestion 문제가 발생하면 됩니다. 추천 + WHY.
 
-### Appendix: Claude Code Skill DX Checklist
+### Appendix: Claude Code 기술 DX 검사 목록
 
-**Conditional: only run when product type includes "Claude Code skill".**
+**조건: 제품 유형이 "Claude Code 기술"을 포함할 때만 달리십시오.**
 
-This is NOT a scored pass. It's a checklist of proven patterns from gstack's own DX.
+NOT는 점수가 주어진 패스입니다. gstack의 DX에서 입증된 패턴의 체크리스트입니다.
 
-Load reference: Read the "## Claude Code Skill DX Checklist" section from
-`~/.claude/skills/gstack/plan-devex-review/dx-hall-of-fame.md`.
+짐 참고: `~/.claude/skills/gstack/plan-devex-review/dx-hall-of-fame.md`에서 "## Claude Code 기술 DX 검사표" 단면도를 읽으십시오.
 
-Check each item. For any unchecked item, explain what's missing and suggest the fix.
+각 항목을 확인합니다. 체크하지 않은 품목을 위해, 누락 된 것을 설명하고 수정을 제안.
 
-**STOP.** AskUserQuestion for any item that requires a design decision.
+**STOP.** AskUserQuestion 디자인 결정이 필요한 모든 항목에 대해.
 
-## Outside Voice — Independent Plan Challenge (default-on)
+## 외부 음성 — 독립 계획 도전 (과태에)
 
-After all review sections are complete, run an independent second opinion from a
-different AI system automatically — it is a standard part of plan review, not an
-opt-in. Two models agreeing on a plan is stronger signal than one model's thorough
-review. The user turns this off only by asking explicitly
-(`gstack-config set codex_reviews disabled`).
+모든 리뷰 섹션이 완료되면, 다른 AI 시스템에서 독립적 인 두 번째 의견을 자동으로 실행하십시오. 계획 검토의 표준 부분이 아닌 선택 인 계획 검토가 아닙니다. 계획의 두 모델은 한 모델의 철저한 검토보다 강한 신호입니다. 사용자는 명시적으로 묻는 (`gstack-config set codex_reviews disabled`)에서만이 꺼집니다.
 
-**Preflight — decide whether and how the outside voice runs:**
+**Preflight — 외부 음성이 실행되는지 결정합니다:**
 
 ```bash
 # Codex preflight: one block (functions sourced here don't persist to later blocks).
@@ -283,40 +262,26 @@ fi
 echo "CODEX_MODE: $_CODEX_MODE"
 ```
 
-Branch on the echoed `CODEX_MODE`:
-- **`disabled`** — the user turned Codex reviews off (`codex_reviews=disabled`). Skip this section entirely; do NOT fall back to a Claude subagent — disabled means no extra review step. Print: "Codex review skipped (codex_reviews disabled). Re-enable: `gstack-config set codex_reviews enabled`."
-- **`not_installed`** — Codex CLI absent. Print: "Codex not installed — falling back to a Claude subagent (fresh context, but the SAME model family — not an outside model). Install Codex for an actual outside-model read: `npm install -g @openai/codex`." Fall back to the Claude subagent path.
-- **`under_codex`** — this session is already running INSIDE a Codex host, so spawning codex again is the same model reviewing itself at multiplied token cost (#2519). Print exactly one line: "[running under Codex — nested codex passes skipped; set GSTACK_FORCE_CODEX_REVIEW=1 to force]" and skip the codex invocations below; run the section's free in-host pass instead if it defines one.
-- **`not_authed`** — installed but no credentials. Print: "Codex installed but not authenticated — falling back to a Claude subagent (same model family, not an outside model). Run `codex login` or set `$CODEX_API_KEY`." Fall back to the Claude subagent path.
-- **`broken_install`** — the CLI is on PATH but cannot execute (spawn ENOENT, non-executable binary, missing vendor payload). Print: "Codex is installed but its binary cannot run — Codex passes skipped. Reinstall: `npm install -g @openai/codex`." Relay the probe's HINT lines and fall back to the Claude subagent path. This state exists because a missing binary used to land in the model probe's fail-open bucket and report `ready`, so every Codex pass was skipped silently (#2742).
-- **`model_unusable`** — authed but the account cannot use its configured model (#2477: HTTP 400 on every call, usually a stale `model =` pin in `~/.codex/config.toml`). Relay the probe's HINT lines, tell the user the one-line fix (update the pin; `[notice.model_migrations]` names the replacement), and fall back to the Claude subagent path. The ~10s round trip is cached for 1h; timeouts fail open to `ready`.
-- **`ready`** — run the Codex pass below.
+`CODEX_MODE` 에 분기:
+- **`disabled`** - 사용자가 Codex (`codex_reviews=disabled`)를 끄는 것을 돕습니다. 이 단면도를 전적으로 건너십시오; NOT는 Claude subagent에 뒤떨어졌습니다 - 추가 검토 단계가 아닙니다. 인쇄: "Codex 검토 건너뛰기 (codex_리뷰 사용 가능). 재사용 가능: `gstack-config set codex_reviews 활성화된 것"을."
+- **`not_installed`** — Codex CLI absent. 인쇄: "Codex 설치되지 않음 - Claude subagent (fresh context, 하지만 SAME 모델 가족- 외부 모델)로 다시 떨어지십시오. Codex를 실제 외부 모델에 읽습니다: `npm install -g @openai/codex`." Claude subagent 경로로 돌아갑니다.
+- **`under_codex`** - 이 세션은 이미 INSIDE를 Codex 호스트로 실행하고, 그래서 코드를 다시 복사하는 같은 모델은 멀티플린 토큰 비용 (#2519)에서 자체를 검토하는 동일 모델입니다. Codex 아래에서 실행하는 GSTACK_FORCE_CODEX_REVIEW=1를 강제로 설정하고 아래 코덱 주장을 건너 뛰십시오. 대신 섹션의 무료 호스트 패스를 실행하면 하나 정의를 정의합니다.
+- **`not_authed`** - 설치하지만, 자격 증명이 없습니다. 인쇄 : "Codex 설치되었지만 인증되지 않은 - Claude 에이전트 (모델 가족, 외부 모델)로 다시 떨어지십시오. `codex login` 또는 `$CODEX_API_KEY`를 실행하십시오. Claude 에이전트 경로로 돌아갑니다.
+- **`broken_install`** - CLI는 PATH에 이고, (ENOENT, 비 executable 바이너리, 누락된 납품업자 탑재)를 실행할 수 없습니다. 인쇄: "Codex는 설치되 그러나 그것의 이진은 실행할 수 없습니다 — Codex는 건너뛰기. 재설치: `npm install -g @openai/codex`." 릴레이 조사 HINT 선은 Claude 에이전트 경로로 돌아갑니다. 이 상태는 이진이 이진 때문에, 이진은 이렇게 뛰기 위하여, 이렇게 `ready`를 통과하고, 이렇게 뛰기 위하여, 이렇게 갔습니다.
+- **`model_unusable`** - authed 하지만 계정은 구성 된 모델을 사용할 수 없습니다 (#2477: HTTP 400 모든 호출에, 보통 stale `model =` 핀 `~/.codex/config.toml`). 프로브의 HINT 라인을 릴레이, 사용자를 알려줍니다. 한 줄 수정 (핀을 업데이트; `[notice.model_migrations]` 이름 교체), 그리고 Claude 에이전트 경로로 돌아갑니다. ~10s 라운드 여행은 1 시간 동안 열리기; `[notice.model_migrations]`는 교체를 의미한다.
+- **`ready`** - 아래 Codex 패스를 실행합니다.
 
-When the mode is `ready`, `not_installed`, or `not_authed`, print one line so the off-switch
-stays discoverable: "Running the outside voice automatically (standard step). Disable: `gstack-config set codex_reviews disabled`."
+모드가 `ready`, `not_installed`, 또는 `not_authed`일 때, off-switch가 발견될 때: "외부 음성을 자동적으로 (표준 단계) 놓기. 비활성화: `gstack-config set codex_reviews disabled`."
 
-**Construct the plan review prompt** (for `ready`, `not_installed`, and `not_authed` — skip only on `disabled`).
-Read the plan file being reviewed (the file the user pointed this review at, or the branch
-diff scope). If a CEO plan document was written in Step 0D-POST, read that too — it contains
-the scope decisions and vision.
+**계획 검토를 지시** ( `ready`, `not_installed`, `not_authed` - `disabled`에서만 건너뛰기). 검토되는 계획 파일을 읽으십시오 (파일 사용자는 이 검토를, 또는 branch 디프 범위에 지적했습니다). CEO 계획 문서가 단계 0D-POST에서 기록된 경우에, 이렇게 읽으십시오 — 범위 결정 및 시각을 포함합니다.
 
-Construct this prompt (substitute the actual plan content — if plan content exceeds 30KB,
-truncate to the first 30KB and note "Plan truncated for size"). **Always start with the
-filesystem boundary instruction:**
+이 프롬프트를 구축 (실제 계획 내용에 따라 - 계획 내용이 30KB를 초과하면, 첫 30KB에 truncate 및 "플랜 크기에 대한 truncated"). **항상 filesystem 경계 지시와 시작:**
 
-"IMPORTANT: Do NOT read or execute any files under ~/.claude/, ~/.agents/, .claude/skills/, or agents/. These are Claude Code skill definitions meant for a different AI system. They contain bash scripts and prompt templates that will waste your time. Ignore them completely. Do NOT modify agents/openai.yaml. Stay focused on the repository code only.\n\nYou are a brutally honest technical reviewer examining a development plan that has
-already been through a multi-section review. Your job is NOT to repeat that review.
-Instead, find what it missed. Look for: logical gaps and unstated assumptions that
-survived the review scrutiny, overcomplexity (is there a fundamentally simpler
-approach the review was too deep in the weeds to see?), feasibility risks the review
-took for granted, missing dependencies or sequencing issues, and strategic
-miscalibration (is this the right thing to build at all?). Be direct. Be terse. No
-compliments. Just the problems.
+"IMPORTANT: NOT는 ~/.claude/, ~/.agents/, .claude/skills/, 또는 에이전트/의 밑에 어떤 파일을 읽거나 실행합니다. 이들은 Claude Code 기술 정의가 다른 AI 체계를 의미하지 않습니다. 그들은 bash 스크립트와 신속한 템플릿을 포함해 당신의 시간을 낭비하. 그것을 완전하게 무시하십시오. NOT는 Agent/openai.yaml를 수정합니다. 저장소 코드 only.\n\nYou를 통해서 집중된 유지하십시오. 기술적인 검토는 이미 기술적인 계획이 있는 경우에, 우리의 기술적인 검토가 있습니다. 이 웹 사이트는 귀하가 웹 사이트를 탐색하는 동안 귀하의 경험을 향상시키기 위해 쿠키를 사용합니다. 이 쿠키들 중에서 필요에 따라 분류 된 쿠키는 웹 사이트의 기본적인 기능을 수행하는 데 필수적이므로 브라우저에 저장됩니다. 또한이 웹 사이트의 사용 방식을 분석하고 이해하는 데 도움이되는 제 3 자 쿠키를 사용합니다. 이 쿠키는 귀하의 동의하에 만 브라우저에 저장됩니다. 이러한 쿠키를 거부 할 수도 있습니다. 이러한 쿠키 중 일부를 선택 해제하면 검색 환경에 영향을 미칠 수 있습니다.
 
-THE PLAN:
-<plan content>"
+THE PLAN: <plan content>"
 
-**If `CODEX_MODE: ready` — run Codex:**
+**`CODEX_MODE: ready` - Codex 실행:**
 
 ```bash
 TMPERR_PV=$(mktemp /tmp/codex-planreview-XXXXXXXX)
@@ -324,12 +289,12 @@ _REPO_ROOT=$(git rev-parse --show-toplevel) || { echo "ERROR: not in a git repo"
 codex exec "<prompt>" -C "$_REPO_ROOT" -s read-only -c 'model_reasoning_effort="high"' -c 'web_search="cached"' < /dev/null 2>"$TMPERR_PV"
 ```
 
-Use a 5-minute timeout (`timeout: 300000`). After the command completes, read stderr:
+5분 간격을 사용하십시오 (`timeout: 300000`). 명령이 완료된 후, stderr를 읽으십시오:
 ```bash
 cat "$TMPERR_PV"
 ```
 
-Present the full output verbatim:
+출력 동사:
 
 ```
 CODEX SAYS (plan review — outside voice):
@@ -338,29 +303,26 @@ CODEX SAYS (plan review — outside voice):
 ════════════════════════════════════════════════════════════
 ```
 
-**Error handling:** All errors are non-blocking — the outside voice is informational.
-- Auth failure (stderr contains "auth", "login", "unauthorized"): "Codex auth failed. Run \`codex login\` to authenticate." Fall back to the Claude subagent below.
-- Timeout: "Codex timed out after 5 minutes." Fall back to the Claude subagent below.
-- Empty response: "Codex returned no response." Fall back to the Claude subagent below.
+**오류 처리 :** 모든 오류는 비 차단되지 않습니다. - 외부 음성은 정보입니다.
+- Auth 실패 (stderr는 "auth", "login", " 무단") : "Codex auth 실패. \`codex login\`를 실행하여 인증."아래 Claude 에이전트으로 돌아갑니다.
+- 타임아웃: "Codex 5분 후 시간. Claude 이하로 돌아갑니다.
+- 빈 응답: "Codex 응답을 반환하지." 아래 Claude 에이전트에 다시.
 
-**If `CODEX_MODE: not_installed` or `not_authed` (or Codex errored at runtime):**
+**`CODEX_MODE: not_installed` 또는 `not_authed` (또는 Codex)가 runtime에 과실된 경우:**
 
-Dispatch via the Agent tool with `run_in_background: false` (subagents default to background since Claude Code v2.1.198; the findings must land before the workflow continues). The subagent has fresh context and no conversation bias — but it is the SAME model family, not an outside model; weigh its agreement accordingly.
-Bound it the same way as Codex: cap the dispatch at a 5-minute timeout so "never blocking"
-is also "never hanging."
+`run_in_background: false` (Claude Code v2.1.198 이후 배경에 따라 기본 사항)와 에이전트 도구를 통해 Dispatch; 결과는 워크플로가 계속되기 전에 착륙해야 합니다. 서브 에이전트에는 신선한 컨텍스트와 대화 비스듬한이 있지만, 외부 모델이 아닌 SAME 모델 가족입니다. Codex와 같은 방식으로 무게를 다십시오. "never blocking"은 "never blocking"도 "never blocking"도 "never blocking"도 "never blocking"으로 파견하십시오."
 
-Subagent prompt: same plan review prompt as above.
+Subagent 신속한: 위의 것과 동일한 계획 검토 신속한.
 
-Present findings under an `OUTSIDE VOICE (Claude subagent):` header.
+`OUTSIDE VOICE (Claude subagent):` 헤더에 대한 현재 발견.
 
-If the subagent fails or times out: "Outside voice unavailable. Continuing to outputs."
+에이전트이 실패하거나 밖으로 시간: "아웃사이드 목소리는 사용할 수 없습니다. 출력에 계속."
 
-(On `CODEX_MODE: disabled` you already skipped this section per the preflight — do not reach here.)
+(`CODEX_MODE: disabled`에 이미 이 섹션을 건너 뛰고 있습니다. - 여기에 도달하지 마십시오.)
 
-**Cross-model tension:**
+**크로스 모델 긴장:**
 
-After presenting the outside voice findings, note any points where the outside voice
-disagrees with the review findings from earlier sections. Flag these as:
+외부 음성 발견을 제시 한 후, 외부 음성이 이전 섹션에서 발견 한 리뷰와 관련하여 방해하는 점을 참고하십시오. 다음과 같이 플래그 :
 
 ```
 CROSS-MODEL TENSION:
@@ -368,108 +330,84 @@ CROSS-MODEL TENSION:
   State what context you might be missing that would change the answer.]
 ```
 
-**User Sovereignty:** Do NOT auto-incorporate outside voice recommendations into the plan.
-Present each tension point to the user. The user decides. Cross-model agreement is a
-strong signal — present it as such — but it is NOT permission to act. You may state
-which argument you find more compelling, but you MUST NOT apply the change without
-explicit user approval.
+**사용자 Sovereignty:** Do NOT는 외부 음성 권고를 계획으로 자동화합니다. 사용자가 결정합니다. 크로스 모델 계약은 강한 신호입니다. 그런 다음 NOT는 행동 권한을 부여합니다. 더 많은 칭찬을 발견 할 수 있지만 MUST NOT는 명시적 사용자 승인없이 변경을 적용합니다.
 
-For each substantive tension point, use AskUserQuestion:
+각 substantive 긴장 점을 위해, 사용 AskUserQuestion:
 
-> "Cross-model disagreement on [topic]. The review found [X] but the outside voice
-> argues [Y]. [One sentence on what context you might be missing.]"
+> "Cross-model disagreement on [topic]. 리뷰는 [X]를 찾았지만 외부 목소리
+> argues [Y]. [누락 할 수있는 어떤 상황에 대한 하나의 문장.]"
 >
-> RECOMMENDATION: Choose [A or B] because [one-line reason explaining which argument
-> is more compelling and why]. Completeness: A=X/10, B=Y/10.
+> RECOMMENDATION: [A 또는 B]를 선택하기 때문에 [한 줄의 인수를 설명하는 이유
+> 더 칭찬하고 왜]. 완료: A=X/10, B=Y/10.
 
-Options:
-- A) Accept the outside voice's recommendation (I'll apply this change)
-- B) Keep the current approach (reject the outside voice)
-- C) Investigate further before deciding
-- D) Add to TODOS.md for later
+옵션:
+- A) 외부 음성의 권고 (나는이 변경을 적용 할 것입니다)
+- B) 현재 접근을 유지 (외부 음성을 거부)
+- C) 더 많은 것을 감소시키기 전에 투자하십시오
+- D) TODOS.md에 나중에 추가하십시오
 
-Wait for the user's response. Do NOT default to accepting because you agree with the
-outside voice. If the user chooses B, the current approach stands — do not re-argue.
+사용자의 응답을 기다립니다. NOT 기본적으로 외부 목소리에 동의하기 때문에 허용. 사용자가 B를 선택하면 현재 접근 방식을 의미합니다. - 다시 -argue하지 마십시오.
 
-If no tension points exist, note: "No cross-model tension — both reviewers agree."
+긴장이 없는 경우, 주의: "크로스 모델 텐션 없음 — 모두 검토자 동의."
 
-**Persist the result:**
+**결과의 결과 :**
 ```bash
 ~/.claude/skills/gstack/bin/gstack-review-log '{"skill":"codex-plan-review","timestamp":"'"$(date -u +%Y-%m-%dT%H:%M:%SZ)"'","status":"STATUS","source":"SOURCE","commit":"'"$(git rev-parse --short HEAD)"'"}'
 ```
 
-Substitute: STATUS = "clean" if no findings, "issues_found" if findings exist.
-SOURCE = "codex" if Codex ran, "claude" if subagent ran.
+대칭: STATUS = "클린" 찾는 경우, "issues_found"를 찾을 수 없습니다. SOURCE = "codex" if Codex ran, "claude" if subagent ran.
 
-**Cleanup:** Run `rm -f "$TMPERR_PV"` after processing (if Codex was used).
+**청소:** 처리 후 `rm -f "$TMPERR_PV"` 실행 (Codex가 사용되었는지).
 
 ---
 
-When constructing the outside voice prompt, include the Developer Persona from Step 0A
-and the Competitive Benchmark from Step 0C. The outside voice should critique the plan
-in the context of who is using it and what they're competing against.
+외부 음성 프롬프트를 구성할 때, 단계 0A 및 단계 0C에서 경쟁 벤치 마크에서 개발자 인 Persona를 포함합니다. 외부 음성은 그것을 사용하고 그들이 반대하는 것을 누구의 상황에 있는 계획을 비례해야 합니다.
 
-## CRITICAL RULE — How to ask questions
+## CRITICAL RULE — 질문하는 방법
 
-Follow the AskUserQuestion format from the Preamble above. Additional rules for
-DX reviews:
+위의 Preamble에서 AskUserQuestion 형식을 따르십시오. DX 리뷰에 대한 추가 규칙:
 
-* **One issue = one AskUserQuestion call.** Never combine multiple issues.
-* **Ground every question in evidence.** Reference the persona, competitive benchmark,
-  empathy narrative, or friction trace. Never ask a question in the abstract.
-* **Frame pain from the persona's perspective.** Not "developers would be frustrated"
-  but "[persona from 0A] would hit this at minute [N] of their getting-started flow
-  and [specific consequence: abandon, file an issue, hack a workaround]."
-* Present 2-3 options. For each: effort to fix, impact on developer adoption.
-* **Map to DX First Principles above.** One sentence connecting your recommendation
-  to a specific principle (e.g., "This violates 'zero friction at T0' because
-  [persona] needs 3 extra config steps before their first API call").
-* **Zero findings:** if a section has zero findings, state "No issues, moving on"
-  and proceed. Otherwise, use AskUserQuestion for each gap — a gap with an
-  "obvious fix" is still a gap and still needs user approval before any change
-  lands in the plan.
-* Assume the user hasn't looked at this window in 20 minutes. Re-ground every question.
+* **하나의 문제 = 하나 AskUserQuestion 호출.** 여러 가지 문제를 결합하지 마십시오.
+* **증거에 대한 모든 질문.** 참고 인사, 경쟁적인 벤치 마크,
+  동종 요법, 마찰 추적. 초록에 질문을하지 마십시오.
+* **사람의 관점에서 구조 통증.** "개발자는 좌절 될 것"
+  그러나 "[0A에서 사람]는 자신의 얻은 흐름의 분 [N]에 이것을 명중하고 [특히 결과 : 버려, 문제, 해머를 해킹]."
+* 현재 2-3 옵션. 각: 해결, 개발자 채택에 영향을 미치는 노력.
+* **DX 위의 첫 번째 원칙으로 맵을 붙여 넣으십시오.** 한 문장을 연결해 권고를 연결
+  특정 원칙 (예 : "이 violates 'zero 마찰 T0'에서 "이 violates"는 "사람들]는 첫 번째 API 호출 전에 3 개의 추가 구성 단계를 필요로한다.
+* **Zero 발견 :** 섹션이 0개의 발견이 있는 경우, state "No issues, move on"
+  그리고 진행합니다. 그렇지 않으면 각 간격의 AskUserQuestion를 사용하며, "obvious fix"의 간격은 여전히 간격이며, 여전히 계획의 변화가 있는 토지의 변경 전에 사용자 승인을 필요로 합니다.
+* 사용자를 20 분 안에 이 창에서 살펴 보지 마십시오. 모든 질문에 대한 답변.
 
-## Required Outputs
+## 필수 산출
 
-### Developer Persona Card
-The persona card from Step 0A. This goes at the top of the plan's DX section.
+## 개발자 인 Persona Card Step 0A에서 인가 카드. 이것은 플랜의 DX 섹션의 상단에 간다.
 
-### Developer Empathy Narrative
-The first-person narrative from Step 0B, updated with user corrections.
+## 개발자 Empathy Narrative 단계 0B에서 첫 번째 사람의 narrative, 사용자 보정으로 업데이트.
 
-### Competitive DX Benchmark
-The benchmark table from Step 0C, updated with the product's post-review scores.
+## 경쟁력있는 DX 벤치 마크 단계 0C에서 벤치 마크 테이블, 제품의 포스트 리뷰 점수로 업데이트.
 
-### Magical Moment Specification
-The chosen delivery vehicle from Step 0D with implementation requirements.
+### Magical Moment 명세 단계 0D에서 선택된 납품 차량은 구현 필요조건으로.
 
-### Developer Journey Map
-The journey map from Step 0F, updated with all friction point resolutions.
+## 개발자 여행지도 Step 0F에서 여행지도, 모든 마찰점 해결책으로 업데이트.
 
-### First-Time Developer Confusion Report
-The roleplay report from Step 0G, annotated with which items were addressed.
+### First-Time Developer Confusion Report Step 0G의 역할극 보고서는 해당 항목이 주소로 표기된 것으로 표기됩니다.
 
-### "NOT in scope" section
-DX improvements considered and explicitly deferred, with one-line rationale each.
+### "NOT 범위에서"섹션 DX 개선은 각각 한 줄 합리적으로 간주되고 명시적으로 적습니다.
 
-### "What already exists" section
-Existing docs, examples, error handling, and DX patterns that the plan should reuse.
+### "여기있는 것은"섹션 Existing docs, 예제, 오류 처리 및 계획이 재사용되어야하는 DX 패턴을 설명합니다.
 
-### TODOS.md updates
-After all review passes are complete, present each potential TODO as its own individual
-AskUserQuestion. Never batch. For DX debt: missing error messages, unspecified upgrade
-paths, documentation gaps, missing SDK languages. Each TODO gets:
-* **What:** One-line description
-* **Why:** The concrete developer pain it causes
-* **Pros:** What you gain (adoption, retention, satisfaction)
-* **Cons:** Cost, complexity, or risks
-* **Context:** Enough detail for someone to pick this up in 3 months
-* **Depends on / blocked by:** Prerequisites
+## TODOS.md 업데이트 모든 리뷰 패스가 완료되면, 각 잠재력 TODO 자신의 개별 AskUserQuestion로. 절대 배치하지 마십시오. DX 부채 : 오류 메시지, 불특정 된 업그레이드 경로, 문서 간격, 누락 된 SDK 언어. 각 TODO 을 얻다:
+* **이름:** 원라인 설명
+* **왜:** 콘크리트 개발자가 원인을 겪고 있습니다.
+* **프로 :** 당신이 얻는 무슨 (adoption, 보유, 만족)
+* **단점 :** 비용, 복잡성, 또는 위험
+* **구성 :** 3개월 동안 이를 선택하기 위해 누군가를 위한 충분한 세부사항
+* **/에 따라 달라집니다:** 필수품
 
-Options: **A)** Add to TODOS.md **B)** Skip **C)** Build it now
+옵션: **A)** TODOS.md **B) (아)** Skip **C) (아)** 지금 빌드하십시오
 
-### DX Scorecard
+## DX 득점 카드
 
 ```
 +====================================================================+
@@ -503,11 +441,9 @@ Options: **A)** Add to TODOS.md **B)** Skip **C)** Build it now
 +====================================================================+
 ```
 
-If all passes 8+: "DX plan is solid. Developers will have a good experience."
-If any below 6: Flag as critical DX debt with specific impact on adoption.
-If TTHW > 10 min: Flag as blocking issue.
+모든 패스 8 +: "DX 계획은 고체입니다. 개발자는 좋은 경험이 있을 것입니다." 아래 6: 특정 영향력을 가진 중요한 DX 부채로 플래그가 들어갑니다. TTHW > 10 분: 문제 차단으로 플래그.
 
-### DX Implementation Checklist
+### DX 구현 체크리스트
 
 ```
 DX IMPLEMENTATION CHECKLIST
@@ -531,14 +467,11 @@ DX IMPLEMENTATION CHECKLIST
 [ ] Community channel exists and is monitored
 ```
 
-## Implementation Tasks
+## 구현 작업
 
-Before closing this review, synthesize the findings above into a flat list of
-build-actionable tasks. Each task derives from a specific finding — no padding.
-Emit the markdown section AND write a JSONL artifact that `/autoplan` can
-aggregate across phases.
+이 검토를 닫기 전에, 빌드 액션 작업의 플랫 목록으로 위의 결과를 종합. 특정 검색에서 각 작업 파생 - 패딩 없음. 마크 다운 섹션을 이동 AND JSONL 단계 전반에 걸쳐 집계 할 수 있음을 `/autoplan` 식을 작성.
 
-### Markdown section (always emit)
+## Markdown 단면도 (직접 방출)
 
 ```markdown
 ## Implementation Tasks
@@ -552,17 +485,15 @@ finding above. Run with Claude Code or Codex; checkbox as you ship.
 - [ ] **T2 (P2, human: ~30min / CC: ~5min)** — ...
 ```
 
-Rules:
-- P1 blocks ship; P2 should land same branch; P3 is a follow-up TODO.
-- If a finding produced no actionable task, do not invent one.
-- If a section had zero findings, emit `_No new tasks from <section>._`
-- Effort uses the AI-compression table from CLAUDE.md.
+규칙:
+- P1 구획 배; P2는 동일한 branch를 착륙해야 합니다; P3는 후속 TODO입니다.
+- 작업이 작동하지 않는 것을 발견하면, 한 번 발명하지 마십시오.
+- 섹션이 0개의 발견을 가지고 있다면, `_No new tasks from <section>._`를 방출
+- Effort는 AI-압축 테이블을 CLAUDE.md에서 사용합니다.
 
-### JSONL artifact (always write, even if zero tasks)
+## JSONL artifact (직접 쓰기, 0 작업 경우에도)
 
-`/autoplan` reads this file to aggregate across phases. Build each line with
-`jq -nc` so titles and source findings containing quotes, newlines, or
-backslashes serialize cleanly — never use hand-rolled `echo` / `printf`.
+`/autoplan`는 단계의 골재에 이 파일을 읽습니다. 각 선을 `jq -nc`로 구축하여 인용, 신라인, 또는 backslashes serialize를 포함하는 원본과 근원 발견하십시오 - 결코 손으로 구른 `echo`/`printf`를 사용하지 마십시오.
 
 ```bash
 eval "$(~/.claude/skills/gstack/bin/gstack-slug 2>/dev/null)"
@@ -595,43 +526,38 @@ jq -nc \
   >> "$TASKS_FILE"
 ```
 
-If `jq` is not installed, fall back to skipping the JSONL write and warn
-the user to install jq for autoplan aggregation. Never hand-roll JSONL.
+`jq`가 설치되지 않은 경우, JSONL 쓰기를 건너 뛰기 위하여 넘어가고 autoplan 집계를 위한 jq를 설치하기 위하여 사용자를 경고합니다. 절대로 손 목록 JSONL.
 
-If zero tasks were identified in this review, still touch the JSONL file
-(`: > "$TASKS_FILE"`) so the aggregator sees that the phase produced output
-this run (an empty file means "ran, no findings" — distinct from "didn't run").
+이 리뷰에서 0개의 작업을 확인한 경우, 여전히 JSONL 파일 (`: > "$TASKS_FILE"`)를 터치하여, 이 런닝을 출력하는 단계가 있음을 알 수 있습니다. (비어 있는 파일은 "ran, no finds"를 의미합니다. "didn't run"에서 구별하지 않습니다.)
 
 
-### Unresolved Decisions
-If any AskUserQuestion goes unanswered, note here. Never silently default.
+### Unresolved Decisions if any AskUserQuestion 는 unanswered, 여기에 메모. 절대로 침묵적으로 기본값.
 
-## Review Log
+## 리뷰 로그
 
-Persist after the DX Scorecard — the dashboard, the GSTACK REVIEW REPORT, and the EXIT
-PLAN MODE GATE's "review log was called" check depend on it. **PLAN MODE EXCEPTION — ALWAYS RUN** (writes to `~/.gstack/`, not project files):
+DX Scorecard — 대시보드, GSTACK REVIEW REPORT, EXIT PLAN MODE GATE의 "review log"라고 함)가 체크에 따라 결정한 후, **PLAN MODE EXCEPTION — ALWAYS RUN** (`~/.gstack/`로 씁니다, 프로젝트 파일이 아닙니다):
 
 ```bash
 ~/.claude/skills/gstack/bin/gstack-review-log '{"skill":"plan-devex-review","timestamp":"TIMESTAMP","status":"STATUS","initial_score":N,"overall_score":N,"product_type":"PRODUCT_TYPE","tthw_current":"TTHW_CURRENT","tthw_target":"TTHW_TARGET","mode":"MODE","persona":"PERSONA","competitive_tier":"COMPETITIVE_TIER","unresolved":N,"commit":"COMMIT"}'
 ```
 
-TIMESTAMP = current ISO 8601 datetime; STATUS = "clean" if score 8+ AND 0 unresolved, else "issues_open"; other fields from the DX Scorecard + Step 0; COMMIT = `git rev-parse --short HEAD`.
+TIMESTAMP = 현재 ISO 8601 datetime; STATUS = "클린" 점수 8+ AND 0에 녹이는 경우에, 다른 "issues_open"; DX Scorecard + Step 0; COMMIT = `git rev-parse --short HEAD`에서 다른 분야.
 
-## Review Readiness Dashboard
+## 리뷰 Readiness 대시보드
 
-After completing the review, read the review log and config to display the dashboard.
+검토 완료 후, 검토 로그 및 구성을 읽고 대시보드를 표시합니다.
 
 ```bash
 ~/.claude/skills/gstack/bin/gstack-review-read
 ```
 
-Parse the output. Find the most recent entry for each skill (plan-ceo-review, plan-eng-review, review, plan-design-review, design-review-lite, adversarial-review, codex-review, codex-plan-review). Ignore entries with timestamps older than 7 days. For the Eng Review row, show whichever is more recent between `review` (diff-scoped pre-landing review) and `plan-eng-review` (plan-stage architecture review). Append "(DIFF)" or "(PLAN)" to the status to distinguish. For the Adversarial row, show whichever is more recent between `adversarial-review` (new auto-scaled) and `codex-review` (legacy). For Design Review, show whichever is more recent between `plan-design-review` (full visual audit) and `design-review-lite` (code-level check). Append "(FULL)" or "(LITE)" to the status to distinguish. For the Outside Voice row, show the most recent `codex-plan-review` entry — this captures outside voices from both /plan-ceo-review and /plan-eng-review.
+Parse the output. Find the most recent entry for each skill (plan-ceo-review, plan-eng-review, review, plan-design-review, design-review-lite, adversarial-review, codex-review, codex-plan-review). Ignore entries with timestamps older than 7 days. For the Eng Review row, show whichever is more recent between `review` (diff-scoped pre-landing review) and `plan-eng-review` (plan-stage architecture review). Append "(DIFF)" or "(PLAN)" to the status to distinguish. Adversarial 행의 경우, `adversarial-review` (새로운 자동 확장)과 `codex-review` (아직) 사이에 더 최근 더 많은 것을 보여주는 보여줍니다. 디자인 검토를 위해, `plan-design-review` (전체 시각 감사)와 `design-review-lite` (코드 레벨 체크) 사이에서 더 최근 더 최근 더 많은 것을 보여줍니다. "(FULL)"또는 "(LITE)"를 상태에 명시하십시오. 외부 음성 행의 경우, 가장 최근 /plan-ceo-review (이번 입력된 /plan-ceo-review)를 표시합니다.
 
-**Source attribution:** If the most recent entry for a skill has a \`"via"\` field, append it to the status label in parentheses. Examples: `plan-eng-review` with `via:"autoplan"` shows as "CLEAR (PLAN via /autoplan)". `review` with `via:"ship"` shows as "CLEAR (DIFF via /ship)". Entries without a `via` field show as "CLEAR (PLAN)" or "CLEAR (DIFF)" as before.
+**근원 attribution:** 기술에 가장 최근의 항목이 \`"via"\` 필드를 가지고 있다면, 부모의 상태 라벨에 부합합니다. 예: `plan-eng-review` 와 `via:"autoplan"` 쇼는 CLEAR (PLAN 를 통해 /autoplan)"으로 보여줍니다. `review` 와 `via:"ship"` 는 CLEAR (DIFF 를 통해 /ship)" 를 보여줍니다. `via` (CLEAR) 의 `via` (CLEAR) 를 보여주기 전에 `via` 를 보여주십시오.
 
-Note: `autoplan-voices` and `design-outside-voices` entries are audit-trail-only (forensic data for cross-model consensus analysis). They do not appear in the dashboard and are not checked by any consumer.
+참고: `autoplan-voices` 및 `design-outside-voices` 항목은 감사철 전용 (크로스 모델 합의 분석을위한 법의 데이터)입니다. 그들은 대시보드에 나타나지 않으며 어떤 소비자가 검사하지 않습니다.
 
-Display:
+전시:
 
 ```
 +====================================================================+
@@ -649,168 +575,127 @@ Display:
 +====================================================================+
 ```
 
-**Review tiers:**
-- **Eng Review (required by default):** The only review that gates shipping. Covers architecture, code quality, tests, performance. Can be disabled globally with \`gstack-config set skip_eng_review true\` (the "don't bother me" setting).
-- **CEO Review (optional):** Use your judgment. Recommend it for big product/business changes, new user-facing features, or scope decisions. Skip for bug fixes, refactors, infra, and cleanup.
-- **Design Review (optional):** Use your judgment. Recommend it for UI/UX changes. Skip for backend-only, infra, or prompt-only changes.
-- **Adversarial Review (automatic):** Always-on for every review. Every diff gets both Claude adversarial subagent and Codex adversarial challenge. Large diffs (200+ lines) additionally get Codex structured review with P1 gate. No configuration needed.
-- **Outside Voice (optional):** Independent plan review from a different AI model when Codex is available (falls back to a same-family Claude subagent otherwise — fresh context, not cross-model). Offered after all review sections complete in /plan-ceo-review and /plan-eng-review. Never gates shipping.
+**리뷰 계층:**
+- **Eng Review (기본적으로 필요):** 문 발송하는 유일한 검토. 건축술, 코드 질, 시험, 성과 커버하십시오. \`gstack-config set skip_eng_review true\` (" 두번 저" 조정)에 전 세계적으로 비활성화될 수 있습니다.
+- **CEO (선택) 검토:** 당신의 판단을 사용하십시오. 큰 제품/business 변경, 새로운 사용자 직면 특징, 또는 범위 결정에 그것을 추천합니다. 버그 수정, 재공장, 인프라 및 정리를 위해 건너 뛰십시오.
+- **디자인 검토 (선택):** 당신의 판단을 사용하십시오. UI/UX 변경을 위해 그것을 추천하십시오. 배경 전용, 적외선, 또는 신속한 단지 변화를 위해 건너 뛰십시오.
+- **Adversarial 검토 (자동):** 항상 모든 리뷰에 대 한. 모든 디프는 Claude adversarial subagent와 Codex adversarial 도전을 모두 얻을. 큰 디프 (200 + 라인) 추가로 얻을 Codex 구조화 검토와 P1 문. 필요 구성 없음.
+- **외부 음성 (선택):** Codex가 유효할 때 다른 AI 모형에서 독립적인 계획 검토는 ( 동일한 가족 Claude subagent에 뒤에 가십시오 그렇지 않으면 — 신선한 컨텍스트, 십자가 모형 아닙니다). /plan-ceo-review 및 /plan-eng-review에서 완전한 모든 검토 단면도 후에 제안해. 선박을 결코 문이 아닙니다.
 
-**Verdict logic:**
-- **CLEARED**: Eng Review has >= 1 entry within 7 days from either \`review\` or \`plan-eng-review\` with status "clean" (or \`skip_eng_review\` is \`true\`)
-- **NOT CLEARED**: Eng Review missing, stale (>7 days), or has open issues
-- CEO, Design, and Codex reviews are shown for context but never block shipping
-- If \`skip_eng_review\` config is \`true\`, Eng Review shows "SKIPPED (global)" and verdict is CLEARED
+**Verdict 논리:**
+- **CLEARED**: Eng Review has >= 1 항목 이내에 7 일 이내에 \`review\` 또는 \`plan-eng-review\` 상태 "클린" (또는 \`skip_eng_review\`는 \`true\`)
+- **NOT CLEARED**: 잉여된 잉여, stale (>7일), 또는 문제점을 열지
+- CEO, 디자인, Codex 리뷰는 상황에 따라 표시되지만 배송을 막지 못합니다.
+- \`skip_eng_review\` 설정은 \`true\`, Eng Review show "SKIPPED (global)"이며 verdict는 CLEARED입니다.
 
-**Staleness detection:** After displaying the dashboard, check if any existing reviews may be stale:
-- **Content-first rule (diff-scoped rows only: \`review\`, \`adversarial-review\`, \`codex-review\`, ship-stage entries).** Parse the \`---WTREE---\` and \`---DIRTY---\` sections from the bash output. If an entry has a \`wtree\` field AND it equals the current \`---WTREE---\` value, the review is CURRENT — identical content, regardless of commit count, rebase, amend, or whether it was committed yet (wtree equality alone proves identical content; that is the keystone property). Skip the commit-count heuristic for that entry and show no staleness note.
-- Plan-tier rows (plan-ceo-review, plan-eng-review, plan-design-review) grade a plan file, not the repo tree — never apply the wtree rule to them; they keep the 7-day freshness logic. If such an entry carries a \`plan_sha256\` field, you MAY compare it against the current plan file's sha256 and note "plan changed since review" on mismatch.
-- Fallback (no \`wtree\` on the entry, or wtree mismatch): parse the \`---HEAD---\` section to get the current HEAD commit hash. For each review entry that has a \`commit\` field: compare it against the current HEAD. If different, count elapsed commits: \`git rev-list --count STORED_COMMIT..HEAD\`. If that command FAILS (the stored commit was rebased away), grade UNKNOWN and treat as stale — do not error. Display: "Note: {skill} review from {date} may be stale — {N} commits since review"
-- For entries without a \`commit\` field (legacy entries): display "Note: {skill} review from {date} has no commit tracking — consider re-running for accurate staleness detection"
-- If all reviews grade CURRENT (wtree match or HEAD match), do not display any staleness notes
+**Staleness 탐지:** 대시보드를 표시한 후, 기존 리뷰가 stale일 수 있는 경우 확인:
+- **내용-첫 번째 규칙 (디프스코프 행만: \`review\`, \`adversarial-review\`, \`codex-review\`, 배 단계 항목).** \`---WTREE---\`와 \`---DIRTY---\` bash 출력에서 섹션을 파. 항목이 \`wtree\` 필드 AND가 있는 경우 현재 \`---WTREE---\` 값과 동일하게 검토는 CURRENT - 동일한 내용, 커밋, 수정, 수정 또는 아직 (이렇게 equality 혼자 동일한 내용을 증명하는지 여부, 즉, 키스톤 속성). 그 항목에 대한 커밋 통계를 건너 뛰고 staleness 참고를 표시하십시오.
+- 플랜티티티 행 (플랜티-세로-리뷰, 플랜-세리뷰) 플랜티 파일 등급, 리포 트리가 적용되지 않음 - 그에 대한 wtree 규칙을 적용하지 않습니다. 7일의 신선도 논리를 유지합니다. 이러한 항목은 \`plan_sha256\` 필드를 운반하면, 현재 플랜 파일의 sha256과 메모 "플랜 변경 이후"에 비교합니다.
+- 가을 (no \`wtree\` on the entry, or wtree mismatch): \`---HEAD---\` 섹션을 파로 현재 HEAD 커밋 해시를 얻기 위해. 각 리뷰 항목에 대한 \`commit\` 필드가 있습니다: 현재의 HEAD에 대해 비교합니다. 다른 경우, elapsed commits: \`git rev-list --count STORED_COMMIT..HEAD\`를 계산하십시오. FAILS (저장된 커밋은 다시 시작되었습니다), UNKNOWN (저장된 커밋은 ")"는 {nl/> (저스트)에서 "nl"로 요약합니다.
+- \`commit\` 필드가 없는 항목에 대해서는, "주의: {skill} 리뷰는 {date}에서 아무런 커밋트 추적이 없습니다. 정확한 staleness 탐지를 위해 다시 실행해야 합니다."
+- 모든 리뷰 등급 CURRENT (위트 일치 또는 HEAD 일치), 어떤 staleness 메모 표시하지 않는 경우
 
-## Plan File Review Report
+## 계획 파일 검토 보고서
 
-After displaying the Review Readiness Dashboard in conversation output, also update the
-**plan file** itself so review status is visible to anyone reading the plan.
+검토 읽기 후 Dashboard 대화 출력에서, 또한 업데이트 **계획 파일** 자체 그래서 검토 상태는 누구에게 계획을 읽는 것으로 볼 수 있습니다.
 
-### Detect the plan file
+### 플랜 파일을 검색
 
-1. Check if there is an active plan file in this conversation (the host provides plan file
-   paths in system messages — look for plan file references in the conversation context).
-2. If not found, skip this section silently — not every review runs in plan mode.
+1. 이 대화에서 활동 계획 파일이 있는지 확인 (주 호스트는 계획 파일을 제공합니다)
+   시스템 메시지의 경로 — 대화 상황에 계획 파일 참조를 찾습니다.
+2. 발견되지 않은 경우,이 섹션을 침묵적으로 건너 뛰기 — 모든 리뷰는 계획 모드에서 실행되지 않습니다.
 
-### Generate the report
+### 보고서 생성
 
-Read the review log output you already have from the Review Readiness Dashboard step above.
-Parse each JSONL entry. Each skill logs different fields:
+검토 로그 출력을 읽으십시오. 이미 리뷰 Readiness Dashboard 단계에서 있습니다. 각 JSONL 항목에 파십시오. 각 기술 로그는 다른 필드를 기록합니다.
 
-- **plan-ceo-review**: \`status\`, \`unresolved\`, \`critical_gaps\`, \`mode\`, \`scope_proposed\`, \`scope_accepted\`, \`scope_deferred\`, \`commit\`
-  → Findings: "{scope_proposed} proposals, {scope_accepted} accepted, {scope_deferred} deferred"
-  → If scope fields are 0 or missing (HOLD/REDUCTION mode): "mode: {mode}, {critical_gaps} critical gaps"
-- **plan-eng-review**: \`status\`, \`unresolved\`, \`critical_gaps\`, \`issues_found\`, \`mode\`, \`commit\`
-  → Findings: "{issues_found} issues, {critical_gaps} critical gaps"
-- **plan-design-review**: \`status\`, \`initial_score\`, \`overall_score\`, \`unresolved\`, \`decisions_made\`, \`commit\`
-  → Findings: "score: {initial_score}/10 → {overall_score}/10, {decisions_made} decisions"
-- **plan-devex-review**: \`status\`, \`initial_score\`, \`overall_score\`, \`product_type\`, \`tthw_current\`, \`tthw_target\`, \`mode\`, \`persona\`, \`competitive_tier\`, \`unresolved\`, \`commit\`
-  → Findings: "score: {initial_score}/10 → {overall_score}/10, TTHW: {tthw_current} → {tthw_target}"
-- **devex-review**: \`status\`, \`overall_score\`, \`product_type\`, \`tthw_measured\`, \`dimensions_tested\`, \`dimensions_inferred\`, \`boomerang\`, \`commit\`
-  → Findings: "score: {overall_score}/10, TTHW: {tthw_measured}, {dimensions_tested} tested/{dimensions_inferred} inferred"
-- **codex-review**: \`status\`, \`gate\`, \`findings\`, \`findings_fixed\`
-  → Findings: "{findings} findings, {findings_fixed}/{findings} fixed"
+- **플랜 일람**: \`status\`, \`unresolved\`, \`critical_gaps\`, \`mode\`, \`scope_proposed\`, \`scope_accepted\`, \`scope_deferred\`, \`commit\`
+  → 찾기 : "{scope_제안됨_accepted} 허용, {scope_deferred} deferred" → 범위 필드가 0 또는 누락된 경우 (HOLD/REDUCTION 모드): "mode: {mode}, {critical_gaps} 중요 간격"
+- **플랜 일람**: \`status\`, \`unresolved\`, \`critical_gaps\`, \`issues_found\`, \`mode\`, \`commit\`
+  → 찾기 : "{issues_발견됨_gaps} 중요한 간격"
+- **플랜트-디자인-리뷰**: \`status\`, \`initial_score\`, \`overall_score\`, \`unresolved\`, \`decisions_made\`, \`commit\`
+  → 찾기: "스코어: {initial_점수}/10 → {overall_score}/10, {decisions_made} 결정"
+- **플랜-devex-review**: \`status\`, \`initial_score\`, \`overall_score\`, \`product_type\`, \`tthw_current\`, \`tthw_target\`, \`mode\`, \`persona\`, \`competitive_tier\`, \`unresolved\`, \`commit\`
+  → 찾기: "스코어: {initial_점수}/10 → {overall_score}/10, TTHW: {tthw_현재} → {tthw_target}"
+- **딕스 - 리뷰**: \`status\`, \`overall_score\`, \`product_type\`, \`tthw_measured\`, \`dimensions_tested\`, \`dimensions_inferred\`, \`boomerang\`, \`commit\`
+  → 찾기 : "스코어 : {overall_점수}/10, TTHW: {tthw_측정}, {dimensions_테스트됨: 테스트/{dimensions_inferred} inferred"
+- **코엑스-리뷰**: \`status\`, \`gate\`, \`findings\`, \`findings_fixed\`
+  → 찾기 : "{findings} 찾기, {findings_fixed}/{findings} 고정"
 
-All fields needed for the Findings column are now present in the JSONL entries.
-For the review you just completed, you may use richer details from your own Completion
-Summary. For prior reviews, use the JSONL fields directly — they contain all required data.
+Findings 칼럼에 필요한 모든 필드는 이제 JSONL 항목에 있습니다. 리뷰에 대해 완료된 경우, 자신의 Completion Summary에서 부자 세부 정보를 사용할 수 있습니다. 사전 리뷰의 경우 JSONL 필드를 직접 사용하십시오. 필요한 모든 데이터를 포함합니다.
 
-Produce this markdown table:
+이 markdown 테이블을 생성하십시오:
 
-\`\`\`markdown
-## GSTACK REVIEW REPORT
+\`\`\`markdown ## GSTACK REVIEW REPORT
 
-| Review | Trigger | Why | Runs | Status | Findings |
+| Review | Trigger의 | 이유 | Runs | Status | 의논하기 |
 |--------|---------|-----|------|--------|----------|
-| CEO Review | \`/plan-ceo-review\` | Scope & strategy | {runs} | {status} | {findings} |
-| Codex Review | \`/codex review\` | Independent 2nd opinion | {runs} | {status} | {findings} |
-| Eng Review | \`/plan-eng-review\` | Architecture & tests (required) | {runs} | {status} | {findings} |
-| Design Review | \`/plan-design-review\` | UI/UX gaps | {runs} | {status} | {findings} |
-| DX Review | \`/plan-devex-review\` | Developer experience gaps | {runs} | {status} | {findings} |
+| CEO 리뷰 | \`/plan-ceo-review\` | 범위 및 전략 | ... | {status} | {findings} |
+| Codex 리뷰 | \`/codex review\` | 독립 제 2의 의견 | ... | {status} | {findings} |
+| Eng 검토 | \`/plan-eng-review\` | 건축 및 테스트 (필수) | ... | {status} | {findings} |
+| 디자인 리뷰 | \`/plan-design-review\` | UI/UX 간격 | ... | {status} | {findings} |
+| DX 리뷰 | \`/plan-devex-review\` | 개발자 경험 gaps | ... | {status} | {findings} |
 \`\`\`
 
-Below the table, add these lines. **CODEX** and **CROSS-MODEL** are optional (omit when
-empty); **VERDICT** is always present:
+테이블 아래,이 라인을 추가합니다. **CODEX** 및 **CROSS-MODEL**는 선택 사항입니다 (비어있을 때 미트); **VERDICT**는 항상 존재합니다:
 
-- **CODEX:** (only if codex-review ran) — one-line summary of codex fixes
-- **CROSS-MODEL:** (only if both Claude and Codex reviews exist) — overlap analysis
-- **VERDICT:** list reviews that are CLEAR (e.g., "CEO + ENG CLEARED — ready to implement").
-  If Eng Review is not CLEAR and not skipped globally, append "eng review required".
+- **CODEX:** (Codex-review ran만) - 코덱 수정의 한 줄 요약
+- **CROSS-MODEL:** (Claude와 Codex 리뷰가 모두 있으면) - 오버랩 분석
+- **VERDICT:** 목록 리뷰는 CLEAR (예: "CEO + ENG CLEARED - 구현 준비)입니다.
+  만약 Eng Review가 CLEAR이 아닌 글로벌로 건너뛰지 않는다면, "eng review required"를 추가한다.
 
-**Unresolved-decisions status (MANDATORY — never omitted; the report's final non-whitespace
-line).** After VERDICT, end the report (content under the \`## GSTACK REVIEW REPORT\`
-heading — a bold label, never a new \`## \` heading; exempt from the "omit when empty"
-rule) with exactly one: the exact unbolded line \`NO UNRESOLVED DECISIONS\` (a bolded one
-does NOT count), OR a \`**UNRESOLVED DECISIONS:**\` header + one bullet per open item
-(last bullet = final line; add \`+ N unresolved from prior reviews\` only when N > 0).
-This avoids double-counting: list THIS review's open items from context; for prior reviews
-sum \`unresolved\` over the latest fresh row per skill (dashboard 7-day window) after you
-DROP the current skill's row; emit the sentinel only when both are zero.
+**해결되지 않은 절제 상태 (MANDATORY — 결코 무효; 보고서의 최종 비-whitespace 라인).** VERDICT 후, 보고서를 종료 (`## GSTACK REVIEW REPORT\` 헤더 - 대담한 라벨, 새로운 \`## \` 헤더; 정확히 한 "오미트" 규칙)과 정확히 한 번에 제외 : 정확한 unbolded line \`NO UNRESOLVED DECISIONS\` (대략한 것은 NOT 카운트), OR a \`**UNRESOLVED DECISIONS:**\` 헤더 + 열선 당 하나의 총알 (마지막 선 = 마지막 선; 마지막 선; \`+ N unresolved from prior reviews\`만 N > 0일 때만 추가합니다. 이 두 배 위탁을 피합니다: 목록 THIS는 문맥에서 열린 품목을 검토합니다; 이전 리뷰 합계를 위해 \`unresolved\`는 기술 당 최신 신선한 줄에 (dashboard 7 일 창) 당신이 DROP 현재 기술의 줄 후에; 둘 다 0일 때만 sentinel를 방출합니다.
 
-### Write to the plan file
+### 계획 파일에 쓰기
 
-**PLAN MODE EXCEPTION — ALWAYS RUN:** This writes to the plan file, which is the one
-file you are allowed to edit in plan mode. The plan file review report is part of the
-plan's living status.
+**PLAN MODE EXCEPTION — ALWAYS RUN:** 이 플랜 파일에 쓰여져 플랜 모드로 편집할 수 있는 파일입니다. 플랜 파일 리뷰 보고서는 플랜의 생활 상태의 일부입니다.
 
-The report must always be the LAST section of the plan file — never mid-file.
-Use a single delete-then-append flow:
+보고서는 항상 계획 파일의 LAST 섹션이어야 합니다. - 결코 중간 파일. 단일 삭제-그 다음-부드 흐름을 사용하십시오.
 
-1. Read the plan file (Read tool) to see its full current content. Search the read
-   output for a \`## GSTACK REVIEW REPORT\` heading anywhere in the file.
-2. If found, use the Edit tool to DELETE the entire existing section. Match from
-   \`## GSTACK REVIEW REPORT\` through either the next \`## \` heading or end of
-   file, whichever comes first. Replace with the empty string. This applies
-   regardless of where the section currently lives — mid-file deletion is
-   intentional, not a special case. If the Edit fails (e.g., concurrent edit
-   changed the content), re-read the plan file and retry once.
-3. After the delete (or skipped, if no section existed), append the new
-   \`## GSTACK REVIEW REPORT\` section at the END of the file. Use the Edit
-   tool to match the file's current last paragraph and add the section after it,
-   or use Write to re-emit the whole file with the section at the end.
-4. Verify with the Read tool that \`## GSTACK REVIEW REPORT\` is the last
-   \`## \` heading in the file before continuing. If it isn't, repeat steps
-   2-3 once.
+1. 전체 현재 내용을 보려면 계획 파일 (읽기 도구)를 읽으십시오. 읽기
+   파일에 있는 `## GSTACK REVIEW REPORT\`를 위해 출력하는.
+2. 발견되면, 편집 도구를 DELETE 전체의 기존 섹션에 사용합니다.
+   \`## GSTACK REVIEW REPORT\` 를 통해 다음 \`## \` 를 통해 먼저 나온 파일의 끝을 머리에 넣거나, 빈 문자열로 대체합니다. 이 부분은 현재 영역의 부분과 관계없이 적용됩니다. - 중간 파일 삭제는 의도적, 특별한 경우 아닙니다. 편집이 실패하면 (예 : 동시 편집은 내용을 변경), 계획 파일 및 재시를 다시 한번 다시 읽습니다.
+3. 삭제 후 (또는 건너뛰기, 어떤 섹션이 존재하지 않는 경우), 새 추가
+   \`## GSTACK REVIEW REPORT\` 파일의 END 섹션. 파일의 현재 마지막 단락과 섹션을 추가하려면 편집 도구를 사용하여, 또는 끝에 섹션을 전체 파일을 다시 시작 씁니다.
+4. \`## GSTACK REVIEW REPORT\`가 마지막 것 같은 읽기 도구로 정의
+   \`## \` 계속하기 전에 파일에 두기. 그것이 아니라면 반복 단계 2-3를 한 번 반복하십시오.
 
-Do NOT replace the section in place. The "replace mid-file" path is what allowed
-prior versions to leave the report mid-file when an older report already lived
-there — the user then sees a plan whose review report is not at the bottom and
-(correctly) rejects it.
+NOT는 장소에 있는 부분을 대체합니다. 이전 보고서가 이미 살 때 "파일을 바꾸는" 경로는 이전 버전이 이전의 보고서를 남겨두기 전에 허용됩니다. 사용자는 그 후, 검토 보고서가 바닥에 있지 않은 계획을 볼 수 있습니다 (현재).
 
-## Capture Learnings
+# 캡처 학습
 
-If you discovered a non-obvious pattern, pitfall, or architectural insight during
-this session, log it for future sessions:
+이 세션 중 비 명백한 패턴, pitfall, 또는 건축 통찰력을 발견하면 향후 세션에 로그인하십시오.
 
 ```bash
 ~/.claude/skills/gstack/bin/gstack-learnings-log '{"skill":"plan-devex-review","type":"TYPE","key":"SHORT_KEY","insight":"DESCRIPTION","confidence":N,"source":"SOURCE","files":["path/to/relevant/file"]}'
 ```
 
-**Types:** `pattern` (reusable approach), `pitfall` (what NOT to do), `preference`
-(user stated), `architecture` (structural decision), `tool` (library/framework insight),
-`operational` (project environment/CLI/workflow knowledge).
+**유형:** `pattern` (재사용 가능한 접근), `pitfall` (일 NOT), `preference` (사용자 명시), `architecture` (구 결정), `tool` (library/framework 통찰력), `operational` (프로젝트 environment/CLI/workflow 지식).
 
-**Sources:** `observed` (you found this in the code), `user-stated` (user told you),
-`inferred` (AI deduction), `cross-model` (both Claude and Codex agree).
+**근원:** `observed` (코드에서 이것을 발견했습니다), `user-stated` (사용자가 당신을 말했습니다), `inferred` (AI 감응작용), `cross-model` (Claude 및 Codex 동의).
 
-**Confidence:** 1-10. Be honest. An observed pattern you verified in the code is 8-9.
-An inference you're not sure about is 4-5. A user preference they explicitly stated is 10.
+**구성:** 1-10. 정직. 코드를 확인한 관찰 패턴은 8-9입니다. 의도적으로는 4-5입니다. 명시적으로 명시된 사용자 선호도는 10입니다.
 
-**files:** Include the specific file paths this learning references. This enables
-staleness detection: if those files are later deleted, the learning can be flagged.
+**파일 :** 이 학습 참조를 특정 파일 경로 포함. 이 활성화 staleness 검출: 그 파일이 나중에 삭제되면, 학습은 떨어질 수 있습니다.
 
-**Only log genuine discoveries.** Don't log obvious things. Don't log things the user
-already knows. A good test: would this insight save time in a future session? If yes, log it.
+**로그인 하세요.** 분명한 것들을 로그하지 마십시오. 이미 사용자를 알 수 없습니다. 좋은 테스트 :이 통찰력은 향후 세션에서 시간을 절약 할 것인가? 예, 로그.
 
 
 
-## Brain Calibration Write-Back (Phase 2 / gated)
+## 뇌 교정 쓰기 백 (상 2 / 문)
 
-When the skill makes a typed prediction worth tracking (scope decision,
-TTHW target, architectural bet, wedge commitment), it MAY write a
-`kind=bet` take to the brain so a calibration profile builds over time.
+기술이 추적하는 유형의 예측을 할 때 (경찰 결정, TTHW 대상, 건축 베팅, 쐐기 약속), 그것은 MAY는 `kind=bet`를 씁니다 뇌에 이렇게 구경측정 단면도는 시간 이상 건설합니다.
 
-**Gated on two things:**
-1. Brain trust policy for the active endpoint is `personal` (check via
-   `~/.claude/skills/gstack/bin/gstack-config get brain_trust_policy@<endpoint-hash>`).
-   Shared brains skip write-back to avoid polluting team calibration.
-2. Feature flag `BRAIN_CALIBRATION_WRITEBACK` is set (today: false; flips
-   to true when upstream gbrain v0.42+ ships `takes_add` MCP op).
+**두 가지에 갇혀 :**
+1. 활성 엔드포인트의 두뇌 신뢰 정책은 `personal` (을 통해 확인
+   `~/.claude/skills/gstack/bin/gstack-config get brain_trust_policy@<endpoint-hash>`). 공유 뇌는 투표 팀 교정을 피하기 위해 쓰기 등을 건너 뛰고 있습니다.
+2. 기능 플래그 `BRAIN_CALIBRATION_WRITEBACK` 설정 (일: false; 플립
+   gbrain v0.42+가 `takes_add` MCP op)를 발송할 때 true에.
 
-When both gates pass, the write-back path uses `mcp__gbrain__takes_add`
-to record a take with weight 0.6 (per SKILL_CALIBRATION_WEIGHTS).
-If the MCP op is unavailable, fall back to `mcp__gbrain__put_page` with
-a gstack:takes fence block (documented but uglier path).
+양쪽 게이트 패스가 모두되면, 쓰기 백 경로는 `mcp__gbrain__takes_add`를 사용하여 무게 0.6 (SKILL_CALIBRATION_WEIGHTS당)로 가져갑니다. MCP op가 사용되지 않는 경우 `mcp__gbrain__put_page` 와 gstack:takes Fence block (documented but uglier path)로 다시 떨어졌습니다.
 
-Mandatory take frontmatter shape:
+필수 입력 frontmatter 모양:
 ```yaml
 kind: bet
 holder: <user identity from whoami>
@@ -821,8 +706,7 @@ expected_resolution: <date in 1-3 months depending on skill>
 source_skill: plan-devex-review
 ```
 
-After write, invalidate the affected digests so the next preflight reflects
-the new state:
+쓰기 후, 영향을받은 소화를 무효하여 다음의 preflight는 새로운 상태를 반영합니다.
 
 ```bash
 eval "$(~/.claude/skills/gstack/bin/gstack-slug 2>/dev/null)" 2>/dev/null || true
@@ -830,12 +714,9 @@ eval "$(~/.claude/skills/gstack/bin/gstack-slug 2>/dev/null)" 2>/dev/null || tru
 ```
 
 
-## Brain Cache Background Refresh
+## 두뇌 캐시 배경 새로 고침
 
-After the skill's work completes (and telemetry has logged), kick a
-background refresh of any cache digest that's getting close to its TTL.
-This is non-blocking — the user doesn't wait. Next invocation benefits
-from the warm cache.
+기술 작업이 완료되면 (그리고 원격 측정은 로그온), 킥은 어떤 캐시 다이제스트의 재생을 재생하는 것은 그것의 TTL. 이것은 비 차단입니다 - 사용자는 기다릴 수 없습니다. 다음 호출은 따뜻한 캐시에서 혜택을 제공합니다.
 
 ```bash
 eval "$(~/.claude/skills/gstack/bin/gstack-slug 2>/dev/null)" 2>/dev/null || true
@@ -843,29 +724,23 @@ eval "$(~/.claude/skills/gstack/bin/gstack-slug 2>/dev/null)" 2>/dev/null || tru
 ```
 
 
-## Next Steps — Review Chaining
+## 다음 단계 — 체인링 검토
 
-After displaying the Review Readiness Dashboard, recommend next reviews:
+검토 읽기 후 Dashboard 검토, 다음 리뷰를 추천 :
 
-**Recommend /plan-eng-review if eng review is not skipped globally** — DX issues often
-have architectural implications. If this DX review found API design problems, error
-handling gaps, or CLI ergonomics issues, eng review should validate the fixes.
+**eng 검토가 전 세계적으로 건너지지 않는 경우 /plan-eng-review를 추천하십시오.** - DX 문제는 종종 건축적 의미가 있습니다. DX 검토가 API 디자인 문제, 오류 처리 간격, 또는 CLI 인체 공학적 문제, eng 검토가 수정을 검증해야합니다.
 
-**Suggest /plan-design-review if user-facing UI exists** — DX review focuses on
-developer-facing surfaces; design review covers end-user-facing UI.
+**/plan-design-review 사용자를 강제로 하면 UI가 존재합니다.** — DX 검토는 개발자 직면 표면에 초점; 디자인 검토는 끝 사용자 파싱 UI를 포함합니다.
 
-**Recommend /devex-review after implementation** — the boomerang. Plan said TTHW would
-be [target from 0C]. Did reality match? Run /devex-review on the live product to find
-out. This is where the competitive benchmark pays off: you have a concrete target to
-measure against.
+**/devex-review를 구현한 후** — Boomerang. 계획은 TTHW가 0C에서 [target]일 것이라고 말했습니다. 현실 경기가 있었습니까? 살아있는 제품에 /devex-review를 실행하십시오. 경쟁적인 벤치 마크가 떨어져 지불하는 곳입니다: 당신은 측정하는 구체적인 표적이 있습니다.
 
-Use AskUserQuestion with applicable options:
-- **A)** Run /plan-eng-review next (required gate)
-- **B)** Run /plan-design-review (only if UI scope detected)
-- **C)** Ready to implement, run /devex-review after shipping
-- **D)** Skip, I'll handle next steps manually
+적용 가능한 옵션과 AskUserQuestion를 사용하십시오:
+- **A)** 실행 /plan-eng-review 다음 (필수 문)
+- **B) (아)** 실행 /plan-design-review (UI 범위가 검출된 경우에만)
+- **C) (아)** 구현을 준비, 선박 후 /devex-review 실행
+- **(주)** Skip, 다음 단계가 수동으로 처리됩니다.
 
-## Mode Quick Reference
+## 모드 빠른 참조
 ```
              | DX EXPANSION     | DX POLISH          | DX TRIAGE
 Scope        | Push UP (opt-in) | Maintain           | Critical only
@@ -878,11 +753,11 @@ Passes       | All 8, expanded  | All 8, standard    | Pass 1 + 3 only
 Outside voice| Recommended      | Recommended        | Skip
 ```
 
-## Formatting Rules
+## 형식 규칙
 
-* NUMBER issues (1, 2, 3...) and LETTERS for options (A, B, C...).
-* Label with NUMBER + LETTER (e.g., "3A", "3B").
-* One sentence max per option.
-* After each pass, pause and wait for feedback before moving on.
-* Rate before and after each pass for scannability.
+* NUMBER 문제 (1, 2, 3...) 및 옵션에 대한 LETTERS (A, B, C ...).
+* NUMBER + LETTER (예: "3A", "3B").
+* 옵션당 최대 1개의 문장.
+* 각 통행 후에, 일시 중지는 위에 이동하는의 앞에 의견을 기다립니다.
+* 검사를 위한 각 통행의 앞에 그리고 후에 비율.
 

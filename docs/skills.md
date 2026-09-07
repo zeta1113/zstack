@@ -1,239 +1,238 @@
 # Skill Deep Dives
 
-Detailed guides for every gstack skill — philosophy, workflow, and examples.
+gstack skill 각각의 철학, workflow, 예시를 설명하는 자세한 가이드입니다.
 
-| Skill | Your specialist | What they do |
+| Skill | 당신의 specialist | 하는 일 |
 |-------|----------------|--------------|
-| [`/office-hours`](#office-hours) | **YC Office Hours** | Start here. Six forcing questions that reframe your product before you write code. Pushes back on your framing, challenges premises, generates implementation alternatives. Design doc feeds into every downstream skill. |
-| [`/spec`](#spec) | **Spec Author** | Turn vague intent into a precise, executable spec in five phases. Backlog-ready output that downstream skills can pick up. Optional agent spawn at the end. |
-| [`/plan-ceo-review`](#plan-ceo-review) | **CEO / Founder** | Rethink the problem. Find the 10-star product hiding inside the request. Four modes: Expansion, Selective Expansion, Hold Scope, Reduction. |
-| [`/plan-eng-review`](#plan-eng-review) | **Eng Manager** | Lock in architecture, data flow, diagrams, edge cases, and tests. Forces hidden assumptions into the open. |
-| [`/plan-design-review`](#plan-design-review) | **Senior Designer** | Interactive plan-mode design review. Rates each dimension 0-10, explains what a 10 looks like, fixes the plan. Works in plan mode. |
-| [`/design-consultation`](#design-consultation) | **Design Partner** | Build a complete design system from scratch. Knows the landscape, proposes creative risks, generates realistic product mockups. Design at the heart of all other phases. |
-| [`/review`](#review) | **Staff Engineer** | Find the bugs that pass CI but blow up in production. Auto-fixes the obvious ones. Flags completeness gaps. Advisory simplification lens flags over-built code — never blocks, never auto-applies. |
-| [`/investigate`](#investigate) | **Debugger** | Systematic root-cause debugging. Iron Law: no fixes without investigation. Traces data flow, tests hypotheses, stops after 3 failed fixes. |
-| [`/design-review`](#design-review) | **Designer Who Codes** | Live-site visual audit + fix loop. 80-item audit, then fixes what it finds. Atomic commits, before/after screenshots. |
-| [`/design-shotgun`](#design-shotgun) | **Design Explorer** | Generate multiple AI design variants, open a comparison board in your browser, and iterate until you approve a direction. Taste memory biases toward your preferences. |
-| [`/design-html`](#design-html) | **Design Engineer** | Generates production-quality Pretext-native HTML. Works with approved mockups, CEO plans, design reviews, or from scratch. Text reflows on resize, heights adjust to content. Smart API routing per design type. Framework detection for React/Svelte/Vue. |
-| [`/qa`](#qa) | **QA Lead** | Test your app, find bugs, fix them with atomic commits, re-verify. Auto-generates regression tests for every fix. |
-| [`/qa-only`](#qa) | **QA Reporter** | Same methodology as /qa but report only. Use when you want a pure bug report without code changes. |
-| [`/scrape`](#scrape) | **Browser Data Extractor** | Pull data from a web page. First call prototypes via `$B`; subsequent calls on a matching intent run a codified browser-skill in ~200ms. |
-| [`/skillify`](#skillify) | **Skill Codifier** | Walks back through your conversation, finds the last `/scrape` prototype, synthesizes script + test + fixture, runs the test, asks before committing. |
-| [`/ship`](#ship) | **Release Engineer** | Sync main, run tests, audit coverage, push, open PR. Bootstraps test frameworks if you don't have one. One command. |
-| [`/land-and-deploy`](#land-and-deploy) | **Release Engineer** | Merge the PR, wait for CI and deploy, verify production health. One command from "approved" to "verified in production." |
-| [`/canary`](#canary) | **SRE** | Post-deploy monitoring loop. Watches for console errors, performance regressions, and page failures using the browse daemon. |
-| [`/benchmark`](#benchmark) | **Performance Engineer** | Baseline page load times, Core Web Vitals, and resource sizes. Compare before/after on every PR. Track trends over time. |
-| [`/cso`](#cso) | **Chief Security Officer** | OWASP Top 10 + STRIDE threat modeling security audit. Scans for injection, auth, crypto, and access control issues. |
-| [`/document-release`](#document-release) | **Technical Writer** | Update all project docs to match what you just shipped. Catches stale READMEs automatically. |
-| [`/document-generate`](#document-generate) | **Technical Writer** | Generate Diataxis docs (tutorial / how-to / reference / explanation) for a feature from code. |
-| [`/retro`](#retro) | **Eng Manager** | Team-aware weekly retro. Per-person breakdowns, shipping streaks, test health trends, growth opportunities. |
-| [`/browse`](#browse) | **QA Engineer** | Give the agent eyes. Real Chromium browser, real clicks, real screenshots. ~100ms per command. |
-| [`/setup-browser-cookies`](#setup-browser-cookies) | **Session Manager** | Import cookies from your real browser (Chrome, Arc, Brave, Edge) into the headless session. Test authenticated pages. |
-| [`/autoplan`](#autoplan) | **Review Pipeline** | One command, fully reviewed plan. Runs CEO → design → DX → eng review automatically (eng always last, so the shipping gate reviews the final amended plan) with encoded decision principles. Surfaces only taste decisions for your approval. |
-| [`/plan-devex-review`](#plan-devex-review) | **DX Reviewer** | Plan-stage DX review. TTHW (time-to-hello-world), magical moments, friction points, persona traces. Three modes: Expansion, Polish, Triage. |
-| [`/devex-review`](#devex-review) | **DX Reviewer (live)** | Live developer experience audit. Walks the actual onboarding flow, measures TTHW, catches the docs lies. |
-| [`/plan-tune`](#plan-tune) | **Question Tuner** | Self-tune AskUserQuestion sensitivity per question. Mark questions as never-ask, always-ask, or only-for-one-way. |
-| [`/spec`](#spec) | **Spec Author** | Turn vague intent into a precise, executable spec in five phases. Files a GitHub issue, optionally spawns a Claude Code agent in a fresh worktree, and lets `/ship` close the source issue on merge. |
-| [`/learn`](#learn) | **Memory** | Manage what gstack learned across sessions. Review, search, prune, and export project-specific patterns and preferences. |
-| [`/context-save`](#context-save) | **Save State** | Save working context (git state, decisions, remaining work) so any future session can resume. |
-| [`/context-restore`](#context-restore) | **Restore State** | Resume from a saved context, even across Conductor workspace handoffs. |
-| [`/health`](#health) | **Code Quality Dashboard** | Wraps type checker, linter, tests, dead code detection. Computes a weighted 0-10 score; tracks trends over time. |
-| [`/landing-report`](#landing-report) | **Ship Queue Dashboard** | Read-only snapshot of the workspace-aware ship queue. Which version slots are claimed, which sibling workspaces have WIP. |
-| [`/benchmark-models`](#benchmark-models) | **Model Benchmark** | Side-by-side cross-model benchmark for skills (Claude vs GPT vs Gemini). Latency, tokens, cost, optional LLM-judged quality. |
+| [`/office-hours`](#office-hours) | **YC Office Hours** | 여기서 시작합니다. 코드를 쓰기 전에 product를 다시 framing하는 6개의 forcing question을 던집니다. framing에 pushback하고, premise를 challenge하며, implementation alternative를 생성합니다. design doc은 모든 downstream skill의 입력이 됩니다. |
+| [`/spec`](#spec) | **Spec Author** | 모호한 intent를 5단계로 정확하고 실행 가능한 spec으로 바꿉니다. downstream skill이 이어받을 수 있는 backlog-ready output을 만들고, 끝에서 optional agent spawn도 지원합니다. |
+| [`/plan-ceo-review`](#plan-ceo-review) | **CEO / Founder** | 문제를 다시 생각합니다. request 안에 숨어 있는 10-star product를 찾습니다. Expansion, Selective Expansion, Hold Scope, Reduction 네 가지 mode가 있습니다. |
+| [`/plan-eng-review`](#plan-eng-review) | **Eng Manager** | architecture, data flow, diagram, edge case, test를 잠급니다. 숨은 assumption을 밖으로 끌어냅니다. |
+| [`/plan-design-review`](#plan-design-review) | **Senior Designer** | plan-mode에서 interactive design review를 수행합니다. 각 dimension을 0-10으로 평가하고, 10점짜리가 무엇인지 설명한 뒤 plan을 수정합니다. |
+| [`/design-consultation`](#design-consultation) | **Design Partner** | scratch에서 완전한 design system을 만듭니다. landscape를 이해하고, creative risk를 제안하며, realistic product mockup을 생성합니다. |
+| [`/review`](#review) | **Staff Engineer** | CI는 통과하지만 production에서 터질 bug를 찾습니다. 명백한 것은 auto-fix하고 completeness gap을 flag합니다. over-built code를 짚는 simplification lens는 advisory이며 block하거나 auto-apply하지 않습니다. |
+| [`/investigate`](#investigate) | **Debugger** | 체계적인 root-cause debugging입니다. Iron Law: 조사 없는 fix 금지. data flow를 추적하고 hypothesis를 테스트하며, fix 시도가 3번 실패하면 멈춥니다. |
+| [`/design-review`](#design-review) | **Designer Who Codes** | live site visual audit + fix loop입니다. 80-item audit 후 발견한 문제를 고치고, atomic commit과 before/after screenshot을 남깁니다. |
+| [`/design-shotgun`](#design-shotgun) | **Design Explorer** | 여러 AI design variant를 만들고 browser에서 comparison board를 열어 방향을 승인할 때까지 iterate합니다. taste memory가 선호를 반영합니다. |
+| [`/design-html`](#design-html) | **Design Engineer** | production-quality Pretext-native HTML을 생성합니다. approved mockup, CEO plan, design review, scratch description 모두 입력으로 받을 수 있습니다. resize 시 text가 reflow되고 height가 content에 맞춰 조정됩니다. |
+| [`/qa`](#qa) | **QA Lead** | app을 테스트하고 bug를 찾고, atomic commit으로 fix한 뒤 재검증합니다. 모든 fix에 regression test를 자동 생성합니다. |
+| [`/qa-only`](#qa) | **QA Reporter** | /qa와 같은 methodology를 사용하지만 report만 작성합니다. code change 없는 순수 bug report가 필요할 때 씁니다. |
+| [`/scrape`](#scrape) | **Browser Data Extractor** | web page에서 data를 추출합니다. 첫 호출은 `$B`로 prototype하고, 같은 intent의 후속 호출은 codified browser-skill로 약 200ms 안에 실행됩니다. |
+| [`/skillify`](#skillify) | **Skill Codifier** | conversation을 되짚어 마지막 `/scrape` prototype을 찾고, script + test + fixture를 합성해 test를 실행한 뒤 commit 전 확인을 요청합니다. |
+| [`/ship`](#ship) | **Release Engineer** | main sync, test 실행, coverage audit, push, PR 생성까지 한 command로 처리합니다. test framework가 없으면 bootstrap합니다. |
+| [`/land-and-deploy`](#land-and-deploy) | **Release Engineer** | PR을 merge하고 CI/deploy를 기다린 뒤 production health를 검증합니다. "approved"에서 "verified in production"까지 한 command로 진행됩니다. |
+| [`/canary`](#canary) | **SRE** | post-deploy monitoring loop입니다. browse daemon으로 console error, performance regression, page failure를 감시합니다. |
+| [`/benchmark`](#benchmark) | **Performance Engineer** | page load time, Core Web Vitals, resource size baseline을 잡습니다. PR 전후를 비교하고 trend를 추적합니다. |
+| [`/cso`](#cso) | **Chief Security Officer** | OWASP Top 10 + STRIDE threat modeling security audit입니다. injection, auth, crypto, access control 문제를 찾습니다. |
+| [`/document-release`](#document-release) | **Technical Writer** | 방금 ship한 내용에 맞춰 project docs를 업데이트합니다. stale README를 자동으로 잡습니다. |
+| [`/document-generate`](#document-generate) | **Documentation Author** | code에서 feature용 Diataxis docs(tutorial / how-to / reference / explanation)를 생성합니다. |
+| [`/retro`](#retro) | **Eng Manager** | team-aware weekly retro입니다. 사람별 breakdown, shipping streak, test health trend, growth opportunity를 정리합니다. |
+| [`/browse`](#browse) | **QA Engineer** | agent에게 눈을 줍니다. 실제 Chromium browser, 실제 click, 실제 screenshot을 사용합니다. command당 약 100ms입니다. |
+| [`/setup-browser-cookies`](#setup-browser-cookies) | **Session Manager** | 실제 browser(Chrome, Arc, Brave, Edge)에서 cookie를 가져와 headless session에 넣습니다. 인증된 page를 테스트할 수 있습니다. |
+| [`/autoplan`](#autoplan) | **Review Pipeline** | command 하나로 완전히 review된 plan을 만듭니다. CEO → design → DX → eng review를 자동 실행하고 taste decision만 approval용으로 보여줍니다. |
+| [`/plan-devex-review`](#plan-devex-review) | **DX Reviewer** | plan-stage DX review입니다. TTHW(time-to-hello-world), magical moment, friction point, persona trace를 다룹니다. Expansion, Polish, Triage 세 가지 mode가 있습니다. |
+| [`/devex-review`](#devex-review) | **DX Reviewer (live)** | live developer experience audit입니다. 실제 onboarding flow를 따라가며 TTHW를 측정하고 docs가 실제와 다른 지점을 잡습니다. |
+| [`/plan-tune`](#plan-tune) | **Question Tuner** | AskUserQuestion 민감도를 question별로 self-tune합니다. never-ask, always-ask, only-for-one-way로 표시할 수 있습니다. |
+| [`/learn`](#learn) | **Memory** | gstack가 session 전반에서 학습한 project-specific pattern과 preference를 review, search, prune, export합니다. |
+| [`/context-save`](#context-save) | **Save State** | working context(git state, decision, remaining work)를 저장해 future session이 이어받을 수 있게 합니다. |
+| [`/context-restore`](#context-restore) | **Restore State** | saved context에서 session을 재개합니다. Conductor workspace handoff 후에도 이어갈 수 있습니다. |
+| [`/health`](#health) | **Code Quality Dashboard** | type checker, linter, test, dead code detection을 감싸고 weighted 0-10 score와 trend를 계산합니다. |
+| [`/landing-report`](#landing-report) | **Ship Queue Dashboard** | workspace-aware ship queue의 read-only snapshot입니다. 어떤 version slot이 잡혔고 sibling workspace에 WIP가 있는지 보여줍니다. |
+| [`/benchmark-models`](#benchmark-models) | **Model Benchmark** | skill을 Claude, GPT, Gemini 등 여러 model로 side-by-side benchmark합니다. latency, token, cost, optional LLM-judged quality를 비교합니다. |
 | | | |
 | **Multi-AI** | | |
-| [`/codex`](#codex) | **Second Opinion** | Independent review from OpenAI Codex CLI. Three modes: code review (pass/fail gate), adversarial challenge, and open consultation with session continuity. Cross-model analysis when both `/review` and `/codex` have run. |
-| [`/pair-agent`](#pair-agent) | **Remote Agent Bridge** | Pair a remote AI agent (OpenClaw, Codex, Cursor, Hermes) with your browser. Scoped tunnel, locked allowlist, session token. |
-| [`/setup-gbrain`](#setup-gbrain) | **Memory Sync** | Set up gbrain for cross-machine session memory sync. One command from zero to live. |
-| [`/sync-gbrain`](#sync-gbrain) | **Keep Brain Current** | Refresh gbrain against this repo's code; teach the agent when to use `gbrain search`/`code-def` over Grep. Idempotent; safe to re-run. |
+| [`/codex`](#codex) | **Second Opinion** | OpenAI Codex CLI의 independent review입니다. review(pass/fail gate), adversarial challenge, session continuity가 있는 open consultation 세 가지 mode를 제공합니다. |
+| [`/pair-agent`](#pair-agent) | **Remote Agent Bridge** | remote AI agent(OpenClaw, Codex, Cursor, Hermes)를 browser와 pair합니다. scoped tunnel, locked allowlist, session token을 사용합니다. |
+| [`/setup-gbrain`](#setup-gbrain) | **Memory Sync** | cross-machine session memory sync를 위해 gbrain을 설정합니다. 0에서 live까지 한 command입니다. |
+| [`/sync-gbrain`](#sync-gbrain) | **Keep Brain Current** | 이 repo의 code로 gbrain을 refresh하고, agent가 Grep보다 `gbrain search`/`code-def`를 언제 써야 하는지 알려 줍니다. idempotent하며 재실행해도 안전합니다. |
 | | | |
 | **Safety & Utility** | | |
-| [`/careful`](#safety--guardrails) | **Safety Guardrails** | Warns before destructive commands (rm -rf, DROP TABLE, force-push, git reset --hard). Override any MEDIUM warning; root/home recursive deletes and default-branch force-pushes are hard-denied. Common build cleanups whitelisted. |
-| [`/freeze`](#safety--guardrails) | **Edit Lock** | Restrict all file edits to a single directory. Blocks Edit and Write outside the boundary. Accident prevention for debugging. |
-| [`/guard`](#safety--guardrails) | **Full Safety** | Combines /careful + /freeze in one command. Maximum safety for prod work. |
-| [`/unfreeze`](#safety--guardrails) | **Unlock** | Remove the /freeze boundary, allowing edits everywhere again. |
-| [`/open-gstack-browser`](#open-gstack-browser) | **GStack Browser** | Launch GStack Browser with sidebar, anti-bot stealth, auto model routing, cookie import, and Claude Code integration. Watch every action live. |
-| [`/setup-deploy`](#setup-deploy) | **Deploy Configurator** | One-time setup for `/land-and-deploy`. Detects your platform, production URL, and deploy commands. |
-| [`/gstack-upgrade`](#gstack-upgrade) | **Self-Updater** | Upgrade gstack to the latest version. Detects global vs vendored install, syncs both, shows what changed. |
-| [`/make-pdf`](#make-pdf) | **PDF Generator** | Turn any markdown file into a publication-quality PDF. Proper margins, page numbers, cover pages, clickable TOC. Mermaid/excalidraw fences render as vector diagrams; `--to html\|docx` for other formats. |
-| [`/diagram`](#diagram) | **Diagram Maker** | English in, diagram out: mermaid source + editable `.excalidraw` (open it on excalidraw.com, hand-drawn style) + rendered SVG/PNG. Fully offline. |
-| [`/ios-qa`](#ios-qa) | **iOS QA Lead** | Live-device iOS QA via USB CoreDevice tunnel + embedded StateServer. Reads Swift source, codegens accessors, drives the real iPhone. Optionally exposes the device over Tailscale for remote agents. |
-| [`/ios-fix`](#ios-fix) | **iOS Autonomous Fixer** | Closes the find→fix→verify loop on a real iPhone. Captures a reproducing snapshot, fixes the source, rebuilds, redeploys, verifies. |
-| [`/ios-design-review`](#ios-design-review) | **iOS Designer's Eye** | 10-dimension Apple HIG audit on a real iPhone. Rates each screen, says what would make it a 10. |
-| [`/ios-clean`](#ios-clean) | **iOS Bridge Cleanup** | Convenience wrapper to strip DebugBridge SPM + `#if DEBUG` wiring. The structural Release-build guard is in Package.swift + CI; this skill is for guided manual removals. |
-| [`/ios-sync`](#ios-sync) | **iOS Bridge Resync** | Regenerate accessors and Swift templates against the latest upstream gstack. Run when you add new `@Observable` classes or upgrade gstack. |
+| [`/careful`](#safety--guardrails) | **Safety Guardrails** | `rm -rf`, `DROP TABLE`, force-push, `git reset --hard` 같은 destructive command 전에 경고합니다. MEDIUM warning은 override 가능하고 root/home recursive delete와 default-branch force-push는 hard deny됩니다. |
+| [`/freeze`](#safety--guardrails) | **Edit Lock** | file edit를 하나의 directory로 제한합니다. boundary 밖 Edit/Write를 block해 debugging 중 실수를 막습니다. |
+| [`/guard`](#safety--guardrails) | **Full Safety** | /careful + /freeze를 하나의 command로 켭니다. prod 작업에 최대한의 안전장치를 둡니다. |
+| [`/unfreeze`](#safety--guardrails) | **Unlock** | /freeze boundary를 제거해 다시 어디든 edit할 수 있게 합니다. |
+| [`/open-gstack-browser`](#open-gstack-browser) | **GStack Browser** | sidebar, anti-bot stealth, auto model routing, cookie import, Claude Code integration이 포함된 GStack Browser를 실행합니다. 모든 action을 live로 볼 수 있습니다. |
+| [`/setup-deploy`](#setup-deploy) | **Deploy Configurator** | `/land-and-deploy`를 위한 one-time setup입니다. platform, production URL, deploy command를 감지합니다. |
+| [`/gstack-upgrade`](#gstack-upgrade) | **Self-Updater** | gstack를 latest version으로 upgrade합니다. global install과 vendored install을 감지해 sync하고 변경 내용을 보여줍니다. |
+| [`/make-pdf`](#make-pdf) | **PDF Generator** | Markdown을 publication-quality PDF로 바꿉니다. margin, page number, cover page, clickable TOC를 처리하고 Mermaid/excalidraw fence를 vector diagram으로 render합니다. |
+| [`/diagram`](#diagram) | **Diagram Maker** | English input에서 mermaid source + editable `.excalidraw` + rendered SVG/PNG를 생성합니다. 완전히 offline입니다. |
+| [`/ios-qa`](#ios-qa) | **iOS QA Lead** | USB CoreDevice tunnel + embedded StateServer로 real iPhone을 구동하는 live-device iOS QA입니다. Swift source를 읽고 accessor를 codegen하며 remote agent에도 Tailscale로 expose할 수 있습니다. |
+| [`/ios-fix`](#ios-fix) | **iOS Autonomous Fixer** | real iPhone에서 find→fix→verify loop를 닫습니다. reproducing snapshot을 잡고 source를 수정한 뒤 rebuild, redeploy, verify합니다. |
+| [`/ios-design-review`](#ios-design-review) | **iOS Designer's Eye** | real iPhone에서 10-dimension Apple HIG audit을 수행합니다. 각 screen을 평가하고 10점에 가까워지려면 무엇이 필요한지 설명합니다. |
+| [`/ios-clean`](#ios-clean) | **iOS Bridge Cleanup** | DebugBridge SPM + `#if DEBUG` wiring을 제거하는 convenience wrapper입니다. structural release-build guard는 Package.swift + CI에 있습니다. |
+| [`/ios-sync`](#ios-sync) | **iOS Bridge Resync** | latest upstream gstack에 맞춰 accessor와 Swift template을 재생성합니다. 새 `@Observable` class를 추가하거나 gstack를 upgrade한 뒤 실행합니다. |
 
 ---
 
 ## `/office-hours`
 
-This is where every project should start.
+모든 project는 여기서 시작하는 것이 좋습니다.
 
-Before you plan, before you review, before you write code — sit down with a YC-style partner and think about what you're actually building. Not what you think you're building. What you're *actually* building.
+plan을 세우기 전에, review하기 전에, code를 쓰기 전에 YC-style partner와 앉아 실제로 무엇을 만들고 있는지 생각합니다. 당신이 만들고 있다고 *생각하는 것*이 아니라, 정말로 만들고 있는 것이 무엇인지 보는 단계입니다.
 
-### The reframe
+### Reframe
 
-Here's what happened on a real project. The user said: "I want to build a daily briefing app for my calendar." Reasonable request. Then it asked about the pain — specific examples, not hypotheticals. They described an assistant missing things, calendar items across multiple Google accounts with stale info, prep docs that were AI slop, events with wrong locations that took forever to track down.
+실제 project에서 이런 일이 있었습니다. 사용자는 "내 calendar용 daily briefing app을 만들고 싶다"고 말했습니다. 합리적인 request처럼 보입니다. 그러자 skill은 가설이 아니라 구체적인 예시를 요구하며 pain을 물었습니다. 사용자는 assistant가 중요한 것을 놓치고, 여러 Google account에 흩어진 calendar item에는 stale info가 많고, prep doc은 AI slop 같고, event location은 틀려 직접 추적하는 데 시간이 오래 걸린다고 설명했습니다.
 
-It came back with: *"I'm going to push back on the framing, because I think you've outgrown it. You said 'daily briefing app for multi-Google-Calendar management.' But what you actually described is a personal chief of staff AI."*
+skill은 이렇게 답했습니다: *"이 framing에는 조금 pushback하겠습니다. 이미 그 범위를 넘어선 것처럼 보입니다. 당신은 'multi-Google-Calendar management용 daily briefing app'이라고 말했지만, 실제로 설명한 것은 personal chief of staff AI입니다."*
 
-Then it extracted five capabilities the user didn't realize they were describing:
+그리고 사용자가 스스로 설명하고 있다는 사실을 몰랐던 capability 다섯 가지를 추출했습니다.
 
-1. **Watches your calendar** across all accounts and detects stale info, missing locations, permission gaps
-2. **Generates real prep work** — not logistics summaries, but *the intellectual work* of preparing for a board meeting, a podcast, a fundraiser
-3. **Manages your CRM** — who are you meeting, what's the relationship, what do they want, what's the history
-4. **Prioritizes your time** — flags when prep needs to start early, blocks time proactively, ranks events by importance
-5. **Trades money for leverage** — actively looks for ways to delegate or automate
+1. 모든 account의 **calendar를 감시**하고 stale info, missing location, permission gap을 감지합니다.
+2. **진짜 prep work를 생성**합니다. logistics summary가 아니라 board meeting, podcast, fundraiser를 준비하기 위한 *intellectual work*입니다.
+3. **CRM을 관리**합니다. 누구를 만나고, 관계가 무엇이고, 상대가 무엇을 원하고, history가 무엇인지 봅니다.
+4. **시간을 우선순위화**합니다. 준비를 일찍 시작해야 하는 경우를 flag하고, 시간을 proactive하게 block하며, event를 importance별로 ranking합니다.
+5. **money를 leverage로 바꿉니다.** delegate하거나 automate할 방법을 적극적으로 찾습니다.
 
-That reframe changed the entire project. They were about to build a calendar app. Now they're building something ten times more valuable — because the skill listened to their pain instead of their feature request.
+이 reframe은 project 전체를 바꿨습니다. 원래는 calendar app을 만들 뻔했습니다. 이제는 10배 더 가치 있는 것을 만들게 되었습니다. skill이 feature request가 아니라 pain을 들었기 때문입니다.
 
-### Premise challenge
+### Premise Challenge
 
-After the reframe, it presents premises for you to validate. Not "does this sound good?" — actual falsifiable claims about the product:
+reframe 후에는 검증해야 할 premise를 제시합니다. "이거 좋아 보이나요?" 같은 질문이 아니라 product에 대한 falsifiable claim입니다.
 
-1. The calendar is the anchor data source, but the value is in the intelligence layer on top
-2. The assistant doesn't get replaced — they get superpowered
-3. The narrowest wedge is a daily briefing that actually works
-4. CRM integration is a must-have, not a nice-to-have
+1. calendar는 anchor data source이지만, value는 그 위의 intelligence layer에 있습니다.
+2. assistant는 replace되는 것이 아니라 superpower를 얻습니다.
+3. 가장 좁은 wedge는 실제로 작동하는 daily briefing입니다.
+4. CRM integration은 nice-to-have가 아니라 must-have입니다.
 
-You agree, disagree, or adjust. Every premise you accept becomes load-bearing in the design doc.
+당신은 동의하거나, 반대하거나, 조정합니다. 받아들인 premise는 design doc에서 load-bearing decision이 됩니다.
 
-### Implementation alternatives
+### Implementation Alternative
 
-Then it generates 2-3 concrete implementation approaches with honest effort estimates:
+그다음 2-3개의 구체적인 implementation approach와 솔직한 effort estimate를 만듭니다.
 
-- **Approach A: Daily Briefing First** — narrowest wedge, ships tomorrow, M effort (human: ~3 weeks / CC: ~2 days)
-- **Approach B: CRM-First** — build the relationship graph first, L effort (human: ~6 weeks / CC: ~4 days)
-- **Approach C: Full Vision** — everything at once, XL effort (human: ~3 months / CC: ~1.5 weeks)
+- **Approach A: Daily Briefing First** — 가장 좁은 wedge, 내일 ship 가능, M effort(human: 약 3주 / CC: 약 2일)
+- **Approach B: CRM-First** — relationship graph를 먼저 구축, L effort(human: 약 6주 / CC: 약 4일)
+- **Approach C: Full Vision** — 모든 것을 한 번에 구현, XL effort(human: 약 3개월 / CC: 약 1.5주)
 
-Recommends A because you learn from real usage. CRM data comes naturally in week two.
+실제 사용에서 배울 수 있으므로 A를 추천합니다. CRM data는 2주 차에 자연스럽게 따라옵니다.
 
-### Two modes
+### Two Modes
 
-**Startup mode** — for founders and intrapreneurs building a business. You get six forcing questions distilled from how YC partners evaluate products: demand reality, status quo, desperate specificity, narrowest wedge, observation & surprise, and future-fit. These questions are uncomfortable on purpose. If you can't name a specific human who needs your product, that's the most important thing to learn before writing any code.
+**Startup mode** — business를 만드는 founder와 intrapreneur를 위한 mode입니다. YC partner가 product를 평가할 때 보는 관점에서 추출한 6개의 forcing question을 받습니다: demand reality, status quo, desperate specificity, narrowest wedge, observation & surprise, future-fit. 일부러 불편한 질문들입니다. product가 필요한 구체적인 사람 한 명을 말할 수 없다면, code를 쓰기 전에 그것부터 배우는 것이 가장 중요합니다.
 
-**Builder mode** — for hackathons, side projects, open source, learning, and having fun. You get an enthusiastic collaborator who helps you find the coolest version of your idea. What would make someone say "whoa"? What's the fastest path to something you can share? The questions are generative, not interrogative.
+**Builder mode** — hackathon, side project, open source, learning, fun을 위한 mode입니다. 당신의 idea에서 가장 멋진 version을 찾도록 도와주는 열정적인 collaborator를 얻습니다. 무엇이 사람을 "whoa"라고 말하게 만들까요? 공유할 수 있는 무언가까지 가는 가장 빠른 path는 무엇일까요? 이 질문들은 interrogative가 아니라 generative합니다.
 
-### The design doc
+### Design Doc
 
-Both modes end with a design doc written to `~/.gstack/projects/` — and that doc feeds directly into `/plan-ceo-review` and `/plan-eng-review`. The full lifecycle is now: `office-hours → plan → implement → review → QA → ship → retro`.
+두 mode 모두 `~/.gstack/projects/`에 design doc을 작성하고, 그 doc은 `/plan-ceo-review`와 `/plan-eng-review`의 입력이 됩니다. 전체 lifecycle은 `office-hours → plan → implement → review → QA → ship → retro`입니다.
 
-After the design doc is approved, `/office-hours` reflects on what it noticed about how you think — not generic praise, but specific callbacks to things you said during the session. The observations appear in the design doc too, so you re-encounter them when you re-read later.
+design doc이 승인되면 `/office-hours`는 session 동안 당신이 어떻게 생각하는지에 대해 관찰한 것을 반영합니다. generic praise가 아니라, 당신이 실제로 했던 말에 대한 specific callback입니다. 이 observation은 design doc에도 들어가므로 나중에 다시 읽을 때 다시 만나게 됩니다.
 
 ---
 
 ## `/plan-ceo-review`
 
-This is my **founder mode**.
+이것은 내 **founder mode**입니다.
 
-This is where I want the model to think with taste, ambition, user empathy, and a long time horizon. I do not want it taking the request literally. I want it asking a more important question first:
+여기서는 model이 taste, ambition, user empathy, long time horizon을 가지고 생각하길 원합니다. request를 문자 그대로 받아들이지 않고, 먼저 더 중요한 질문을 묻기를 바랍니다.
 
-**What is this product actually for?**
+**이 product는 실제로 무엇을 위한 것인가?**
 
-I think of this as **Brian Chesky mode**.
+나는 이것을 **Brian Chesky mode**라고 생각합니다.
 
-The point is not to implement the obvious ticket. The point is to rethink the problem from the user's point of view and find the version that feels inevitable, delightful, and maybe even a little magical.
+목표는 obvious ticket을 구현하는 것이 아닙니다. 사용자의 관점에서 문제를 다시 생각하고, inevitable하고 delightful하며 어쩌면 조금 magical하게 느껴지는 version을 찾는 것입니다.
 
 ### Example
 
-Say I am building a Craigslist-style listing app and I say:
+Craigslist-style listing app을 만들고 있다고 해 봅시다. 내가 이렇게 말합니다.
 
-> "Let sellers upload a photo for their item."
+> "판매자가 item photo를 upload할 수 있게 해줘."
 
-A weak assistant will add a file picker and save an image.
+약한 assistant는 file picker를 추가하고 image를 저장합니다.
 
-That is not the real product.
+그것은 진짜 product가 아닙니다.
 
-In `/plan-ceo-review`, I want the model to ask whether "photo upload" is even the feature. Maybe the real feature is helping someone create a listing that actually sells.
+`/plan-ceo-review`에서는 model이 "photo upload"가 정말 feature인지 물어야 합니다. 실제 feature는 누군가가 잘 팔리는 listing을 만들도록 돕는 것일 수 있습니다.
 
-If that is the real job, the whole plan changes.
+그것이 진짜 job이라면 plan 전체가 달라집니다.
 
-Now the model should ask:
+이제 model은 이런 질문을 해야 합니다.
 
-* Can we identify the product from the photo?
-* Can we infer the SKU or model number?
-* Can we search the web and draft the title and description automatically?
-* Can we pull specs, category, and pricing comps?
-* Can we suggest which photo will convert best as the hero image?
-* Can we detect when the uploaded photo is ugly, dark, cluttered, or low-trust?
-* Can we make the experience feel premium instead of like a dead form from 2007?
+* photo에서 product를 식별할 수 있는가?
+* SKU나 model number를 추론할 수 있는가?
+* web search로 title과 description을 자동 draft할 수 있는가?
+* spec, category, pricing comp를 가져올 수 있는가?
+* 어떤 photo가 hero image로 가장 잘 convert될지 제안할 수 있는가?
+* uploaded photo가 ugly, dark, cluttered, low-trust인지 감지할 수 있는가?
+* dead form from 2007 같은 경험이 아니라 premium experience로 만들 수 있는가?
 
-That is what `/plan-ceo-review` does for me.
+이것이 `/plan-ceo-review`가 나에게 해 주는 일입니다.
 
-It does not just ask, "how do I add this feature?"
-It asks, **"what is the 10-star product hiding inside this request?"**
+그냥 "이 feature를 어떻게 추가하지?"라고 묻지 않습니다.
+**"이 request 안에 숨어 있는 10-star product는 무엇인가?"**라고 묻습니다.
 
-### Four modes
+### Four Modes
 
-- **SCOPE EXPANSION** — dream big. The agent proposes the ambitious version. Every expansion is presented as an individual decision you opt into. Recommends enthusiastically.
-- **SELECTIVE EXPANSION** — hold your current scope as the baseline, but see what else is possible. The agent surfaces opportunities one by one with neutral recommendations — you cherry-pick the ones worth doing.
-- **HOLD SCOPE** — maximum rigor on the existing plan. No expansions surfaced.
-- **SCOPE REDUCTION** — find the minimum viable version. Cut everything else.
+- **SCOPE EXPANSION** — 크게 꿈꿉니다. agent가 ambitious version을 제안합니다. 모든 expansion은 opt-in할 수 있는 개별 decision으로 제시되며, agent는 적극적으로 추천합니다.
+- **SELECTIVE EXPANSION** — 현재 scope를 baseline으로 유지하되, 가능한 추가 기회를 하나씩 보여줍니다. recommendation은 neutral하며 당신이 가치 있는 것만 cherry-pick합니다.
+- **HOLD SCOPE** — 기존 plan에 대해 최대한 엄격하게 review합니다. expansion은 보여주지 않습니다.
+- **SCOPE REDUCTION** — minimum viable version을 찾고 나머지는 잘라냅니다.
 
-Visions and decisions are persisted to `~/.gstack/projects/` so they survive beyond the conversation. Exceptional visions can be promoted to `docs/designs/` in your repo for the team.
+vision과 decision은 `~/.gstack/projects/`에 저장되어 conversation 이후에도 유지됩니다. exceptional vision은 team과 공유할 수 있도록 repo의 `docs/designs/`로 promote할 수 있습니다.
 
 ---
 
 ## `/plan-eng-review`
 
-This is my **eng manager mode**.
+이것은 내 **eng manager mode**입니다.
 
-Once the product direction is right, I want a different kind of intelligence entirely. I do not want more sprawling ideation. I do not want more "wouldn't it be cool if." I want the model to become my best technical lead.
+product direction이 맞아지면 완전히 다른 종류의 intelligence가 필요합니다. 더 넓게 퍼지는 ideation도, "wouldn't it be cool if"도 원하지 않습니다. model이 최고의 technical lead처럼 행동하길 원합니다.
 
-This mode should nail:
+이 mode는 다음을 단단히 잡아야 합니다.
 
 * architecture
-* system boundaries
+* system boundary
 * data flow
-* state transitions
-* failure modes
-* edge cases
-* trust boundaries
+* state transition
+* failure mode
+* edge case
+* trust boundary
 * test coverage
 
-And one surprisingly big unlock for me: **diagrams**.
+그리고 나에게 크게 unlock이 되었던 것 하나: **diagram**입니다.
 
-LLMs get way more complete when you force them to draw the system. Sequence diagrams, state diagrams, component diagrams, data-flow diagrams, even test matrices. Diagrams force hidden assumptions into the open. They make hand-wavy planning much harder.
+LLM은 system을 그리게 만들면 훨씬 더 complete해집니다. sequence diagram, state diagram, component diagram, data-flow diagram, test matrix 모두 숨은 assumption을 밖으로 끌어냅니다. 손에 잡히지 않는 planning이 훨씬 어려워집니다.
 
-So `/plan-eng-review` is where I want the model to build the technical spine that can carry the product vision.
+그래서 `/plan-eng-review`는 product vision을 실제로 구현할 수 있게 지탱하는 technical spine을 만드는 단계입니다.
 
 ### Example
 
-Take the same listing app example.
+같은 listing app 예시를 봅시다.
 
-Let's say `/plan-ceo-review` already did its job. We decided the real feature is not just photo upload. It is a smart listing flow that:
+`/plan-ceo-review`가 이미 일을 마쳤다고 합시다. 진짜 feature는 단순 photo upload가 아니라 다음을 하는 smart listing flow입니다.
 
-* uploads photos
-* identifies the product
-* enriches the listing from the web
-* drafts a strong title and description
-* suggests the best hero image
+* photo upload
+* product identification
+* web enrichment
+* strong title/description draft
+* best hero image suggestion
 
-Now `/plan-eng-review` takes over.
+이제 `/plan-eng-review`가 이어받습니다.
 
-Now I want the model to answer questions like:
+model은 다음 질문에 답해야 합니다.
 
-* What is the architecture for upload, classification, enrichment, and draft generation?
-* Which steps happen synchronously, and which go to background jobs?
-* Where are the boundaries between app server, object storage, vision model, search/enrichment APIs, and the listing database?
-* What happens if upload succeeds but enrichment fails?
-* What happens if product identification is low-confidence?
-* How do retries work?
-* How do we prevent duplicate jobs?
-* What gets persisted when, and what can be safely recomputed?
+* upload, classification, enrichment, draft generation의 architecture는 무엇인가?
+* 어떤 step은 sync로 처리하고, 어떤 step은 background job으로 보낼 것인가?
+* app server, object storage, vision model, search/enrichment API, listing database 사이의 boundary는 어디인가?
+* upload는 성공했지만 enrichment가 실패하면 어떻게 되는가?
+* product identification confidence가 낮으면 어떻게 되는가?
+* retry는 어떻게 동작하는가?
+* duplicate job은 어떻게 막는가?
+* 무엇을 언제 persist하고, 무엇은 안전하게 recompute할 수 있는가?
 
-And this is where I want diagrams — architecture diagrams, state models, data-flow diagrams, test matrices. Diagrams force hidden assumptions into the open. They make hand-wavy planning much harder.
+여기서 diagram이 필요합니다. architecture diagram, state model, data-flow diagram, test matrix가 hidden assumption을 끄집어내고 hand-wavy planning을 어렵게 만듭니다.
 
-That is `/plan-eng-review`.
+이것이 `/plan-eng-review`입니다.
 
-Not "make the idea smaller."
-**Make the idea buildable.**
+"idea를 더 작게 만들기"가 아닙니다.
+**idea를 buildable하게 만드는 것**입니다.
 
-One note on invocation: in plan mode, the skill skips the "what should I review?" scope question and reviews your active plan automatically, announcing its pick in one line ("Scope gate: plan mode — auto-selected B") so you can redirect it. Name a target explicitly ("review PLAN.md") and your choice wins in any mode. Outside plan mode with nothing named, it asks first — that gate is a hard stop.
+invocation note: plan mode에서는 "무엇을 review할까요?" scope question을 건너뛰고 active plan을 자동 review합니다. 한 줄로 선택을 알립니다("Scope gate: plan mode — auto-selected B"). target을 명시하면("review PLAN.md") 어떤 mode에서도 그 선택이 우선합니다. plan mode가 아니고 target도 없으면 먼저 묻습니다. 이 gate는 hard stop입니다.
 
 ### Review Readiness Dashboard
 
-Every review (CEO, Eng, Design) logs its result. At the end of each review, you see a dashboard:
+모든 review(CEO, Eng, Design)는 결과를 log합니다. review가 끝나면 dashboard가 표시됩니다.
 
 ```
 +====================================================================+
@@ -249,603 +248,601 @@ Every review (CEO, Eng, Design) logs its result. At the end of each review, you 
 +====================================================================+
 ```
 
-Eng Review is the only required gate (disable with `gstack-config set skip_eng_review true`). CEO and Design are informational — recommended for product and UI changes respectively.
+Eng Review만 required gate입니다(`gstack-config set skip_eng_review true`로 비활성화 가능). CEO와 Design은 informational이며, 각각 product change와 UI change에 권장됩니다.
 
-### Plan-to-QA flow
+### Plan-to-QA Flow
 
-When `/plan-eng-review` finishes the test review section, it writes a test plan artifact to `~/.gstack/projects/`. When you later run `/qa`, it picks up that test plan automatically — your engineering review feeds directly into QA testing with no manual copy-paste.
+`/plan-eng-review`가 test review section을 마치면 test plan artifact를 `~/.gstack/projects/`에 씁니다. 나중에 `/qa`를 실행하면 이 test plan을 자동으로 가져옵니다. 즉 engineering review가 manual copy-paste 없이 QA testing으로 바로 이어집니다.
 
 ---
 
 ## `/plan-design-review`
 
-This is my **senior designer reviewing your plan** — before you write a single line of code.
+이것은 내 **senior designer reviewing your plan**입니다. code 한 줄 쓰기 전에 실행합니다.
 
-Most plans describe what the backend does but never specify what the user actually sees. Empty states? Error states? Loading states? Mobile layout? AI slop risk? These decisions get deferred to "figure it out during implementation" — and then an engineer ships "No items found." as the empty state because nobody specified anything better.
+대부분의 plan은 backend가 무엇을 하는지는 설명하지만, 사용자가 실제로 무엇을 보는지는 지정하지 않습니다. empty state, error state, loading state, mobile layout, AI slop risk 같은 결정이 "구현하면서 알아서"로 밀립니다. 그러면 아무도 더 나은 empty state를 지정하지 않았기 때문에 engineer가 "No items found."를 ship하게 됩니다.
 
-`/plan-design-review` catches all of this during planning, when it's cheap to fix.
+`/plan-design-review`는 수정 비용이 싼 planning 단계에서 이 문제를 잡습니다.
 
-It works like `/plan-ceo-review` and `/plan-eng-review` — interactive, one issue at a time, with the **STOP + AskUserQuestion** pattern. It rates each design dimension 0-10, explains what a 10 looks like, then edits the plan to get there. The rating drives the work: rate low = lots of fixes, rate high = quick pass. Like `/plan-eng-review`, it skips the "what should I review?" scope question in plan mode and targets your active plan automatically (announced in one line so you can redirect); an explicitly named target wins in any mode.
+`/plan-ceo-review`, `/plan-eng-review`처럼 interactive하게 동작합니다. issue를 하나씩 다루고 **STOP + AskUserQuestion** pattern을 사용합니다. 각 design dimension을 0-10으로 평가하고, 10점짜리가 무엇인지 설명한 뒤 plan을 그 방향으로 수정합니다. 점수는 작업량을 결정합니다. 낮으면 많은 fix, 높으면 quick pass입니다. plan mode에서는 active plan을 자동 target으로 삼고, 명시적 target이 있으면 그것이 우선합니다.
 
-Seven passes over the plan: information architecture, interaction state coverage, user journey, AI slop risk, design system alignment, responsive/accessibility, and unresolved design decisions. For each pass, it finds gaps and either fixes them directly (obvious ones) or asks you to make a design choice (genuine tradeoffs).
+plan을 일곱 번 통과합니다: information architecture, interaction state coverage, user journey, AI slop risk, design system alignment, responsive/accessibility, unresolved design decision. 각 pass는 gap을 찾고, obvious한 것은 직접 fix하며, 진짜 tradeoff가 있는 것은 사용자에게 선택을 요청합니다.
 
 ### Example
 
 ```
 You:   /plan-design-review
 
-Claude: Initial Design Rating: 4/10
+Claude: 초기 디자인 평점: 4/10
 
-        "This plan describes a user dashboard but never specifies
-         what the user sees first. It says 'cards with icons' —
-         which looks like every SaaS template. It mentions zero
-         loading states, zero empty states, and no mobile behavior."
+        "이 plan은 user dashboard를 설명하지만 사용자가 처음 무엇을 보게 되는지
+         지정하지 않습니다. 'icons가 있는 cards'라고만 되어 있어 모든 SaaS template처럼
+         보입니다. loading state, empty state, mobile behavior도 전혀 언급하지 않습니다."
 
         Pass 1 (Info Architecture): 3/10
-        "A 10 would define primary/secondary/tertiary content
-         hierarchy for every screen."
-        → Added information hierarchy section to plan
+        "10점짜리 plan이라면 모든 screen의 primary/secondary/tertiary content
+         hierarchy를 정의했을 것입니다."
+        → plan에 information hierarchy section을 추가함
 
         Pass 2 (Interaction States): 2/10
-        "The plan has 4 UI features but specifies 0 out of 20
-         interaction states (4 features × 5 states each)."
-        → Added interaction state table to plan
+        "plan에는 UI feature가 4개 있지만, 필요한 20개 interaction state
+         (feature 4개 × state 5개) 중 아무것도 지정되어 있지 않습니다."
+        → plan에 interaction state table을 추가함
 
         Pass 4 (AI Slop): 4/10
-        "The plan says 'clean, modern UI with cards and icons'
-         and 'hero section with gradient'. These are the top 2
-         AI-generated-looking patterns."
-        → Rewrote UI descriptions with specific, intentional alternatives
+        "plan에는 'cards and icons가 있는 clean, modern UI',
+         'gradient가 있는 hero section'이라고 되어 있습니다. 둘 다 AI가 만든 것처럼
+         보이게 만드는 대표 pattern입니다."
+        → UI description을 구체적이고 intentional한 alternative로 다시 작성함
 
-        Overall: 4/10 → 8/10 after fixes
-        "Plan is design-complete. Run /design-review after
-         implementation for visual QA."
+        Overall: 수정 후 4/10 → 8/10
+        "plan이 design-complete 상태입니다. implementation 후 visual QA를 위해
+         /design-review를 실행하세요."
 ```
 
-When you re-run it, sections already at 8+ get a quick pass. Sections below 8 get full treatment. For live-site visual audits post-implementation, use `/design-review`.
+다시 실행할 때 이미 8점 이상인 section은 quick pass를 받고, 8점 미만인 section은 full treatment를 받습니다. implementation 이후 live-site visual audit에는 `/design-review`를 사용하세요.
 
 ---
 
 ## `/design-consultation`
 
-This is my **design partner mode**.
+이것은 내 **design partner mode**입니다.
 
-`/plan-design-review` audits a site that already exists. `/design-consultation` is for when you have nothing yet — no design system, no font choices, no color palette. You are starting from zero and you want a senior designer to sit down with you and build the whole visual identity together.
+`/plan-design-review`는 이미 존재하는 site를 audit합니다. `/design-consultation`은 아직 아무것도 없을 때 사용합니다. design system도, font choice도, color palette도 없는 상태에서 senior designer와 함께 전체 visual identity를 만들고 싶을 때입니다.
 
-It is a conversation, not a form. The agent asks about your product, your users, and your audience. It thinks about what your product needs to communicate — trust, speed, craft, warmth, whatever fits — and works backward from that to concrete choices. Then it proposes a complete, coherent design system: aesthetic direction, typography (3+ fonts with specific roles), color palette with hex values, spacing scale, layout approach, and motion strategy. Every recommendation comes with a rationale. Every choice reinforces every other choice.
+이것은 form이 아니라 conversation입니다. agent는 product, user, audience를 묻고 product가 전달해야 하는 감각을 생각합니다. trust, speed, craft, warmth처럼 product에 맞는 느낌에서 출발해 aesthetic direction, typography, color palette, spacing scale, layout approach, motion strategy까지 구체적인 선택으로 역산합니다. 모든 recommendation에는 rationale이 있고, 각 선택은 서로를 강화합니다.
 
-But coherence is table stakes. Every dev tool dashboard looks the same — clean sans-serif, muted grays, a blue accent. They are all coherent. They are all forgettable. The difference between a product that looks "nice" and one that people actually recognize is the **deliberate creative risks**: the unexpected serif for headings, the bold accent nobody else in your category uses, the tighter spacing that makes your data feel authoritative instead of airy.
+하지만 coherence는 table stakes입니다. 모든 dev tool dashboard는 비슷해 보입니다. clean sans-serif, muted gray, blue accent. 모두 일관성은 있지만 잊히기 쉽습니다. "nice"하게 보이는 product와 실제로 사람들이 기억하는 product의 차이는 **deliberate creative risk**입니다. heading의 unexpected serif, category에서 아무도 쓰지 않는 bold accent, data를 airy하게 두지 않고 authoritative하게 만드는 tighter spacing 같은 것들입니다.
 
-That is what `/design-consultation` is really about. It does not just propose a safe system. It proposes safe choices AND risks — and tells you which is which. "Here are the choices that keep you literate in your category. And here is where I think you should break from convention, and why." You pick which risks to take. The agent checks that the whole system still coheres either way.
+`/design-consultation`은 안전한 system만 제안하지 않습니다. safe choice와 risk를 함께 제안하고 어느 쪽이 어떤 의미인지 말합니다. "category 안에서 읽히게 해 주는 선택은 이것이고, convention을 깨야 한다고 보는 지점은 이것이며, 이유는 이렇습니다." 당신이 감수할 risk를 고르면 agent는 어느 선택을 하든 전체 system이 coherent한지 확인합니다.
 
-If you want, the agent will research what's already out there in your space — take screenshots of real sites, analyze their fonts and colors and spacing — so you can see the landscape before you make choices. This is not about copying. It is about getting in the ballpark so you know what the conventions are, and then deciding which ones are worth breaking.
+원하면 agent가 당신의 space에 이미 존재하는 것들을 research합니다. real site screenshot을 찍고 font, color, spacing을 분석해 landscape를 보여줍니다. 복사가 목적이 아니라 convention을 이해하고 무엇을 깨야 할지 선택하기 위한 것입니다.
 
-After you agree on the system, it generates an interactive HTML preview page — not just swatches and font samples, but realistic product pages. If you are building a dashboard, you see a dashboard with a sidebar, data tables, and stat cards. If you are building a marketing site, you see a hero section with real copy and a CTA. Everything rendered in your design system, with your product name, in light and dark mode. You see what your product could feel like before a single line of production code is written.
+system에 합의하면 interactive HTML preview page를 생성합니다. swatch와 font sample만 보여주는 것이 아니라 realistic product page를 보여줍니다. dashboard라면 sidebar, data table, stat card가 보이고, marketing site라면 실제 copy와 CTA가 있는 hero section이 보입니다. 모든 것은 product name, light/dark mode와 함께 design system 안에서 render됩니다. production code를 쓰기 전에 product가 어떤 느낌일지 볼 수 있습니다.
 
-Then it writes `DESIGN.md` to your repo root — your project's design source of truth — and updates `CLAUDE.md` so every future Claude Code session respects the system. From that point on, `/design-review` can audit against it, and any agent working on your frontend knows the rules.
+그다음 repo root에 `DESIGN.md`를 작성합니다. project의 design source of truth입니다. 그리고 모든 future Claude Code session이 system을 따르도록 `CLAUDE.md`를 업데이트합니다. 이후 `/design-review`는 그 기준으로 audit할 수 있고, frontend를 다루는 모든 agent는 rule을 알게 됩니다.
 
 ### Example
 
 ```
 You:   /design-consultation
 
-Claude: From the README, this looks like a developer analytics dashboard
-        for engineering teams. Sound right? Tell me about the feeling
-        you want — and would you like me to look at what's out there
-        first so we can see the landscape?
+Claude: README를 보면 엔지니어링 팀을 위한 개발자 분석 대시보드로 보입니다.
+        맞나요? 원하는 느낌을 말해 주세요.
+        그리고 먼저 시장에 어떤 것들이 있는지 살펴볼까요?
+        전체 landscape를 보고 선택할 수 있습니다.
 
-You:    Yes, it's for eng managers. Show me what's out there.
+You:    맞아, engineering manager용이야. 어떤 것들이 있는지 보여줘.
 
-Claude: [browses Linear, Vercel, Datadog, Posthog — takes screenshots]
+Claude: [Linear, Vercel, Datadog, Posthog를 둘러보고 스크린샷을 찍습니다.]
 
-        Here's the landscape. They all converge on clean sans-serifs
-        and muted blue-gray palettes. Linear stands out with dark-first
-        and tight spacing. The rest feel interchangeable.
+        landscape는 이렇습니다. 대부분 clean sans-serif와
+        muted blue-gray palette로 수렴합니다. Linear는 dark-first 접근과
+        tight spacing으로 차별화됩니다. 나머지는 서로 바꿔도 크게 달라 보이지 않습니다.
 
-        Here's my proposal — and where I'd play it safe vs. take risks:
+        제안은 이렇습니다. 어디서는 안전하게 가고, 어디서는 risk를 감수할지 나눴습니다:
 
-        AESTHETIC: Industrial/Utilitarian — data-first, every pixel earns its place
+        AESTHETIC: Industrial/Utilitarian — data-first, 모든 pixel이 이유를 갖는 방향
         TYPOGRAPHY: Geist (body + UI), Instrument Serif (display), JetBrains Mono (data)
-        COLOR: Restrained — slate neutrals, single teal accent (#0D9488)
+        COLOR: 절제된 slate neutral, 단일 teal accent (#0D9488)
         SPACING: 4px base, compact density
-        LAYOUT: Grid-disciplined, 12-column
-        MOTION: Minimal-functional — only transitions that aid comprehension
+        LAYOUT: grid를 엄격히 따르는 12-column 구조
+        MOTION: Minimal-functional — 이해를 돕는 transition만 사용
 
-        SAFE CHOICES (match category expectations):
-          Geist for body — your users already know this font from Vercel
-          Slate neutrals — warm grays feel right for data-heavy UIs
-          Grid-disciplined layout — dashboards need predictable alignment
+        SAFE CHOICES (category expectation에 맞춤):
+          body에는 Geist — 사용자는 Vercel에서 이미 이 font에 익숙합니다.
+          slate neutral — data-heavy UI에는 따뜻한 gray가 잘 맞습니다.
+          grid-disciplined layout — dashboard에는 예측 가능한 정렬이 필요합니다.
 
-        RISKS (where you'd stand out):
-          Instrument Serif for display headings — nobody in dev tools
-            uses a serif. It creates instant hierarchy contrast and
-            signals "we care about craft" in a space full of sans-serifs.
-          Single teal accent instead of blue — everyone else in this space uses blue.
-            Teal is close enough to feel trustworthy, different enough
-            to be recognizable.
-          4px compact density — tighter than Linear, says "we respect
-            your screen real estate."
+        RISKS (차별화 지점):
+          display heading에 Instrument Serif — dev tool 영역에서는 거의 아무도
+            serif를 쓰지 않습니다. 즉각적인 hierarchy contrast를 만들고
+            sans-serif로 가득한 공간에서 "우리는 craft를 신경 쓴다"는 신호를 줍니다.
+          blue 대신 단일 teal accent — 이 영역의 대부분은 blue를 씁니다.
+            teal은 신뢰감을 줄 만큼 가깝고, 알아볼 수 있을 만큼 다릅니다.
+          4px compact density — Linear보다 더 촘촘해서 "우리는 사용자의
+            screen real estate를 존중한다"고 말합니다.
 
-        The safe choices keep you literate. The risks are where your
-        product gets its own face. Which risks appeal to you?
+        안전한 선택은 category 안에서 읽히게 해줍니다. risk는 product가
+        자기 얼굴을 갖는 지점입니다. 어떤 risk가 끌리나요?
 
-You:    Love the serif risk. Let's see it.
+You:    세리프를 쓰는 리스크가 마음에 들어. 한번 보자.
 
-Claude: Preview opened in your browser.
+Claude: 브라우저에서 preview를 열었습니다.
         [/tmp/design-consultation-preview-1710000000.html]
 
-        The page shows a realistic dashboard: sidebar nav, header with
-        avatar, stat cards, data table — all in your design system.
-        Instrument Serif at hero scale, Geist in body text, JetBrains
-        Mono in the data table. Teal accent on buttons and active states.
-        Light and dark mode toggle in the corner.
+        이 page는 실제 dashboard처럼 보입니다. sidebar nav, avatar가 있는 header,
+        stat card, data table이 모두 design system 안에서 렌더링됩니다.
+        hero scale에는 Instrument Serif, body text에는 Geist, data table에는
+        JetBrains Mono를 사용합니다. button과 active state에는 teal accent를 적용했습니다.
+        모서리에는 light/dark mode toggle이 있습니다.
 
-        How does it feel? Want to adjust anything before I write DESIGN.md?
+        느낌이 어떤가요? DESIGN.md를 쓰기 전에 조정할 부분이 있나요?
 
-You:    Ship it.
+You:    좋아, 진행해.
 
-Claude: Wrote DESIGN.md (typography, color, spacing, layout, motion).
-        Updated CLAUDE.md with design system guidelines.
-        All future sessions will respect these choices.
+Claude: DESIGN.md를 작성했습니다. (타이포그래피, 색상, 간격, 레이아웃, 모션)
+        CLAUDE.md에 design system guideline을 업데이트했습니다.
+        이후 모든 session은 이 선택을 따릅니다.
 ```
 
 ---
 
 ## `/design-review`
 
-This is my **designer who codes mode**.
+이것은 내 **designer who codes mode**입니다.
 
-`/plan-design-review` reviews your plan before implementation. `/design-review` audits and fixes the live site after.
+`/plan-design-review`는 implementation 전에 plan을 review합니다. `/design-review`는 implementation 후 live site를 audit하고 fix합니다.
 
-It runs an 80-item visual audit on your live site, then enters a fix loop: for each design finding, it locates the source file, makes the minimal CSS/styling change, commits with `style(design): FINDING-NNN`, re-navigates to verify, and takes before/after screenshots. One commit per fix, fully bisectable.
+live site에 80-item visual audit을 실행한 뒤 fix loop로 들어갑니다. 각 design finding에 대해 source file을 찾고, 최소한의 CSS/styling change를 만들고, `style(design): FINDING-NNN` commit을 남기며, 다시 navigate해서 검증하고 before/after screenshot을 찍습니다. fix 하나당 commit 하나라 완전히 bisectable합니다.
 
-The self-regulation heuristic is tuned for design work — CSS-only changes get a free pass (they are inherently safe and reversible), but changes to component JSX/TSX files count against the risk budget. Hard cap at 30 fixes. If the risk score exceeds 20%, it stops and asks.
+self-regulation heuristic은 design work에 맞춰져 있습니다. CSS-only change는 inherently safe하고 reversible하므로 free pass를 받지만, component JSX/TSX file change는 risk budget에 계산됩니다. hard cap은 30 fix입니다. risk score가 20%를 넘으면 멈추고 묻습니다.
 
 ### Example
 
 ```
 You:   /design-review https://myapp.com
 
-Claude: [Runs full 80-item visual audit on the live site]
+Claude: [live site에서 80개 항목 시각 감사(visual audit)를 실행합니다.]
         Design Score: C  |  AI Slop Score: D
-        12 findings (4 high, 5 medium, 3 polish)
+        finding 12개(high 4개, medium 5개, polish 3개)
 
-        Fixing 9 design issues...
+        design issue 9개를 수정하는 중...
 
-        style(design): FINDING-001 — replace 3-column icon grid with asymmetric layout
-        style(design): FINDING-002 — add heading scale 48/32/24/18/16
-        style(design): FINDING-003 — remove gradient hero, use bold typography
-        style(design): FINDING-004 — add second font for headings
-        style(design): FINDING-005 — vary border-radius by element role
-        style(design): FINDING-006 — left-align body text, reserve center for headings
-        style(design): FINDING-007 — add hover/focus states to all interactive elements
-        style(design): FINDING-008 — add prefers-reduced-motion media query
-        style(design): FINDING-009 — set max content width to 680px for body text
+        style(design): FINDING-001 — 3-column icon grid를 asymmetric layout으로 교체
+        style(design): FINDING-002 — heading scale 48/32/24/18/16 추가
+        style(design): FINDING-003 — gradient hero 제거, bold typography 사용
+        style(design): FINDING-004 — heading용 second font 추가
+        style(design): FINDING-005 — element role에 따라 border-radius 차등 적용
+        style(design): FINDING-006 — body text는 left-align, center는 heading에만 사용
+        style(design): FINDING-007 — 모든 interactive element에 hover/focus state 추가
+        style(design): FINDING-008 — prefers-reduced-motion media query 추가
+        style(design): FINDING-009 — body text의 max content width를 680px로 설정
 
-        Final audit:
+        최종 audit:
         Design Score: C → B+  |  AI Slop Score: D → A
-        9 fixes applied (8 verified, 1 best-effort). 3 deferred.
+        fix 9개 적용(8개 검증, 1개 best-effort). 3개 deferred.
 
-        [Report with before/after screenshots saved to .gstack/design-reports/]
+        [before/after screenshot이 포함된 report를 .gstack/design-reports/에 저장함]
 ```
 
-Nine commits, each touching one concern. The AI Slop score went from D to A because the three most recognizable patterns (gradient hero, 3-column grid, uniform radius) are gone.
+commit 9개, 각 commit은 하나의 concern만 다룹니다. gradient hero, 3-column grid, uniform radius 같은 식별 가능한 AI slop pattern이 사라졌기 때문에 AI Slop Score가 D에서 A로 올라갑니다.
 
 ---
 
 ## `/design-shotgun`
 
-This is my **design exploration mode**.
+이것은 내 **design exploration mode**입니다.
 
-You know the feeling. You have a feature, a page, a landing screen... and you're not sure what it should look like. You could describe it to Claude and get one answer. But one answer means one perspective, and design is a taste game. You need to see options.
+feature, page, landing screen은 있는데 어떤 모습이어야 할지 확신이 없을 때가 있습니다. Claude에게 설명하면 하나의 답을 받을 수 있지만, 하나의 답은 하나의 관점일 뿐입니다. design은 taste game입니다. option을 봐야 합니다.
 
-`/design-shotgun` generates 3 visual design variants using the GPT Image API, opens a comparison board in your browser, and waits for your feedback. You pick a direction, request changes, or ask for entirely new variants. The board supports remix, regenerate, and approval actions.
+`/design-shotgun`은 GPT Image API로 visual design variant 3개를 만들고, browser에서 comparison board를 연 뒤 feedback을 기다립니다. 방향을 고르거나, 변경을 요청하거나, 완전히 새로운 variant를 요청할 수 있습니다. board는 remix, regenerate, approve action을 지원합니다.
 
-### The loop
+### Loop
 
-1. You describe what you want (or point at an existing page)
-2. The skill reads your `DESIGN.md` for brand constraints (if it exists)
-3. It generates 3 distinct design variants as PNGs
-4. A comparison board opens in your browser with all 3 side-by-side
-5. You click "Approve" on the one you like, or give feedback for another round
-6. The approved variant saves to `~/.gstack/projects/$SLUG/designs/` with an `approved.json`
+1. 원하는 것을 설명합니다(또는 existing page를 가리킵니다).
+2. skill이 brand constraint를 위해 `DESIGN.md`를 읽습니다(있다면).
+3. distinct design variant 3개를 PNG로 생성합니다.
+4. comparison board가 browser에서 side-by-side로 열립니다.
+5. 마음에 드는 것에서 "Approve"를 click하거나 다음 round용 feedback을 남깁니다.
+6. approved variant가 `approved.json`과 함께 `~/.gstack/projects/$SLUG/designs/`에 저장됩니다.
 
-That `approved.json` is one way to feed `/design-html`. The design pipeline chains: shotgun picks the direction, design-html renders it as working code. But `/design-html` also works with CEO plans, design reviews, or just a description.
+`approved.json`은 `/design-html`에 들어가는 입력 중 하나입니다. design pipeline은 이렇게 이어집니다: shotgun이 방향을 고르고, design-html이 그 방향을 working code로 만듭니다. 하지만 `/design-html`은 CEO plan, design review, 단순 description으로도 동작합니다.
 
-### Taste memory
+### Taste Memory
 
-The skill remembers your preferences across sessions. If you consistently prefer minimal designs over busy ones, it biases future generations. This isn't a setting you configure... it emerges from your approvals.
+skill은 session 전반에서 preference를 기억합니다. busy design보다 minimal design을 계속 선호하면 future generation이 그쪽으로 bias됩니다. 따로 설정하는 값이 아니라 approval에서 자연스럽게 생겨납니다.
 
 ### Example
 
 ```
-You:   /design-shotgun — hero section for a developer tools landing page
+You:   /design-shotgun — 개발자 도구 landing page의 hero section
 
-Claude: [Generates 3 variants]
-        Variant A: Bold typography, dark background, code snippet hero
-        Variant B: Split layout, product screenshot left, copy right
-        Variant C: Minimal, centered headline, gradient accent
+Claude: [variant 3개를 생성합니다.]
+        변형 A: 굵은 타이포그래피, 어두운 배경, code snippet hero
+        변형 B: split layout, 왼쪽 product screenshot, 오른쪽 copy
+        변형 C: minimal style, 중앙 정렬 headline, gradient accent
 
-        [Opens comparison board at localhost:PORT]
+        [localhost:PORT에서 comparison board를 엽니다.]
 
-You:    [Clicks "Approve" on Variant A in the browser]
+You:    [브라우저에서 Variant A의 "Approve"를 클릭합니다.]
 
-Claude: Approved Variant A. Saved to ~/.gstack/projects/myapp/designs/
-        Next: run /design-html to generate production HTML from this mockup.
+Claude: Variant A를 승인했습니다. ~/.gstack/projects/myapp/designs/에 저장했습니다.
+        다음: 이 mockup에서 production HTML을 생성하려면 /design-html을 실행하세요.
 ```
 
 ---
 
 ## `/design-html`
 
-This is my **design-to-code mode**.
+이것은 내 **design-to-code mode**입니다.
 
-Every AI code generation tool produces static CSS. Hardcoded heights. Text that overflows on resize. Breakpoints that snap instead of flowing. The output looks right at exactly one viewport size and breaks at every other.
+AI code generation tool은 대개 static CSS를 만듭니다. hardcoded height, resize 시 overflow되는 text, flow하지 않고 snap되는 breakpoint가 생깁니다. output은 딱 하나의 viewport size에서는 맞아 보이지만 나머지에서는 깨집니다.
 
-`/design-html` fixes this. It generates HTML using [Pretext](https://github.com/chenglou/pretext) by Cheng Lou (ex-React core, Midjourney frontend). Pretext is a 15KB library that computes text layout without DOM measurement. Text reflows. Heights adjust to content. Cards size themselves. Chat bubbles shrinkwrap. All sub-millisecond, all dynamic.
+`/design-html`은 이 문제를 고칩니다. [Pretext](https://github.com/chenglou/pretext)를 사용해 HTML을 생성합니다. Pretext는 DOM measurement 없이 text layout을 계산하는 15KB library입니다. text는 reflow되고, height는 content에 맞춰 조정되며, card는 스스로 size를 잡고, chat bubble은 shrinkwrap됩니다. 모두 sub-millisecond이고 dynamic합니다.
 
-It works with multiple input sources: an approved mockup from `/design-shotgun`, a CEO plan from `/plan-ceo-review`, design review context from `/plan-design-review`, a PNG you provide, or just a description of what you want. It detects what context exists and asks how you want to proceed.
+여러 input source와 함께 동작합니다: `/design-shotgun`의 approved mockup, `/plan-ceo-review`의 CEO plan, `/plan-design-review`의 design review context, 사용자가 제공한 PNG, 단순 description. 존재하는 context를 감지하고 어떻게 진행할지 묻습니다.
 
-### Smart API routing
+### Smart API Routing
 
-Not every page needs the full Pretext engine. The skill reads the design and picks the right tools:
+모든 page가 full Pretext engine을 필요로 하지는 않습니다. skill은 design을 읽고 알맞은 tool을 고릅니다.
 
-- **Simple layouts** (landing, marketing): `prepare()` + `layout()` for resize-aware heights
-- **Card grids** (dashboard, listing): `prepare()` + `layout()` for self-sizing cards
-- **Chat UIs**: `walkLineRanges()` for tight-fit bubbles with zero wasted pixels
-- **Editorial layouts**: `layoutNextLine()` for text flowing around obstacles
-- **Complex editorial**: Full engine with `layoutWithLines()` for manual line rendering
+- **Simple layouts** (landing, marketing): resize-aware height를 위해 `prepare()` + `layout()`
+- **Card grids** (dashboard, listing): self-sizing card를 위해 `prepare()` + `layout()`
+- **Chat UIs**: wasted pixel 없는 tight-fit bubble을 위해 `walkLineRanges()`
+- **Editorial layouts**: obstacle 주변으로 text가 흐르게 하기 위해 `layoutNextLine()`
+- **Complex editorial**: manual line rendering을 위해 `layoutWithLines()`가 있는 full engine
 
-### The refinement loop
+### Refinement Loop
 
-1. Reads the approved mockup from `approved.json`
-2. Uses GPT-4o vision to extract implementation spec (colors, typography, layout)
-3. Generates self-contained HTML with Pretext inlined (15KB, zero network dependency)
-4. Spins up a live-reload server so you see changes instantly
-5. Screenshots at 3 viewports (mobile, tablet, desktop) to verify layout
-6. AskUserQuestion: what needs to change?
-7. Surgical edits via the Edit tool (not full regeneration)
-8. Repeat until you say "done"
+1. `approved.json`에서 approved mockup을 읽습니다.
+2. GPT-4o vision으로 implementation spec(colors, typography, layout)을 추출합니다.
+3. Pretext가 inline된 self-contained HTML을 생성합니다(15KB, zero network dependency).
+4. live-reload server를 띄워 즉시 변경을 볼 수 있게 합니다.
+5. mobile, tablet, desktop 3개 viewport에서 screenshot으로 layout을 검증합니다.
+6. AskUserQuestion: 무엇을 바꿔야 하나요?
+7. Edit tool로 surgical edit를 수행합니다(full regeneration 아님).
+8. 사용자가 "done"이라고 말할 때까지 반복합니다.
 
-### Framework detection
+### Framework Detection
 
-If your project uses React, Svelte, or Vue (detected from `package.json`), the skill offers to generate a framework component instead of vanilla HTML. Framework output uses `npm install @chenglou/pretext` instead of inline vendoring.
+project가 React, Svelte, Vue를 사용한다면(`package.json`에서 감지), skill은 vanilla HTML 대신 framework component 생성을 제안합니다. framework output은 inline vendoring 대신 `npm install @chenglou/pretext`를 사용합니다.
 
 ### Example
 
 ```
 You:   /design-html
 
-Claude: Found approved mockup: variant-A.png (hero section)
-        Design type: simple layout → using prepare() + layout()
+Claude: 승인된 mockup을 찾았습니다: variant-A.png (hero section)
+        Design type: simple layout → prepare() + layout() 사용
 
-        [Generates HTML with Pretext, opens live-reload server]
-        [Screenshots at 375px, 768px, 1440px — all verified]
+        [Pretext로 HTML을 생성하고 live-reload server를 엽니다.]
+        [375px, 768px, 1440px screenshot — 모두 검증됨]
 
-        The HTML is live at localhost:3456. Resize your browser.
-        Text reflows dynamically. What needs to change?
+        HTML이 localhost:3456에서 실행 중입니다. browser size를 조정해 보세요.
+        text가 dynamic하게 reflow됩니다. 무엇을 바꾸면 될까요?
 
-You:    Make the headline bigger and add more spacing below the CTA
+You:    헤드라인을 더 크게 하고 CTA 아래 간격을 더 줘.
 
-Claude: [Edits font-size and margin, browser auto-reloads]
-        Updated. Two changes applied.
+Claude: [font-size와 margin을 수정하고 browser가 자동 reload됩니다.]
+        업데이트했습니다. 변경 2개를 적용했습니다.
 
-You:    Done
+You:    완료
 
-Claude: Saved to ~/.gstack/projects/myapp/designs/hero-20260330/finalized.html
+Claude: ~/.gstack/projects/myapp/designs/hero-20260330/finalized.html에 저장했습니다.
 ```
 
 ---
 
 ## `/review`
 
-This is my **paranoid staff engineer mode**.
+이것은 내 **paranoid staff engineer mode**입니다.
 
-Passing tests do not mean the branch is safe.
+test가 통과한다고 branch가 안전하다는 뜻은 아닙니다.
 
-`/review` exists because there is a whole class of bugs that can survive CI and still punch you in the face in production. This mode is not about dreaming bigger. It is not about making the plan prettier. It is about asking:
+`/review`는 CI를 통과하고도 production에서 터지는 bug class가 많기 때문에 존재합니다. 이 mode는 더 큰 꿈을 꾸거나 plan을 prettier하게 만드는 데 관심이 없습니다. 질문은 하나입니다.
 
-**What can still break?**
+**아직 무엇이 깨질 수 있는가?**
 
-This is a structural audit, not a style nitpick pass. I want the model to look for things like:
+이것은 structural audit이지 style nitpick pass가 아닙니다. model이 이런 것들을 보길 원합니다.
 
-* N+1 queries
-* stale reads
-* race conditions
-* bad trust boundaries
-* missing indexes
-* escaping bugs
-* broken invariants
+* N+1 query
+* stale read
+* race condition
+* bad trust boundary
+* missing index
+* escaping bug
+* broken invariant
 * bad retry logic
-* tests that pass while missing the real failure mode
-* forgotten enum handlers — add a new status or type constant, and `/review` traces it through every switch statement and allowlist in your codebase, not just the files you changed
+* 실제 failure mode를 놓치면서 통과하는 test
+* forgotten enum handler — 새 status/type constant를 추가했을 때, 변경 file뿐 아니라 codebase 전체의 switch statement와 allowlist를 추적합니다.
 
 ### Fix-First
 
-Findings get action, not just listed. Obvious mechanical fixes (dead code, stale comments, N+1 queries) are applied automatically — you see `[AUTO-FIXED] file:line Problem → what was done` for each one. Genuinely ambiguous issues (security, race conditions, design decisions) get surfaced for your call.
+finding은 단순 listing이 아니라 action으로 이어집니다. dead code, stale comment, N+1 query 같은 obvious mechanical fix는 자동 적용됩니다. 각 genuine issue에는 `[AUTO-FIXED] file:line Problem → what was done`이 표시됩니다. security, race condition, design decision처럼 ambiguous한 문제는 사용자의 판단을 위해 surface됩니다.
 
-### Completeness gaps
+### Completeness Gap
 
-`/review` now flags shortcut implementations where the complete version costs less than 30 minutes of CC time. If you chose the 80% solution and the 100% solution is a lake, not an ocean, the review will call it out.
+`/review`는 complete version 비용이 CC time 30분 미만인 shortcut implementation을 flag합니다. 80% solution을 선택했는데 100% solution이 ocean이 아니라 lake라면 review가 짚어냅니다.
 
-One exception: a shortcut you took deliberately and logged. A `gstack-shortcut(dec-<id>)` marker whose decision id resolves in the decision ledger downgrades the finding to acknowledged debt. An orphan marker — one with no ledger entry behind it — doesn't suppress anything; the gap is reported normally and the marker itself gets flagged.
+예외는 deliberate하게 선택하고 log한 shortcut입니다. decision ledger에서 resolve되는 decision id가 있는 `gstack-shortcut(dec-<id>)` marker는 finding을 acknowledged debt로 downgrade합니다. ledger entry가 없는 orphan marker는 아무것도 suppress하지 않으며, gap은 정상적으로 report되고 marker 자체도 flag됩니다.
 
 ### Example
 
-Suppose the smart listing flow is implemented and the tests are green.
+smart listing flow가 구현됐고 test가 green이라고 합시다.
 
-`/review` should still ask:
+`/review`는 여전히 이렇게 물어야 합니다.
 
-* Did I introduce an N+1 query when rendering listing photos or draft suggestions?
-* Am I trusting client-provided file metadata instead of validating the actual file?
-* Can two tabs race and overwrite cover-photo selection or item details?
-* Do failed uploads leave orphaned files in storage forever?
-* Can the "exactly one hero image" rule break under concurrency?
-* If enrichment APIs partially fail, do I degrade gracefully or save garbage?
-* Did I accidentally create a prompt injection or trust-boundary problem by pulling web data into draft generation?
+* listing photo나 draft suggestion을 render할 때 N+1 query를 만들지 않았는가?
+* client-provided file metadata를 실제 file validation 대신 믿고 있지는 않은가?
+* 두 tab이 race를 일으켜 cover-photo selection이나 item detail을 덮어쓸 수 있는가?
+* failed upload가 storage에 orphaned file을 남기지는 않는가?
+* "정확히 하나의 hero image" rule이 concurrency에서 깨질 수 있는가?
+* enrichment API가 부분 실패하면 graceful degrade하는가, 아니면 garbage를 저장하는가?
+* web data를 draft generation에 넣으면서 prompt injection이나 trust-boundary 문제를 만들지는 않았는가?
 
-That is the point of `/review`.
+이것이 `/review`의 목적입니다.
 
-I do not want flattery here.
-I want the model imagining the production incident before it happens.
+여기서는 칭찬을 원하지 않습니다.
+production incident가 일어나기 전에 model이 먼저 상상해 주길 원합니다.
 
 ---
 
 ## `/investigate`
 
-When something is broken and you don't know why, `/investigate` is your systematic debugger. It follows the Iron Law: **no fixes without root cause investigation first.**
+무언가 깨졌지만 이유를 모를 때 `/investigate`는 체계적인 debugger가 됩니다. Iron Law는 **root cause investigation 없는 fix 금지**입니다.
 
-Instead of guessing and patching, it traces data flow, matches against known bug patterns, and tests hypotheses one at a time. If three fix attempts fail, it stops and questions the architecture instead of thrashing. This prevents the "let me try one more thing" spiral that wastes hours.
+guess하고 patch하는 대신 data flow를 추적하고, known bug pattern과 대조하며, hypothesis를 하나씩 테스트합니다. fix 시도가 3번 실패하면 더 헤매지 않고 architecture를 의심하며 멈춥니다. "하나만 더 해볼게" spiral로 시간을 버리는 일을 막습니다.
 
 ---
 
 ## `/qa`
 
-This is my **QA lead mode**.
+이것은 내 **QA lead mode**입니다.
 
-`/browse` gives the agent eyes. `/qa` gives it a testing methodology.
+`/browse`는 agent에게 눈을 줍니다. `/qa`는 testing methodology를 줍니다.
 
-The most common use case: you're on a feature branch, you just finished coding, and you want to verify everything works. Just say `/qa` — it reads your git diff, identifies which pages and routes your changes affect, spins up the browser, and tests each one. No URL required. No manual test plan.
+가장 흔한 사용 사례는 이렇습니다. feature branch에서 coding을 끝냈고, 모든 것이 실제로 동작하는지 확인하고 싶습니다. 그냥 `/qa`라고 말하면 됩니다. git diff를 읽고 변경이 영향을 주는 page와 route를 식별하고, browser를 띄워 각각을 테스트합니다. URL도 manual test plan도 필요 없습니다.
 
-Four modes:
+4가지 mode가 있습니다.
 
-- **Diff-aware** (automatic on feature branches) — reads `git diff main`, identifies affected pages, tests them specifically
-- **Full** — systematic exploration of the entire app. 5-15 minutes. Documents 5-10 well-evidenced issues.
-- **Quick** (`--quick`) — 30-second smoke test. Homepage + top 5 nav targets.
-- **Regression** (`--regression baseline.json`) — run full mode, then diff against a previous baseline.
+- **Diff-aware** (feature branch에서 자동) — `git diff main`을 읽고 affected page를 찾아 그 부분을 집중 test합니다.
+- **Full** — app 전체를 체계적으로 탐색합니다. 5-15분. 근거가 잘 남은 issue 5-10개를 문서화합니다.
+- **Quick** (`--quick`) — 30초 smoke test입니다. homepage + top 5 nav target.
+- **Regression** (`--regression baseline.json`) — full mode를 실행한 뒤 previous baseline과 diff합니다.
 
-### Automatic regression tests
+### Automatic Regression Tests
 
-When `/qa` fixes a bug and verifies it, it automatically generates a regression test that catches the exact scenario that broke. Tests include full attribution tracing back to the QA report.
+`/qa`가 bug를 fix하고 verify하면, 깨졌던 정확한 scenario를 잡는 regression test를 자동 생성합니다. test에는 QA report로 이어지는 attribution tracing이 포함됩니다.
 
 ### Example
 
 ```
 You:   /qa https://staging.myapp.com
 
-Claude: [Explores 12 pages, fills 3 forms, tests 2 flows]
+Claude: [12개 page를 탐색하고, form 3개를 채우고, flow 2개를 테스트합니다.]
 
         QA Report: staging.myapp.com — Health Score: 72/100
 
-        Top 3 Issues:
-        1. CRITICAL: Checkout form submits with empty required fields
-        2. HIGH: Mobile nav menu doesn't close after selecting an item
-        3. MEDIUM: Dashboard chart overlaps sidebar below 1024px
+        상위 issue 3개:
+        1. CRITICAL: 필수 field가 비어 있어도 checkout form이 submit됨
+        2. HIGH: item을 선택한 뒤 mobile nav menu가 닫히지 않음
+        3. MEDIUM: 1024px 아래에서 dashboard chart가 sidebar와 겹침
 
-        [Full report with screenshots saved to .gstack/qa-reports/]
+        [screenshot이 포함된 full report를 .gstack/qa-reports/에 저장함]
 ```
 
-**Testing authenticated pages:** Use `/setup-browser-cookies` first to import your real browser sessions, then `/qa` can test pages behind login.
+**인증된 page 테스트:** `/setup-browser-cookies`로 실제 browser session을 가져온 뒤 `/qa`를 실행하면 login 뒤 page도 테스트할 수 있습니다.
 
 ---
 
 ## `/ship`
 
-This is my **release machine mode**.
+이것은 내 **release machine mode**입니다.
 
-Once I have decided what to build, nailed the technical plan, and run a serious review, I do not want more talking. I want execution.
+무엇을 만들지 결정했고, technical plan을 확정했으며, serious review까지 끝냈다면 더 많은 대화가 아니라 실행이 필요합니다.
 
-`/ship` is for the final mile. It is for a ready branch, not for deciding what to build.
+`/ship`은 final mile을 위한 skill입니다. 무엇을 만들지 결정하는 단계가 아니라 ready branch를 처리하는 단계입니다.
 
-This is where the model should stop behaving like a brainstorm partner and start behaving like a disciplined release engineer: sync with main, run the right tests, make sure the branch state is sane, update changelog or versioning if the repo expects it, push, and create or update the PR.
+model은 여기서 brainstorm partner처럼 굴지 않고 disciplined release engineer처럼 행동해야 합니다. main과 sync하고, 알맞은 test를 실행하고, branch state가 sane한지 확인하고, repo가 기대한다면 changelog나 version을 업데이트하고, push하고, PR을 생성하거나 업데이트합니다.
 
-### Test bootstrap
+### Test Bootstrap
 
-If your project doesn't have a test framework, `/ship` sets one up — detects your runtime, researches the best framework, installs it, writes 3-5 real tests for your actual code, sets up CI/CD (GitHub Actions), and creates TESTING.md. 100% test coverage is the goal — tests make vibe coding safe instead of yolo coding.
+project에 test framework가 없다면 `/ship`이 한 번 설정합니다. runtime을 감지하고, 가장 적합한 framework를 research하고, 설치하고, 실제 code에 대한 real test 3-5개를 작성하고, CI/CD(GitHub Actions)를 설정하고, TESTING.md를 만듭니다. 목표는 100% test coverage입니다. test는 vibe coding을 yolo coding이 아니라 안전한 workflow로 만듭니다.
 
-### Coverage audit
+### Coverage Audit
 
-Every `/ship` run builds a code path map from your diff, searches for corresponding tests, and produces an ASCII coverage diagram with quality stars. Gaps get tests auto-generated. Your PR body shows the coverage: `Tests: 42 → 47 (+5 new)`.
+모든 `/ship` run은 diff에서 code path map을 만들고, 해당 test를 찾아 quality star가 있는 ASCII coverage diagram을 생성합니다. gap에는 test가 자동 생성됩니다. PR body에는 coverage가 표시됩니다: `Tests: 42 → 47 (+5 new)`.
 
-### Review gate
+### Review Gate
 
-`/ship` checks the [Review Readiness Dashboard](#review-readiness-dashboard) before creating the PR. If the Eng Review is missing, it asks — but won't block you. Decisions are saved per-branch so you're never re-asked.
+`/ship`은 PR 생성 전에 [Review Readiness Dashboard](#review-readiness-dashboard)를 확인합니다. Eng Review가 빠져 있으면 묻지만 block하지는 않습니다. decision은 branch별로 저장되어 같은 질문을 반복하지 않습니다.
 
-A lot of branches die when the interesting work is done and only the boring release work is left. Humans procrastinate that part. AI should not.
+흥미로운 작업은 끝났고 지루한 release work만 남았을 때 많은 branch가 죽습니다. 사람은 그 부분을 미루지만 AI는 그러면 안 됩니다.
 
-### Third-party web actions (v1.72.0.0+)
+### Third-Party Web Actions(v1.72.0.0+)
 
-Sometimes the release work leaves the terminal: registering an API key, creating a vendor account, wiring a webhook or OAuth app. Instead of handing you a manual step list, `/ship` (and `/spec`, `/office-hours`, `/land-and-deploy`, `/setup-deploy`) offers to drive the browser for you. The recommended driver is the Aside AI browser when it's installed — it acts across your real logged-in sessions, which is exactly what vendor dashboards need. gstack's own visible browser (`$B` headed mode with handoff for sign-in) is the fallback on every platform.
+가끔 release work는 terminal 밖으로 나갑니다. API key 등록, vendor account 생성, webhook 또는 OAuth app wiring 같은 작업입니다. manual step list를 넘기는 대신 `/ship`(그리고 `/spec`, `/office-hours`, `/land-and-deploy`, `/setup-deploy`)은 browser를 대신 조작하겠다고 제안합니다. 권장 driver는 설치되어 있다면 Aside AI browser입니다. real logged-in session을 다루므로 vendor dashboard에 적합합니다. gstack의 visible browser(`$B` headed mode + sign-in용 handoff)는 모든 platform의 fallback입니다.
 
-The consent rules are strict and pin-tested: one explicit question per task naming the exact site and actions, no standing permission, no auto-install ever (on a Mac without Aside you get one download pointer — aside.com, macOS 15+ — once per task). Passwords, payment, CAPTCHAs, and identity verification stay yours; Apple credential creation is never a drive target in any skill. A captured secret never appears in chat — it lands in an owner-only file and gets verified with one read-only API call before gstack claims success.
+consent rule은 엄격하고 test로 pin되어 있습니다. task마다 exact site와 action을 명명하는 explicit question 하나만 묻고, standing permission은 없으며, auto-install은 절대 하지 않습니다. Mac에 Aside가 없을 때만 aside.com(macOS 15+) download pointer를 task당 한 번 제공합니다. password, payment, CAPTCHA, identity verification은 사용자 영역입니다. Apple credential 생성은 어떤 skill에서도 drive target이 아닙니다. captured secret은 chat에 나타나지 않고 owner-only file에 저장되며, gstack가 성공을 주장하기 전에 read-only API call로 검증됩니다.
 
 ---
 
 ## `/land-and-deploy`
 
-This is my **deploy pipeline mode**.
+이것은 내 **deploy pipeline mode**입니다.
 
-`/ship` creates the PR. `/land-and-deploy` finishes the job: merge, deploy, verify.
+`/ship`은 PR을 만듭니다. `/land-and-deploy`는 job을 끝냅니다: merge, deploy, verify.
 
-It merges the PR, waits for CI, waits for the deploy to finish, then runs canary checks against production. One command from "approved" to "verified in production." If the deploy breaks, it tells you what failed and whether to rollback.
+PR을 merge하고 CI를 기다리고 deploy 완료를 기다린 뒤 production에 canary check를 실행합니다. "approved"에서 "verified in production"까지 한 command입니다. deploy가 깨지면 무엇이 실패했는지, rollback해야 하는지 알려줍니다.
 
-First run on a new project triggers a dry-run walk-through so you can verify the pipeline before it does anything irreversible. After that, it trusts the config and runs straight through.
+새 project에서 처음 실행할 때는 irreversible한 일을 하기 전에 pipeline을 검증할 수 있도록 dry-run walkthrough를 실행합니다. 그 뒤부터는 config를 믿고 곧장 실행합니다.
 
 ### Setup
 
-Run `/setup-deploy` first. It detects your platform (Fly.io, Render, Vercel, Netlify, Heroku, GitHub Actions, or custom), discovers your production URL and health check endpoints, and writes the config to CLAUDE.md. One-time, 60 seconds.
+먼저 `/setup-deploy`를 실행하세요. platform(Fly.io, Render, Vercel, Netlify, Heroku, GitHub Actions, custom)을 감지하고 production URL과 health check endpoint를 찾아 CLAUDE.md에 config를 씁니다. one-time, 60초입니다.
 
 ### Example
 
 ```
 You:   /land-and-deploy
 
-Claude: Merging PR #42...
+Claude: PR #42를 병합하는 중...
         CI: 3/3 checks passed
-        Deploy: Fly.io — deploying v2.1.0...
+        Deploy: Fly.io — v2.1.0 배포 중...
         Health check: https://myapp.fly.dev/health → 200 OK
-        Canary: 5 pages checked, 0 console errors, p95 < 800ms
+        Canary: 5개 page 확인, console error 0개, p95 < 800ms
 
-        Production verified. v2.1.0 is live.
+        production 검증 완료. v2.1.0이 live 상태입니다.
 ```
 
 ---
 
 ## `/canary`
 
-This is my **post-deploy monitoring mode**.
+이것은 내 **post-deploy monitoring mode**입니다.
 
-After deploy, `/canary` watches the live site for trouble. It loops through your key pages using the browse daemon, checking for console errors, performance regressions, page failures, and visual anomalies. Takes periodic screenshots and compares against pre-deploy baselines.
+deploy 후 `/canary`는 live site에 문제가 없는지 지켜봅니다. browse daemon으로 key page를 반복 방문하며 console error, performance regression, page failure, visual anomaly를 확인합니다. 주기적으로 screenshot을 찍고 pre-deploy baseline과 비교합니다.
 
-Use it right after `/land-and-deploy`, or schedule it to run periodically after a risky deploy.
+`/land-and-deploy` 직후나 risk가 큰 deploy 후 periodic하게 실행하세요.
 
 ```
 You:   /canary https://myapp.com
 
-Claude: Monitoring 8 pages every 2 minutes...
+Claude: 2분마다 8개 page를 모니터링 중...
 
-        Cycle 1: ✓ All pages healthy. p95: 340ms. 0 console errors.
-        Cycle 2: ✓ All pages healthy. p95: 380ms. 0 console errors.
-        Cycle 3: ⚠ /dashboard — new console error: "TypeError: Cannot read
+        Cycle 1: 모든 page 정상. p95: 340ms. console error 0개.
+        Cycle 2: 모든 page 정상. p95: 380ms. console error 0개.
+        Cycle 3: /dashboard — 새 console error: "TypeError: Cannot read
                    property 'map' of undefined" at dashboard.js:142
                  Screenshot saved.
 
-        Alert: 1 new console error after 3 monitoring cycles.
+        Alert: monitoring cycle 3회 후 새 console error 1개 발견.
 ```
 
 ---
 
 ## `/benchmark`
 
-This is my **performance engineer mode**.
+이것은 내 **performance engineer mode**입니다.
 
-`/benchmark` establishes performance baselines for your pages: load time, Core Web Vitals (LCP, CLS, INP), resource counts, and total transfer size. Run it before and after a PR to catch regressions.
+`/benchmark`는 page의 performance baseline을 잡습니다: load time, Core Web Vitals(LCP, CLS, INP), resource count, total transfer size. PR 전후에 실행해 regression을 잡으세요.
 
-It uses the browse daemon for real Chromium measurements, not synthetic estimates. Multiple runs averaged. Results persist so you can track trends across PRs.
+synthetic estimate가 아니라 browse daemon으로 실제 Chromium measurement를 수행합니다. 여러 번 실행해 평균을 내고, 결과를 저장해 PR 전반의 trend를 추적할 수 있습니다.
 
 ```
 You:   /benchmark https://myapp.com
 
-Claude: Benchmarking 5 pages (3 runs each)...
+Claude: 5개 page를 benchmark하는 중(각 3회 실행)...
 
         /           load: 1.2s  LCP: 0.9s  CLS: 0.01  resources: 24 (890KB)
         /dashboard  load: 2.1s  LCP: 1.8s  CLS: 0.03  resources: 31 (1.4MB)
         /settings   load: 0.8s  LCP: 0.6s  CLS: 0.00  resources: 18 (420KB)
 
-        Baseline saved. Run again after changes to compare.
+        baseline을 저장했습니다. 변경 후 다시 실행하면 비교할 수 있습니다.
 ```
 
 ---
 
 ## `/cso`
 
-This is my **Chief Security Officer**.
+이것은 내 **Chief Security Officer**입니다.
 
-Run `/cso` on any codebase and it performs an OWASP Top 10 + STRIDE threat model audit. It scans for injection vulnerabilities, broken authentication, sensitive data exposure, XML external entities, broken access control, security misconfiguration, XSS, insecure deserialization, known-vulnerable components, and insufficient logging. Each finding includes severity, evidence, and a recommended fix.
+어떤 codebase에서든 `/cso`를 실행하면 OWASP Top 10 + STRIDE threat model audit을 수행합니다. injection vulnerability, broken authentication, sensitive data exposure, XML external entity, broken access control, security misconfiguration, XSS, insecure deserialization, known-vulnerable component, insufficient logging을 scan합니다. 각 finding에는 severity, evidence, recommended fix가 포함됩니다.
 
 ```
 You:   /cso
 
-Claude: Running OWASP Top 10 + STRIDE security audit...
+Claude: OWASP Top 10 + STRIDE 보안 감사 실행 중...
 
-        CRITICAL: SQL injection in user search (app/models/user.rb:47)
-        HIGH: Session tokens stored in localStorage (app/frontend/auth.ts:12)
-        MEDIUM: Missing rate limiting on /api/login endpoint
-        LOW: X-Frame-Options header not set
+        CRITICAL: user search의 SQL injection (app/models/user.rb:47)
+        HIGH: session token이 localStorage에 저장됨 (app/frontend/auth.ts:12)
+        MEDIUM: /api/login endpoint에 rate limiting 누락
+        LOW: X-Frame-Options header가 설정되지 않음
 
-        4 findings across 12 files scanned. 1 critical, 1 high.
+        scan한 12개 file에서 finding 4개. critical 1개, high 1개.
 ```
 
 ---
 
 ## `/document-release`
 
-This is my **technical writer mode**.
+이것은 내 **technical writer mode**입니다.
 
-After `/ship` creates the PR but before it merges, `/document-release` reads every documentation file in the project and cross-references it against the diff. It updates file paths, command lists, project structure trees, and anything else that drifted. Risky or subjective changes get surfaced as questions — everything else is handled automatically.
+`/ship`이 PR을 생성한 뒤 merge되기 전에, `/document-release`는 project의 모든 documentation file을 읽고 diff와 cross-reference합니다. file path, command list, project structure tree, drift된 내용을 업데이트합니다. risky하거나 subjective한 change는 question으로 surface하고, 나머지는 자동 처리합니다.
 
 ```
 You:   /document-release
 
-Claude: Analyzing 21 files changed across 3 commits. Found 8 documentation files.
+Claude: 3개 commit에서 변경된 21개 file을 분석했습니다. documentation file 8개를 찾았습니다.
 
-        README.md: updated skill count from 9 to 10, added new skill to table
-        CLAUDE.md: added new directory to project structure
-        CONTRIBUTING.md: current — no changes needed
-        TODOS.md: marked 2 items complete, added 1 new item
+        README.md: skill count를 9에서 10으로 업데이트하고 table에 새 skill 추가
+        CLAUDE.md: project structure에 새 directory 추가
+        CONTRIBUTING.md: 최신 상태 — 변경 필요 없음
+        TODOS.md: item 2개 완료 표시, 새 item 1개 추가
 
-        All docs updated and committed. PR body updated with doc diff.
+        모든 docs를 업데이트하고 commit했습니다. PR body에도 doc diff를 반영했습니다.
 ```
 
-It also polishes CHANGELOG voice (without ever overwriting entries), cleans up completed TODOS, checks cross-doc consistency, and asks about VERSION bumps only when appropriate.
+CHANGELOG voice도 다듬고(기존 entry를 덮어쓰지 않음), completed TODO를 정리하고, cross-doc consistency를 확인하며, VERSION bump는 적절할 때만 묻습니다.
 
 ---
 
 ## `/retro`
 
-This is my **engineering manager mode**.
+이것은 내 **engineering manager mode**입니다.
 
-At the end of the week I want to know what actually happened. Not vibes — data. `/retro` analyzes commit history, work patterns, and shipping velocity and writes a candid retrospective.
+주가 끝날 때 나는 실제로 무슨 일이 있었는지 알고 싶습니다. vibe가 아니라 data입니다. `/retro`는 commit history, work pattern, shipping velocity를 분석해 솔직한 retrospective를 작성합니다.
 
-It is team-aware. It identifies who is running the command, gives you the deepest treatment on your own work, then breaks down every contributor with specific praise and growth opportunities. It computes metrics like commits, LOC, test ratio, PR sizes, and fix ratio. It detects coding sessions from commit timestamps, finds hotspot files, tracks shipping streaks, and identifies the biggest ship of the week.
+team-aware하게 동작합니다. command를 실행하는 사람이 누구인지 식별하고, 자신의 work에는 가장 깊은 treatment를 제공한 뒤 contributor별로 specific praise와 growth opportunity를 정리합니다. commit, LOC, test ratio, PR size, fix ratio 같은 metric을 계산합니다. commit timestamp에서 coding session을 감지하고, hotspot file, shipping streak, 이번 주 가장 큰 ship을 찾습니다.
 
-It also tracks test health: total test files, tests added this period, regression test commits, and trend deltas. If test ratio drops below 20%, it flags it as a growth area.
+test health도 추적합니다. total test file, 이번 period에 추가된 test, regression test commit, trend delta를 봅니다. test ratio가 20% 아래로 떨어지면 growth area로 flag합니다.
 
 ### Example
 
 ```
 You:   /retro
 
-Claude: Week of Mar 1: 47 commits (3 contributors), 3.2k LOC, 38% tests, 12 PRs, peak: 10pm | Streak: 47d
+Claude: 3월 1일 주간: commit 47개(기여자 3명), 3.2k LOC, test 38%, PR 12개, peak: 10pm | Streak: 47d
 
-        ## Your Week
-        32 commits, +2.4k LOC, 41% tests. Peak hours: 9-11pm.
-        Biggest ship: cookie import system (browser decryption + picker UI).
-        What you did well: shipped a complete feature with encryption, UI, and
-        18 unit tests in one focused push...
+        ## 이번 주
+        commit 32개, +2.4k LOC, test 41%. peak hour: 9-11pm.
+        가장 큰 ship: cookie import system(browser decryption + picker UI).
+        잘한 점: encryption, UI, unit test 18개가 포함된 complete feature를
+        한 번의 집중된 push로 ship했습니다...
 
-        ## Team Breakdown
+        ## 팀별 정리
 
         ### Alice
-        12 commits focused on app/services/. Every PR under 200 LOC — disciplined.
-        Opportunity: test ratio at 12% — worth investing before payment gets more complex.
+        app/services/에 집중한 commit 12개. 모든 PR이 200 LOC 미만으로 discipline이 좋습니다.
+        개선 기회: test ratio가 12%입니다. payment가 더 복잡해지기 전에 투자할 만합니다.
 
         ### Bob
-        3 commits — fixed the N+1 query on dashboard. Small but high-impact.
-        Opportunity: only 1 active day this week — check if blocked on anything.
+        commit 3개 — dashboard의 N+1 query를 고쳤습니다. 작지만 high-impact입니다.
+        개선 기회: 이번 주 active day가 1일뿐입니다. 막힌 것이 있는지 확인해 볼 필요가 있습니다.
 
-        [Top 3 team wins, 3 things to improve, 3 habits for next week]
+        [team win 3개, 개선할 점 3개, 다음 주 habit 3개]
 ```
 
-It saves a JSON snapshot to `.context/retros/` so the next run can show trends.
+다음 run에서 trend를 보여줄 수 있도록 JSON snapshot을 `.context/retros/`에 저장합니다.
 
 ---
 
 ## `/browse`
 
-This is my **QA engineer mode**.
+이것은 내 **QA engineer mode**입니다.
 
-`/browse` is the skill that closes the loop. Before it, the agent could think and code but was still half blind. It had to guess about UI state, auth flows, redirects, console errors, empty states, and broken layouts. Now it can just go look.
+`/browse`는 loop를 닫는 skill입니다. 이전에는 agent가 생각하고 code를 쓸 수 있어도 UI state, auth flow, redirect, console error, empty state, broken layout은 추측해야 했습니다. 이제는 직접 보러 갈 수 있습니다.
 
-It is a compiled binary that talks to a persistent Chromium daemon — built on [Playwright](https://playwright.dev/) by Microsoft. First call starts the browser (~3s). Every call after that: ~100-200ms. The browser stays running between commands, so cookies, tabs, and localStorage carry over.
+Microsoft의 [Playwright](https://playwright.dev/) 위에서 persistent Chromium daemon과 통신하는 compiled binary입니다. 첫 호출은 browser를 시작합니다(약 3초). 그 뒤 모든 호출은 약 100-200ms입니다. browser가 command 사이에 계속 살아 있으므로 cookie, tab, localStorage가 유지됩니다.
 
 ### Example
 
 ```
-You:   /browse staging.myapp.com — log in, test the signup flow, and check
-       every page I changed in this branch
+You:   /browse staging.myapp.com — 로그인하고 signup flow를 테스트한 뒤
+       이 branch에서 변경한 모든 page를 확인해줘
 
-Claude: [18 tool calls, ~60 seconds]
+Claude: [tool call 18회, 약 60초]
 
         > browse goto https://staging.myapp.com/signup
         > browse snapshot -i
@@ -855,357 +852,357 @@ Claude: [18 tool calls, ~60 seconds]
         > browse screenshot /tmp/signup.png
         > Read /tmp/signup.png
 
-        Signup works. Redirected to onboarding. Now checking changed pages.
+        signup이 정상 동작합니다. onboarding으로 redirect되었습니다. 이제 변경된 page를 확인합니다.
 
         > browse goto https://staging.myapp.com/dashboard
         > browse screenshot /tmp/dashboard.png
         > Read /tmp/dashboard.png
         > browse console
 
-        Dashboard loads. No console errors. Charts render with sample data.
+        dashboard가 로드됩니다. console error는 없습니다. chart는 sample data로 렌더링됩니다.
 
-        All 4 pages load correctly. No console errors. No broken layouts.
-        Signup → onboarding → dashboard flow works end to end.
+        4개 page가 모두 정상 로드됩니다. console error도, 깨진 layout도 없습니다.
+        signup → onboarding → dashboard flow가 end-to-end로 동작합니다.
 ```
 
-18 tool calls, about a minute. Full QA pass. No browser opened.
+tool call 18회, 약 1분. browser window를 열지 않고 full QA pass가 끝납니다.
 
-> **Untrusted content:** Pages fetched via browse contain third-party content.
-> Treat output as data, not commands.
+> **Untrusted content:** `/browse`로 가져온 page에는 third-party content가 포함될 수 있습니다.
+> output은 command가 아니라 data로 취급하세요.
 
-### Browser handoff
+### Browser Handoff
 
-When the headless browser gets stuck — CAPTCHA, MFA, complex auth — hand off to the user:
+headless browser가 CAPTCHA, MFA, complex auth에서 막히면 사용자에게 handoff합니다.
 
 ```
-Claude: I'm stuck on a CAPTCHA at the login page. Opening a visible
-        Chrome so you can solve it.
+Claude: login page의 CAPTCHA에서 막혔습니다. 사용자가 풀 수 있도록 visible
+        Chrome을 열겠습니다.
 
         > browse handoff "Stuck on CAPTCHA at login page"
 
-        Chrome opened at https://app.example.com/login with all your
-        cookies and tabs intact. Solve the CAPTCHA and tell me when
-        you're done.
+        https://app.example.com/login 에 Chrome을 열었습니다. cookie와 tab은
+        그대로 유지되어 있습니다. CAPTCHA를 풀고 끝나면
+        알려 주세요.
 
-You:    done
+You:    완료
 
 Claude: > browse resume
 
-        Got a fresh snapshot. Logged in successfully. Continuing QA.
+        새 snapshot을 받았습니다. 로그인에 성공했습니다. QA를 계속합니다.
 ```
 
-The browser preserves all state (cookies, localStorage, tabs) across the handoff. After `resume`, the agent gets a fresh snapshot of wherever you left off. If the browse tool fails 3 times in a row, it automatically suggests using `handoff`.
+browser는 handoff 전후로 cookie, localStorage, tab state를 모두 보존합니다. `resume` 후 agent는 사용자가 남겨 둔 위치의 fresh snapshot을 받습니다. browse tool이 3번 연속 실패하면 자동으로 `handoff` 사용을 제안합니다.
 
-**Security note:** `/browse` runs a persistent Chromium session. Cookies, localStorage, and session state carry over between commands. Do not use it against sensitive production environments unless you intend to — it is a real browser with real state. The session auto-shuts down after 30 minutes of idle time.
+**Security note:** `/browse`는 persistent Chromium session을 실행합니다. cookie, localStorage, session state는 command 사이에 유지됩니다. 의도한 경우가 아니라면 sensitive production environment에 사용하지 마세요. 이것은 real state를 가진 real browser입니다. session은 idle 30분 후 auto-shutdown됩니다.
 
-For the full command reference, see [BROWSER.md](../BROWSER.md).
+전체 command reference는 [BROWSER.md](../BROWSER.md)를 참고하세요.
 
 ---
 
 ## `/setup-browser-cookies`
 
-This is my **session manager mode**.
+이것은 내 **session manager mode**입니다.
 
-Before `/qa` or `/browse` can test authenticated pages, they need cookies. Instead of manually logging in through the headless browser every time, `/setup-browser-cookies` imports your real sessions directly from your daily browser.
+`/qa`나 `/browse`가 authenticated page를 테스트하려면 cookie가 필요합니다. headless browser에서 매번 수동 login하는 대신, `/setup-browser-cookies`는 일상적으로 쓰는 browser의 real session을 직접 가져옵니다.
 
-It auto-detects installed Chromium browsers (Comet, Chrome, Arc, Brave, Edge), decrypts cookies via the macOS Keychain, and loads them into the Playwright session. An interactive picker UI lets you choose exactly which domains to import — no cookie values are ever displayed.
+설치된 Chromium browser(Comet, Chrome, Arc, Brave, Edge)를 auto-detect하고, macOS Keychain으로 cookie를 decrypt해 Playwright session에 load합니다. interactive picker UI에서 import할 domain을 정확히 선택할 수 있고, cookie value는 절대 표시되지 않습니다.
 
 ```
 You:   /setup-browser-cookies
 
-Claude: Cookie picker opened — select the domains you want to import
-        in your browser, then tell me when you're done.
+Claude: cookie picker를 열었습니다. 가져올 domain을 선택하고
+        browser에서 완료한 뒤 알려 주세요.
 
-        [You pick github.com, myapp.com in the browser UI]
+        [browser UI에서 github.com, myapp.com을 선택합니다.]
 
-You:    done
+You:    완료
 
-Claude: Imported 2 domains (47 cookies). Session is ready.
+Claude: domain 2개(cookie 47개)를 가져왔습니다. session이 준비되었습니다.
 ```
 
-Or skip the UI entirely:
+UI를 완전히 건너뛸 수도 있습니다.
 
 ```
 You:   /setup-browser-cookies github.com
 
-Claude: Imported 12 cookies for github.com from Comet.
+Claude: Comet에서 github.com cookie 12개를 가져왔습니다.
 ```
 
 ---
 
 ## `/autoplan`
 
-This is my **review autopilot mode**.
+이것은 내 **review autopilot mode**입니다.
 
-Running `/plan-ceo-review`, then `/plan-design-review`, then `/plan-eng-review` individually means answering 15-30 intermediate questions. Each question is valuable, but sometimes you want the gauntlet to run without stopping for every decision.
+`/plan-ceo-review`, `/plan-design-review`, `/plan-eng-review`를 각각 실행하면 15-30개의 intermediate question에 답해야 합니다. 각 question은 가치 있지만, 때로는 모든 decision마다 멈추지 않고 gauntlet을 끝까지 돌리고 싶습니다.
 
-`/autoplan` reads the review skills from disk and runs them sequentially: CEO → Design (if UI scope) → DX (if developer-facing scope) → Eng, always last — the required shipping gate reviews the final amended plan, not a stale one. It makes decisions automatically: each question resolves to its recommended option by default, with six encoded principles (prefer completeness, match existing patterns, choose reversible options, prefer the option the user chose for similar past decisions, defer ambiguous items, and escalate security) breaking ties and deciding questions that carry no recommendation. Taste decisions (close approaches, borderline scope expansions, cross-model disagreements) get saved and presented at a final approval gate.
+`/autoplan`은 review skill을 disk에서 읽고 순서대로 실행합니다: CEO → Design(UI scope일 때) → DX(developer-facing scope일 때) → Eng(always last). required shipping gate가 stale plan이 아니라 final amended plan을 review하도록 하기 위해 Eng는 항상 마지막입니다. decision은 자동 처리합니다. 각 question은 기본적으로 recommended option으로 resolve되고, recommendation이 없을 때는 여섯 가지 encoded principle(prefer completeness, match existing patterns, choose reversible options, prefer option user chose for similar past decision, defer ambiguous items, escalate security)이 tie를 깨고 결정합니다. taste decision(close approach, borderline scope expansion, cross-model disagreement)은 저장해 final approval gate에서 보여줍니다.
 
-One command, fully reviewed plan out.
+command 하나로 fully reviewed plan이 나옵니다.
 
 ```
 You:   /autoplan
 
-Claude: Running CEO review... [4 scope decisions auto-resolved]
-        Running design review... [3 design dimensions auto-scored]
-        Running eng review... [2 architecture decisions auto-resolved]
+Claude: CEO review 실행 중... [scope decision 4개 자동 해결]
+        design review 실행 중... [design dimension 3개 자동 채점]
+        eng review 실행 중... [architecture decision 2개 자동 해결]
 
-        TASTE DECISIONS (need your input):
-        1. Scope: Codex suggested adding search — borderline expansion. Add?
-        2. Design: Two approaches scored within 1 point. Which feels right?
+        TASTE DECISIONS (입력 필요):
+        1. Scope: Codex가 search 추가를 제안했습니다. 경계선에 있는 scope expansion입니다. 추가할까요?
+        2. Design: 두 접근법의 점수 차이가 1점 이내입니다. 어느 쪽이 맞게 느껴지나요?
 
-        [Shows both options with context]
+        [두 option을 context와 함께 보여줍니다.]
 
-You:    1) Yes, add search. 2) Option A.
+You:    1) 네, search 추가. 2) Option A.
 
-Claude: Plan complete. 9 decisions auto-resolved, 2 taste decisions approved.
+Claude: plan 완료. decision 9개 자동 해결, taste decision 2개 승인.
 ```
 
 ---
 
 ## `/learn`
 
-This is my **institutional memory mode**.
+이것은 내 **institutional memory mode**입니다.
 
-gstack learns from every session. Patterns, pitfalls, preferences, architectural decisions... they accumulate in `~/.gstack/projects/$SLUG/learnings.jsonl`. Each learning has a confidence score, source attribution, and the files it references.
+gstack는 session마다 학습합니다. pattern, pitfall, preference, architectural decision이 `~/.gstack/projects/$SLUG/learnings.jsonl`에 쌓입니다. 각 learning에는 confidence score, source attribution, reference file이 있습니다.
 
-`/learn` lets you see what gstack has absorbed, search for specific patterns, prune stale entries (when referenced files no longer exist), and export learnings for team sharing. The real magic is in other skills... they automatically search learnings before making recommendations, and display "Prior learning applied" when a past insight is relevant.
+`/learn`으로 gstack가 흡수한 내용을 보고, specific pattern을 search하고, referenced file이 사라진 stale entry를 prune하고, team sharing용으로 export할 수 있습니다. 진짜 힘은 다른 skill에서 나옵니다. 다른 skill은 recommendation을 만들기 전에 learning을 자동 검색하고, 관련 past insight가 있으면 "Prior learning applied"를 표시합니다.
 
 ```
 You:   /learn
 
-Claude: 23 learnings for this project (14 high confidence, 6 medium, 3 low)
+Claude: 이 project의 learning 23개(high confidence 14개, medium 6개, low 3개)
 
-        Top patterns:
-        - [9/10] API responses always wrapped in { data, error } envelope
-        - [8/10] Tests use factory helpers in test/support/factories.ts
-        - [8/10] All DB queries go through repository pattern, never direct
+        주요 pattern:
+        - [9/10] API response는 항상 { data, error } envelope로 감쌈
+        - [8/10] test는 test/support/factories.ts의 factory helper를 사용함
+        - [8/10] 모든 DB query는 repository pattern을 거치며 직접 호출하지 않음
 
-        3 potentially stale (referenced files deleted):
-        - "auth middleware uses JWT" — auth/middleware.ts was deleted
-        [Prune these? Y/N]
+        stale 가능성이 있는 항목 3개(참조 file 삭제됨):
+        - "auth middleware uses JWT" — auth/middleware.ts가 삭제됨
+        [이 항목들을 prune할까요? Y/N]
 ```
 
 ---
 
 ## `/open-gstack-browser`
 
-This is my **co-presence mode**.
+이것은 내 **co-presence mode**입니다.
 
-`/browse` runs headless by default. You don't see what the agent sees. `/open-gstack-browser` changes that. It launches GStack Browser (rebranded Chromium with anti-bot stealth) controlled by Playwright, with the sidebar extension auto-loaded. You watch every action in real time.
+`/browse`는 기본적으로 headless로 실행됩니다. agent가 보는 것을 사용자는 볼 수 없습니다. `/open-gstack-browser`는 그 점을 바꿉니다. Playwright가 제어하는 GStack Browser(anti-bot stealth가 포함된 rebranded Chromium)를 sidebar extension과 함께 실행합니다. 모든 action을 real time으로 볼 수 있습니다.
 
-The sidebar chat is a Claude instance that controls the browser. It auto-routes to the right model: Sonnet for navigation and actions (click, goto, fill, screenshot), Opus for reading and analysis (summarize, find bugs, describe). One-click cookie import from the sidebar footer. The browser stays alive as long as the window is open... no idle timeout in headed mode. The menu bar says "GStack Browser" instead of "Chrome for Testing."
+sidebar chat은 browser를 제어하는 Claude instance입니다. task에 맞는 model로 auto-route합니다. navigation과 action(click, goto, fill, screenshot)은 Sonnet, reading과 analysis(summarize, find bugs, describe)는 Opus가 맡습니다. sidebar footer에서 one-click cookie import가 가능합니다. window가 열려 있는 동안 browser는 계속 살아 있고, headed mode에서는 idle timeout이 없습니다. menu bar에는 "Chrome for Testing" 대신 "GStack Browser"가 표시됩니다.
 
-The sidebar agent ships a layered prompt injection defense: a local 22MB ML classifier scans every page and tool output, a Haiku transcript check votes on the full conversation, a canary token catches session-exfil attempts, and a verdict combiner requires two classifiers to agree before blocking. A shield icon in the header shows status (green/amber/red). Details in [ARCHITECTURE.md](../ARCHITECTURE.md#prompt-injection-defense-sidebar-agent).
+sidebar agent는 layered prompt injection defense를 제공합니다. local 22MB ML classifier가 page와 tool output을 scan하고, Haiku transcript check가 full conversation에 vote하며, canary token이 session-exfil 시도를 잡고, verdict combiner는 block 전에 두 classifier의 agreement를 요구합니다. header의 shield icon은 status(green/amber/red)를 보여줍니다. 자세한 내용은 [ARCHITECTURE.md](../ARCHITECTURE.md#prompt-injection-defense-sidebar-agent)를 참고하세요.
 
 ```
 You:   /open-gstack-browser
 
-Claude: Launched GStack Browser with sidebar extension.
-        Anti-bot stealth active. All $B commands run in headed mode.
-        Type in the sidebar to direct the browser agent.
-        Sidebar model routing: sonnet for actions, opus for analysis.
+Claude: sidebar extension과 함께 GStack Browser를 실행했습니다.
+        anti-bot stealth가 활성화되었습니다. 모든 $B command는 headed mode로 실행됩니다.
+        sidebar에 입력해 browser agent에게 지시하세요.
+        sidebar model routing: action은 sonnet, analysis는 opus를 사용합니다.
 ```
 
 ---
 
 ## `/setup-deploy`
 
-One-time deploy configuration. Run this before your first `/land-and-deploy`.
+one-time deploy configuration입니다. 첫 `/land-and-deploy` 전에 실행하세요.
 
-It auto-detects your deploy platform (Fly.io, Render, Vercel, Netlify, Heroku, GitHub Actions, or custom), discovers your production URL, health check endpoints, and deploy status commands. Writes everything to CLAUDE.md so all future deploys are automatic.
+deploy platform(Fly.io, Render, Vercel, Netlify, Heroku, GitHub Actions, custom)을 auto-detect하고 production URL, health check endpoint, deploy status command를 찾습니다. 모든 내용을 CLAUDE.md에 써서 future deploy가 자동으로 동작하게 합니다.
 
 ```
 You:   /setup-deploy
 
-Claude: Detected: Fly.io (fly.toml found)
+Claude: 감지됨: Fly.io (fly.toml 찾음)
         Production URL: https://myapp.fly.dev
-        Health check: /health → expects 200
+        Health check: /health → 200 예상
         Deploy command: fly deploy
         Status command: fly status
 
-        Written to CLAUDE.md. Run /land-and-deploy when ready.
+        CLAUDE.md에 작성했습니다. 준비되면 /land-and-deploy를 실행하세요.
 ```
 
 ---
 
 ## `/codex`
 
-This is my **second opinion mode**.
+이것은 내 **second opinion mode**입니다.
 
-When `/review` catches bugs from Claude's perspective, `/codex` brings a completely different AI — OpenAI's Codex CLI — to review the same diff. Different training, different blind spots, different strengths. The overlap tells you what's definitely real. The unique findings from each are where you find the bugs neither would catch alone.
+`/review`가 Claude의 관점에서 bug를 잡으면, `/codex`는 OpenAI Codex CLI라는 완전히 다른 AI를 불러 같은 diff를 review합니다. 다른 training, 다른 blind spot, 다른 strength를 가집니다. overlap은 확실히 real일 가능성이 높고, 각 model만 찾은 finding은 혼자서는 놓쳤을 bug를 드러냅니다.
 
-### Three modes
+### Three Modes
 
-**Review** — run `codex review` against the current diff. Codex reads every changed file, classifies findings by severity (P1 critical, P2 high, P3 medium), and returns a PASS/FAIL verdict. Any P1 finding = FAIL. The review is fully independent — Codex doesn't see Claude's review.
+**Review** — current diff에 대해 `codex review`를 실행합니다. Codex는 변경된 file을 읽고 severity(P1 critical, P2 high, P3 medium)별로 finding을 분류한 뒤 PASS/FAIL verdict를 반환합니다. P1 finding이 있으면 FAIL입니다. review는 완전히 independent합니다. Codex는 Claude의 review를 보지 않습니다.
 
-**Challenge** — adversarial mode. Codex actively tries to break your code. It looks for edge cases, race conditions, security holes, and assumptions that would fail under load. Uses maximum reasoning effort (`xhigh`). Think of it as a penetration test for your logic.
+**Challenge** — adversarial mode입니다. Codex가 code를 적극적으로 깨 보려고 합니다. edge case, race condition, security hole, load에서 실패할 assumption을 찾습니다. maximum reasoning effort(`xhigh`)를 사용합니다. logic에 대한 penetration test라고 생각하면 됩니다.
 
-**Consult** — open conversation with session continuity. Ask Codex anything about the codebase. Follow-up questions reuse the same session, so context carries over. Great for "am I thinking about this correctly?" moments.
+**Consult** — session continuity가 있는 open conversation입니다. codebase에 대해 무엇이든 Codex에게 물을 수 있습니다. follow-up question은 같은 session을 재사용하므로 context가 이어집니다. "내가 이걸 제대로 생각하고 있나?" 싶은 순간에 좋습니다.
 
-### Cross-model analysis
+### Cross-Model Analysis
 
-When both `/review` (Claude) and `/codex` (OpenAI) have reviewed the same branch, you get a cross-model comparison: which findings overlap (high confidence), which are unique to Codex (different perspective), and which are unique to Claude. This is the "two doctors, same patient" approach to code review.
+`/review`(Claude)와 `/codex`(OpenAI)가 같은 branch를 review하면 cross-model comparison을 얻습니다. overlap finding은 high confidence이고, Codex-only finding은 다른 관점에서 나온 것, Claude-only finding은 Claude가 더 잘 본 지점입니다. code review에서 "두 명의 의사, 같은 환자" 접근입니다.
 
 ```
 You:   /codex review
 
-Claude: Running independent Codex review...
+Claude: 독립적인 Codex review 실행 중...
 
-        CODEX REVIEW: PASS (3 findings)
-        [P2] Race condition in payment handler — concurrent charges
-             can double-debit without advisory lock
-        [P3] Missing null check on user.email before downcase
-        [P3] Token comparison not using constant-time compare
+        CODEX REVIEW: PASS (finding 3개)
+        [P2] payment handler의 race condition — advisory lock 없이
+             concurrent charge가 double-debit를 일으킬 수 있음
+        [P3] user.email을 downcase하기 전에 null check 누락
+        [P3] token comparison이 constant-time compare를 사용하지 않음
 
-        Cross-model analysis (vs /review):
-        OVERLAP: Race condition in payment handler (both caught it)
-        UNIQUE TO CODEX: Token comparison timing attack
-        UNIQUE TO CLAUDE: N+1 query in listing photos
+        교차 모델 분석(vs /review):
+        공통 발견: payment handler의 race condition (둘 다 발견)
+        Codex만 발견: token comparison timing attack
+        Claude만 발견: listing photos의 N+1 query
 ```
 
 ---
 
 ## Safety & Guardrails
 
-Four skills that add safety rails to any Claude Code session. They work via Claude Code's PreToolUse hooks — transparent, session-scoped, no configuration required.
+Claude Code session에 safety rail을 추가하는 4개의 skill입니다. Claude Code의 PreToolUse hook을 통해 동작하며 transparent하고 session-scoped이고 별도 configuration이 필요 없습니다.
 
 ### `/careful`
 
-Say "be careful" or run `/careful` when you're working near production, running destructive commands, or just want a safety net. Every Bash command gets checked against known-dangerous patterns:
+production 근처에서 작업하거나 destructive command를 실행하거나 safety net이 필요하면 "be careful"이라고 말하거나 `/careful`을 실행하세요. 모든 Bash command는 known-dangerous pattern과 대조됩니다.
 
 - `rm -rf` / `rm -r` — recursive delete
 - `DROP TABLE` / `DROP DATABASE` / `TRUNCATE` — data loss
 - `git push --force` / `git push -f` — history rewrite
-- `git reset --hard` — discard commits
-- `git checkout .` / `git restore .` — discard uncommitted work
+- `git reset --hard` — commit discard
+- `git checkout .` / `git restore .` — uncommitted work discard
 - `kubectl delete` — production resource deletion
 - `docker rm -f` / `docker system prune` — container/image loss
 
-Common build artifact cleanups (`rm -rf node_modules`, `dist`, `.next`, `__pycache__`, `build`, `coverage`) are whitelisted — no false alarms on routine operations.
+일반 build artifact cleanup(`rm -rf node_modules`, `dist`, `.next`, `__pycache__`, `build`, `coverage`)은 whitelist되어 routine operation에서 false alarm을 내지 않습니다.
 
-You can override any MEDIUM warning. Two catastrophic shapes are hard-denied instead of asked: recursive deletes of the filesystem root or your home directory (including the `/*`, `~/`, and `$HOME/` forms), and force-pushes to the repo's default branch (`--force-with-lease` never triggers the deny; the escape hatch is ending the session-scoped `/careful` session). You can also add your own warn rules — one POSIX ERE per line — in `~/.gstack/careful-patterns.txt` (global) or `~/.gstack/projects/<slug>/careful-patterns.txt` (per-project); custom patterns only ever add warnings, never suppress the built-ins. The guardrails are accident prevention, not access control.
+MEDIUM warning은 override할 수 있습니다. 두 가지 catastrophic shape는 묻지 않고 hard-deny됩니다. filesystem root/home directory recursive delete(`/*`, `~/`, `$HOME/` 형태 포함)와 repo default branch로의 force-push입니다(`--force-with-lease`는 deny를 trigger하지 않습니다. escape hatch는 session-scoped `/careful` session을 끝내는 것입니다). `~/.gstack/careful-patterns.txt`(global) 또는 `~/.gstack/projects/<slug>/careful-patterns.txt`(per-project)에 POSIX ERE를 한 줄씩 추가해 custom warn rule도 만들 수 있습니다. custom pattern은 warning을 추가만 하고 built-in을 suppress하지 않습니다. guardrail은 accident prevention이지 access control이 아닙니다.
 
 ### `/freeze`
 
-Restrict all file edits to a single directory. When you're debugging a billing bug, you don't want Claude accidentally "fixing" unrelated code in `src/auth/`. `/freeze src/billing` blocks all Edit and Write operations outside that path.
+모든 file edit를 하나의 directory로 제한합니다. billing bug를 debug할 때 Claude가 `src/auth/`의 unrelated code를 실수로 "fix"하지 않게 하고 싶다면 `/freeze src/billing`을 실행합니다. 그러면 해당 path 밖의 Edit/Write operation이 block됩니다.
 
-`/investigate` activates this automatically — it detects the module being debugged and freezes edits to that directory.
+`/investigate`는 이를 자동으로 활성화합니다. debug 중인 module을 감지해 그 directory로 edit를 freeze합니다.
 
 ```
 You:   /freeze src/billing
 
-Claude: Edits restricted to src/billing/. Run /unfreeze to remove.
+Claude: edit 범위를 src/billing/로 제한했습니다. 해제하려면 /unfreeze를 실행하세요.
 
-        [Later, Claude tries to edit src/auth/middleware.ts]
+        [나중에 Claude가 src/auth/middleware.ts를 수정하려고 시도함]
 
-Claude: BLOCKED — Edit outside freeze boundary (src/billing/).
-        Skipping this change.
+Claude: BLOCKED — freeze boundary(src/billing/) 밖의 edit입니다.
+        이 변경은 건너뜁니다.
 ```
 
-Note: this blocks Edit and Write tools only. Bash commands like `sed` can still modify files outside the boundary — it's accident prevention, not a security sandbox.
+참고: 이 block은 Edit/Write tool에만 적용됩니다. `sed` 같은 Bash command는 여전히 boundary 밖 file을 수정할 수 있습니다. security sandbox가 아니라 accident prevention입니다.
 
 ### `/guard`
 
-Full safety mode — combines `/careful` + `/freeze` in one command. Destructive command warnings plus directory-scoped edits. Use when touching prod or debugging live systems.
+full safety mode입니다. command 하나로 `/careful` + `/freeze`를 결합합니다. destructive command warning과 directory-scoped edit를 함께 사용합니다. prod를 만지거나 live system을 debug할 때 사용하세요.
 
 ### `/unfreeze`
 
-Remove the `/freeze` boundary, allowing edits everywhere again. The hooks stay registered for the session — they just allow everything. Run `/freeze` again to set a new boundary.
+`/freeze` boundary를 제거해 다시 어디든 edit할 수 있게 합니다. hook은 session에 남아 있지만 모든 것을 허용합니다. 새 boundary가 필요하면 `/freeze`를 다시 실행하세요.
 
 ---
 
 ## `/gstack-upgrade`
 
-Keep gstack current with one command. It detects your install type (global at `~/.claude/skills/gstack` vs vendored in your project at `.claude/skills/gstack`), runs the upgrade, syncs both copies if you have dual installs, and shows you what changed.
+command 하나로 gstack를 최신 상태로 유지합니다. install type(global `~/.claude/skills/gstack` vs project vendored `.claude/skills/gstack`)을 감지하고 upgrade를 실행합니다. dual install이면 두 copy를 sync하고 변경 사항을 보여줍니다.
 
 ```
 You:   /gstack-upgrade
 
-Claude: Current version: 0.7.4
-        Latest version: 0.8.2
+Claude: 현재 version: 0.7.4
+        최신 version: 0.8.2
 
-        What's new:
-        - Browse handoff for CAPTCHAs and auth walls
+        새로운 내용:
+        - CAPTCHA와 auth wall을 위한 browse handoff
         - /codex multi-AI second opinion
-        - /qa always uses browser now
-        - Safety skills: /careful, /freeze, /guard
-        - Proactive skill suggestions
+        - /qa가 이제 항상 browser 사용
+        - safety skill: /careful, /freeze, /guard
+        - proactive skill suggestion
 
-        Upgraded to 0.8.2. Both global and project installs synced.
+        0.8.2로 upgrade했습니다. global install과 project install을 모두 sync했습니다.
 ```
 
-Set `auto_upgrade: true` in `~/.gstack/config.yaml` to skip the prompt entirely — gstack upgrades silently at the start of each session when a new version is available.
+prompt를 완전히 건너뛰고 싶다면 `~/.gstack/config.yaml`에 `auto_upgrade: true`를 설정하세요. 새 version이 있을 때 gstack가 각 session 시작 시 조용히 upgrade합니다.
 
 ---
 
-## Greptile integration
+## Greptile Integration
 
-[Greptile](https://greptile.com) is a YC company that reviews your PRs automatically. It catches real bugs — race conditions, security issues, things that pass CI and blow up in production. It has genuinely saved my ass more than once. I love these guys.
+[Greptile](https://greptile.com)은 PR을 자동 review하는 YC 회사입니다. race condition, security issue, CI를 통과하지만 production에서 터지는 문제 같은 real bug를 잡습니다. 실제로 나를 여러 번 구해 줬습니다. 나는 이 팀을 좋아합니다.
 
 ### Setup
 
-Install Greptile on your GitHub repo at [greptile.com](https://greptile.com) — it takes about 30 seconds. Once it's reviewing your PRs, gstack picks up its comments automatically. No additional configuration.
+[greptile.com](https://greptile.com)에서 GitHub repo에 Greptile을 설치하면 약 30초가 걸립니다. Greptile이 PR을 review하기 시작하면 gstack가 comment를 자동으로 가져옵니다. 추가 configuration은 없습니다.
 
-### How it works
+### How It Works
 
-The problem with any automated reviewer is triage. Greptile is good, but not every comment is a real issue. Some are false positives. Some flag things you already fixed three commits ago. Without a triage layer, the comments pile up and you start ignoring them — which defeats the purpose.
+automated reviewer의 문제는 triage입니다. Greptile은 좋지만 모든 comment가 real issue는 아닙니다. 어떤 것은 false positive이고, 어떤 것은 이미 세 commit 전에 fix한 내용을 flag합니다. triage layer가 없으면 comment가 쌓이고 결국 무시하게 됩니다. 그러면 목적을 잃습니다.
 
-gstack solves this. `/review` and `/ship` are now Greptile-aware. They read Greptile's comments, classify each one, and take action:
+gstack는 이 문제를 해결합니다. `/review`와 `/ship`은 Greptile-aware입니다. Greptile comment를 읽고, 각 comment를 classify하고, action을 취합니다.
 
-- **Valid issues** get added to the critical findings and fixed before shipping
-- **Already-fixed issues** get an auto-reply acknowledging the catch
-- **False positives** get pushed back — you confirm, and a reply goes out explaining why it's wrong
+- **Valid issue** — critical finding에 추가하고 ship 전에 fix합니다.
+- **Already-fixed issue** — catch를 인정하는 auto-reply를 남깁니다.
+- **False positive** — 사용자가 confirm하면 왜 틀렸는지 설명하는 reply를 보냅니다.
 
-The result is a two-layer review: Greptile catches things asynchronously on the PR, then `/review` and `/ship` triage those findings as part of the normal workflow. Nothing falls through the cracks.
+결과적으로 review가 두 layer가 됩니다. Greptile은 PR에서 async하게 문제를 잡고, `/review`와 `/ship`은 normal workflow 안에서 그 finding을 triage합니다. crack으로 빠지는 일이 없습니다.
 
-### Learning from history
+### Learning From History
 
-Every false positive you confirm gets saved to `~/.gstack/greptile-history.md`. Future runs auto-skip known FP patterns for your codebase. And `/retro` tracks Greptile's batting average over time — so you can see whether the signal-to-noise ratio is improving.
+사용자가 confirm한 false positive는 모두 `~/.gstack/greptile-history.md`에 저장됩니다. future run은 codebase의 known FP pattern을 auto-skip합니다. `/retro`는 Greptile의 batting average도 추적해 signal-to-noise ratio가 좋아지는지 볼 수 있게 합니다.
 
 ### Example
 
 ```
 You:   /ship
 
-Claude: [syncs main, runs tests, pre-landing review...]
+Claude: [main 동기화, test 실행, pre-landing review 수행...]
 
-        Greptile found 3 comments on this PR:
+        Greptile이 이 PR에서 comment 3개를 찾았습니다:
 
-        [VALID] app/services/payment_service.rb:47 — Race condition:
-        concurrent charges can double-debit. Recommend DB-level advisory
-        lock around the charge block.
+        [VALID] app/services/payment_service.rb:47 — race condition:
+        concurrent charge가 double-debit를 일으킬 수 있습니다. charge block 주변에 DB-level advisory
+        lock을 권장합니다.
 
-        [ALREADY FIXED] app/models/user.rb:12 — Missing null check
-        on email before downcase.
-        → Already fixed in commit abc1234. Auto-replying.
+        [ALREADY FIXED] app/models/user.rb:12 — null check 누락
+        email을 downcase하기 전 null check가 필요합니다.
+        → commit abc1234에서 이미 수정됨. 자동 reply합니다.
 
-        [FALSE POSITIVE] lib/auth.rb:88 — "Token comparison should
-        use constant-time comparison." We already use
-        ActiveSupport::SecurityUtils.secure_compare here.
+        [FALSE POSITIVE] lib/auth.rb:88 — "token comparison은
+        constant-time comparison을 써야 합니다." 이미 여기서는
+        ActiveSupport::SecurityUtils.secure_compare를 사용하고 있습니다.
 
-        Fixing the race condition in payment_service.rb...
+        payment_service.rb의 race condition을 수정하는 중...
 
-        The auth token comment is a false positive.
-        Options: A) Reply to Greptile explaining  B) Fix anyway  C) Ignore
+        auth token comment는 false positive입니다.
+        옵션: A) Greptile에 설명 reply  B) 그래도 수정  C) 무시
 
 You:    A
 
-Claude: Replied to Greptile. All tests pass.
+Claude: Greptile에 reply했습니다. 모든 test가 통과했습니다.
         PR: github.com/you/app/pull/42
 ```
 
-Three Greptile comments. One real fix. One auto-acknowledged. One false positive pushed back with a reply. Total extra time: about 30 seconds.
+Greptile comment 3개 중 하나는 real fix, 하나는 auto-acknowledged, 하나는 false positive로 reply했습니다. 추가로 든 시간은 약 30초입니다.
 
 ---
 
 ## `/ios-qa`
 
-Live-device iOS QA. The fork's load-bearing insight was: don't simulate, don't run XCTest, don't bring up WebDriverAgent. Embed an HTTP server in the app under test, drive it from a Mac-side daemon over the USB CoreDevice IPv6 tunnel.
+live-device iOS QA입니다. 이 fork의 load-bearing insight는 이것입니다. simulate하지 말고, XCTest를 실행하지 말고, WebDriverAgent를 띄우지 마세요. test 대상 app 안에 HTTP server를 embed하고, USB CoreDevice IPv6 tunnel을 통해 Mac-side daemon에서 구동하세요.
 
-The agent reads your Swift source, finds `@Observable` classes with `@Snapshotable`-marked fields, codegens typed accessors, deploys a debug bridge, then runs a closed find→fix→verify loop.
+agent는 Swift source를 읽고, `@Snapshotable`로 mark된 field를 가진 `@Observable` class를 찾고, typed accessor를 codegen하고, debug bridge를 deploy한 뒤 closed find→fix→verify loop를 실행합니다.
 
-### Architecture in one diagram
+### Architecture In One Diagram
 
 ```
        ┌──────────────────────┐   USB CoreDevice (IPv6)   ┌──────────────────┐
@@ -1225,15 +1222,15 @@ The agent reads your Swift source, finds `@Observable` classes with `@Snapshotab
        └──────────────────────┘
 ```
 
-The iOS app's `StateServer` binds loopback only (`::1` + `127.0.0.1`). The Mac daemon owns tailnet identity validation, capability tiers, and the audit trail. Remote agents NEVER see the boot token — only short-lived session tokens (1h default, 24h hard cap) minted via Tailscale identity gating.
+iOS app의 `StateServer`는 loopback에만 bind합니다(`::1` + `127.0.0.1`). Mac daemon은 tailnet identity validation, capability tier, audit trail을 담당합니다. remote agent는 boot token을 절대 보지 않습니다. Tailscale identity gating으로 mint된 short-lived session token(기본 1h, hard cap 24h)만 봅니다.
 
-### The unlock: USB-tethered + Tailscale = remote iOS QA from any agent
+### Unlock: USB-Tethered + Tailscale = Any Agent에서 Remote iOS QA
 
-A Mac plus an iPhone you already own plus the Tailscale free tier replaces what most teams pay BrowserStack/Sauce Labs for. Any HTTP-capable agent on your tailnet can drive the iOS app once you've minted them a session token. Tailscale ACLs scope which identities can reach the Mac at which capability tier.
+이미 가진 Mac과 iPhone, 그리고 Tailscale free tier만으로 대부분의 team이 BrowserStack/Sauce Labs에 비용을 내는 use case를 대체할 수 있습니다. tailnet의 HTTP-capable agent는 session token을 mint한 뒤 iOS app을 구동할 수 있습니다. Tailscale ACL은 어떤 identity가 어떤 capability tier로 Mac에 접근할 수 있는지 제한합니다.
 
-See `ios-qa/docs/tailscale-acl-example.md` for the runnable setup.
+runnable setup은 `ios-qa/docs/tailscale-acl-example.md`를 참고하세요.
 
-### Capability tiers
+### Capability Tiers
 
 | Tier | Endpoints |
 |------|-----------|
@@ -1242,32 +1239,32 @@ See `ios-qa/docs/tailscale-acl-example.md` for the runnable setup.
 | mutate | interact + `POST /state/<key>` |
 | restore | mutate + `POST /state/restore` |
 
-Default minted tokens get `interact`. Higher tiers require explicit owner mint.
+기본 mint token은 `interact` 권한을 받습니다. 더 높은 tier는 owner의 explicit mint가 필요합니다.
 
 ---
 
 ## `/ios-fix`
 
-Iron Law: no fix without a reproducing snapshot. The agent captures pre-bug state via `GET /state/snapshot`, writes the fix, rebuilds, redeploys, restores the snapshot, and verifies the bug is gone. The snapshot becomes a regression test fixture so the bug can't recur silently.
+Iron Law: reproducing snapshot 없는 fix 금지. agent는 `GET /state/snapshot`으로 bug 이전 상태를 capture하고, fix를 작성하고, rebuild, redeploy, snapshot restore, bug 소멸 검증을 수행합니다. snapshot은 regression test fixture가 되어 bug가 조용히 재발하지 못하게 합니다.
 
-Mirrors `/qa`'s find-bug → fix → re-verify loop for iOS.
+iOS용 `/qa`의 find-bug → fix → re-verify loop라고 보면 됩니다.
 
 ---
 
 ## `/ios-design-review`
 
-Designer's-eye QA on a real iPhone. Connects to the same `/ios-qa` daemon in observe-tier mode and screenshots every screen. Scores 10 dimensions 0-10: typography hierarchy, spacing rhythm, color hierarchy, touch targets, loading/empty/error states, accessibility, animation discipline, iOS idiom alignment, information density, AI-slop check.
+real iPhone에서 designer's-eye QA를 수행합니다. 같은 `/ios-qa` daemon에 observe-tier mode로 연결해 모든 screen을 screenshot합니다. 10개 dimension을 0-10으로 평가합니다: typography hierarchy, spacing rhythm, color hierarchy, touch target, loading/empty/error state, accessibility, animation discipline, iOS idiom alignment, information density, AI-slop check.
 
-For each score < 7, uses AskUserQuestion to present the issue with recommended fix.
+점수가 7 미만인 항목마다 AskUserQuestion으로 issue와 recommended fix를 제시합니다.
 
 ---
 
 ## `/ios-clean`
 
-Convenience wrapper. The structural Release-build guard against shipping DebugBridge is in `Package.swift` (`.when(configuration: .debug)`) plus a CI invariant test. `/ios-clean` is for developers who want a guided removal flow or who manually added the SPM dependency without going through `/ios-qa`.
+convenience wrapper입니다. DebugBridge가 release build에 ship되지 않도록 하는 structural guard는 `Package.swift`(`.when(configuration: .debug)`)와 CI invariant test에 있습니다. `/ios-clean`은 guided removal flow를 원하거나 `/ios-qa`를 거치지 않고 SPM dependency를 수동으로 추가한 developer를 위한 skill입니다.
 
 ---
 
 ## `/ios-sync`
 
-Run after upgrading gstack or adding new `@Observable` classes. Detects what's installed, runs gen-accessors against the latest upstream templates, refreshes any changed Swift files, verifies the app rebuilds. Cache-key invalidation handles Swift version changes, generator git rev changes, and source changes.
+gstack를 upgrade하거나 새 `@Observable` class를 추가한 뒤 실행합니다. 설치된 내용을 감지하고 latest upstream template으로 gen-accessor를 실행하며, 변경된 Swift file을 refresh하고 app rebuild를 검증합니다. cache-key invalidation은 Swift version change, generator git rev change, source change를 처리합니다.

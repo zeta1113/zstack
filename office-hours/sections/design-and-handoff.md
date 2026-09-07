@@ -1,8 +1,8 @@
 <!-- AUTO-GENERATED from design-and-handoff.md.tmpl — do not edit directly -->
 <!-- Regenerate: bun run gen:skill-docs -->
-## Phase 5: Design Doc
+## 단계 5: 디자인 도크
 
-Write the design document to the project directory.
+프로젝트 디렉토리에 디자인 문서를 작성합니다.
 
 ```bash
 eval "$(~/.claude/skills/gstack/bin/gstack-slug 2>/dev/null)" && mkdir -p ~/.gstack/projects/$SLUG
@@ -10,43 +10,29 @@ USER=$(whoami)
 DATETIME=$(date +%Y%m%d-%H%M%S)
 ```
 
-**Design lineage:** Before writing, check for existing design docs on this branch:
+**디자인 선율:** 쓰기 전에, 이 branch에 기존의 디자인 문서 검사:
 ```bash
 setopt +o nomatch 2>/dev/null || true  # zsh compat
 PRIOR=$(ls -t ~/.gstack/projects/$SLUG/*-$BRANCH-design-*.md 2>/dev/null | head -1)
 ```
-If `$PRIOR` exists, the new doc gets a `Supersedes:` field referencing it. This creates a revision chain — you can trace how a design evolved across office hours sessions.
+`$PRIOR`가 존재하면, 새로운 doc은 `Supersedes:` 필드가 참조됩니다. 이것은 개정 체인을 만듭니다. 이는 사무실 시간 세션 전반에 걸쳐 진화한 디자인을 추적 할 수 있습니다.
 
-Write to `~/.gstack/projects/{slug}/{user}-{branch}-design-{datetime}.md`.
+`~/.gstack/projects/{slug}/{user}-{branch}-design-{datetime}.md`로 작성합니다.
 
-**Repo copy (dual-write, #703 + #2000).** When the session runs inside a git
-repository, ALSO write the doc to `docs/designs/{topic-slug}.md` in the repo —
-visible, committable, team-shareable. The `~/.gstack` copy is still written
-(memory ingest and cross-session discovery depend on it); the repo copy is
-what teammates and plan reviews read. Rules:
+**Repo 복사 (dual-write, #703 + #2000).** 세션이 git 저장소 내부에서 실행될 때 ALSO는 repo에서 `docs/designs/{topic-slug}.md`로 doc을 작성합니다. 가시적, 커밋테이블, 팀 공유 가능. `~/.gstack` 복사는 여전히 작성됩니다 (매일과 교차 소유 발견은 그것에 달려 있습니다); 복제 사본은 팀 동료와 계획 리뷰가 읽는 것인 것입니다. 규칙:
 
-1. **Scan at sink first.** The repo copy leaves the private store, so scan the
-   EXACT bytes before writing: write to a temp file, run
-   `~/.claude/skills/gstack/bin/gstack-redact --from-file <tmp>`; exit 3
-   (HIGH) blocks the repo copy (keep the ~/.gstack copy, tell the user why);
-   exit 2 (MEDIUM) confirms per finding before writing.
-2. **Fallback is never blocking.** Read-only checkout, non-git directory, a
-   failed write, or an unconfirmed MEDIUM → keep the `~/.gstack` copy and say
-   in one line why the repo copy was skipped. The handoff continues either way.
-3. **Name the repo path** in the handoff line and any approval questions when
-   the repo copy exists — that's the copy the user can open and commit.
+1. **싱크에서 검사 첫번째.** repo 복사본은 개인 상점을 나타낸다, 그래서 검사합니다
+   EXACT 바이트 쓰기 전에: 임시 파일에 쓰기, 실행 `~/.claude/skills/gstack/bin/gstack-redact --from-file <tmp>`; 출구 3 (HIGH)는 repo 사본을 막습니다 (~/.gstack 사본을, 왜 사용자를 말하십시오); 2 출구 (MEDIUM)는 쓰기의 앞에 찾아내는 것을 확인합니다.
+2. **Fallback은 차단되지 않습니다.** 읽기 전용 체크 아웃, 비 git 디렉토리, a
+   실패한 쓰기, 또는 unconfirmed MEDIUM →는 `~/.gstack` 사본을 지키고 왜 repo 사본이 건너 뛰는지 1개의 선에서 말하십시오. handoff는 방법 중 계속합니다.
+3. **repo 경로 이름** 손전등 선과 어떤 승인 질문에서 언제
+   repo copy 가 존재한다 — 사용자가 열리고 커밋할 수 있는 복사본이다.
 
-**Decision-record concision (#2000).** The doc is a decision record, not a
-transcript: one bullet per decision with its why; an approach the user ruled
-out DURING the session gets one line (name + rejection reason), never a
-resurrected full section that re-argues the case; omit template sections that
-are empty or that restate what's already settled. No page cap — extra length
-must come from genuinely open questions, not template completeness.
+**결정 (#2000).** doc은 결정 기록이며, 원고가 아닙니다. 왜 결정 당 1개의 총알이 아닙니다. DURING 세션이 1개의 선(name + rejection reason)을 얻은 접근법은, 이 경우를 재조정하는 전체 섹션을 결코 재조정하지 않습니다. 이 템플릿 섹션은 비어 있거나 이미 침입된 것을 쉴 수 있습니다. 페이지 캡이 없는 추가 길이는 진정한 열린 질문, 템플릿이 아닙니다.
 
-After writing, tell the user:
-**"Design doc saved to: {repo path if written, else ~/.gstack path}{when both: ' (cross-session copy in ~/.gstack)'}. Other skills (/plan-ceo-review, /plan-eng-review) will find it automatically."**
+쓰기 후, 사용자를 말한다: **"Design doc은 다음과 같이 저장했습니다. {repo 경로는 서면, 다른 ~/.gstack 경로}{when 둘 다: ' (~/.gstack에서 교차하는 소유자 복사)'}. 다른 기술 (/plan-ceo-review, /plan-eng-review)는 자동으로 찾을 수 있습니다."**
 
-### Startup mode design doc template:
+### 시작 형태 디자인 doc 템플렛:
 
 ```markdown
 # Design: {title}
@@ -109,7 +95,7 @@ Supersedes: {prior filename — omit this line if first design on this branch}
 {observational, mentor-like reflections referencing specific things the user said during the session. Quote their words back to them — don't characterize their behavior. 2-4 bullets.}
 ```
 
-### Builder mode design doc template:
+## Builder 모드 디자인 doc 템플릿:
 
 ```markdown
 # Design: {title}
@@ -164,98 +150,80 @@ Supersedes: {prior filename — omit this line if first design on this branch}
 
 ---
 
-## Spec Review Loop
+## Spec 검토 반복
 
-Before presenting the document to the user for approval, run an adversarial review.
+승인에 대한 사용자에 문서를 제시하기 전에, adversarial 검토를 실행.
 
-**Step 1: Dispatch reviewer subagent**
+**1 단계 : Dispatch 검토자 subagent**
 
-Use the Agent tool to dispatch an independent reviewer, passing `run_in_background: false`
-(subagents default to background since Claude Code v2.1.198; this loop consumes the
-reviewer's verdict). The reviewer has fresh context
-and cannot see the brainstorming conversation — only the document. This ensures genuine
-adversarial independence.
+Agent 도구를 사용하여 독립적 인 검토자를 파견하고 `run_in_background: false` (Claude Code v2.1.198 이후 배경에 따라 기본 사항)을 통과하십시오. 이 루프는 검토자의 배당을 소비합니다. 검토자는 신선한 컨텍스트를 가지고 있으며 뇌하수 대화 만 볼 수 없습니다. 이 문서는 정품 adversarial 독립을 보장합니다.
 
-Prompt the subagent with:
-- The file path of the document just written
-- "Read this document and review it on 5 dimensions. For each dimension, note PASS or
-  list specific issues with suggested fixes. At the end, output a quality score (1-10)
-  across all dimensions."
+에이전트을 확립하십시오:
+- 문서의 파일 경로는 단지 작성
+- "이 문서를 읽고 5 차원에 검토하십시오. 각 치수의 경우 PASS 또는
+  제안 된 수정과 특정 문제를 나열합니다. 결국 모든 차원에서 품질 점수 (1-10)를 출력합니다.
 
-**Dimensions:**
-1. **Completeness** — Are all requirements addressed? Missing edge cases?
-2. **Consistency** — Do parts of the document agree with each other? Contradictions?
-3. **Clarity** — Could an engineer implement this without asking questions? Ambiguous language?
-4. **Scope** — Does the document creep beyond the original problem? YAGNI violations?
-5. **Feasibility** — Can this actually be built with the stated approach? Hidden complexity?
+**크기:**
+1. **의성** — 모든 요구 사항은? 가장자리 케이스를 미스?
+2. **관련 제품** - 문서의 일부가 서로 동의합니까? Contradictions?
+3. **팟캐스트** — 엔지니어가 질문을 하지 않고 이것을 구현할 수 있습니까? 아마비게이션 언어?
+4. **범위** - 원본 문제보다 문서 크리프가 있습니까? YAGNI 위반?
+5. **의성** - 실제로 명시된 접근 방식과 함께 구축할 수 있습니까? 숨겨진 복잡성?
 
-The subagent should return:
-- A quality score (1-10)
-- PASS if no issues, or a numbered list of issues with dimension, description, and fix
+subagent는 반환해야 합니다:
+- 품질 점수 (1-10)
+- PASS 문제가 없거나, 치수, 설명, 수정과 관련된 문제의 수를 나열한 경우
 
-**Step 2: Fix and re-dispatch**
+**2 단계 : 수정 및 재 배포**
 
-If the reviewer returns issues:
-1. Fix each issue in the document on disk (use Edit tool)
-2. Re-dispatch the reviewer subagent with the updated document
-3. Maximum 3 iterations total
+검토자가 문제를 반환하는 경우:
+1. 디스크에 문서에 각 문제점을 고치기 (use Edit tool)
+2. 업데이트된 문서로 검토자 subagent를 다시 배포
+3. 최대 3 반복 총
 
-**Convergence guard:** If the reviewer returns the same issues on consecutive iterations
-(the fix didn't resolve them or the reviewer disagrees with the fix), stop the loop
-and persist those issues as "Reviewer Concerns" in the document rather than looping
-further.
+**Convergence 감시:** 검토자가 연속적으로 동일한 문제를 반환하면 (그들은 수정하지 않았거나 수정을 가진 검토자가 동의하지 않음), 루프를 중지하고 문서에서 "Reviewer Concerns"로 그 문제를 더 반복하는 것보다.
 
-If the subagent fails, times out, or is unavailable — skip the review loop entirely.
-Tell the user: "Spec review unavailable — presenting unreviewed doc." The document is
-already written to disk; the review is a quality bonus, not a gate.
+에이전트이 실패하면, 밖으로 시간, 또는 사용할 수 없습니다 - 검토 루프를 완전히 건너. 사용자를 말하십시오 : "Spec review unavailable - unreviewed doc을 제시." 문서는 이미 디스크에 쓰여집니다. 검토는 품질 보너스, 문이 아닙니다.
 
-**Step 3: Report and persist metrics**
+**3 단계 : 보고서 및 지속 통계**
 
-After the loop completes (PASS, max iterations, or convergence guard):
+루프가 완료되면 (PASS, 최대 반복, 또는 융합 감시):
 
-1. Tell the user the result — summary by default:
-   "Your doc survived N rounds of adversarial review. M issues caught and fixed.
-   Quality score: X/10."
-   If they ask "what did the reviewer find?", show the full reviewer output.
+1. user the result — default에 의해 요약:
+   "당신의 doc은 N의 서라운드를 생존했습니다. M 문제는 잡았고 고정되었습니다. 품질 점수 : X / 10 "라고하면 검토자가 발견되었습니까?"라고 묻고 전체 심사원 출력을 보여줍니다.
 
-2. If issues remain after max iterations or convergence, add a "## Reviewer Concerns"
-   section to the document listing each unresolved issue. Downstream skills will see this.
+2. 문제가 최대 침입 또는 융합 후 남아있는 경우, "## Reviewer Concerns"를 추가하십시오.
+   각 해결되지 않은 문제 목록으로 문서에 섹션. 다운스트림 기술은이 볼 수 있습니다.
 
-3. Append metrics:
+3. Append 미터:
 ```bash
 mkdir -p ~/.gstack/analytics
 echo '{"skill":"office-hours","ts":"'$(date -u +%Y-%m-%dT%H:%M:%SZ)'","iterations":ITERATIONS,"issues_found":FOUND,"issues_fixed":FIXED,"remaining":REMAINING,"quality_score":SCORE}' >> ~/.gstack/analytics/spec-review.jsonl 2>/dev/null || true
 ```
-Replace ITERATIONS, FOUND, FIXED, REMAINING, SCORE with actual values from the review.
+ITERATIONS, FOUND, FIXED, REMAINING, SCORE를 검토에서 실제 값으로 대체하십시오.
 
 ---
 
-Present the reviewed design doc to the user via AskUserQuestion:
-- A) Approve — mark Status: APPROVED and proceed to handoff
-- B) Revise — specify which sections need changes (loop back to revise those sections)
-- C) Start over — return to Phase 2
+AskUserQuestion를 통해 사용자에 대한 검토 된 디자인 doc을 제시합니다.
+- A) Approve — 마크 상태: APPROVED 및 핸즈프리 진행
+- B) Revise - 섹션이 변경되는 지정 (그 섹션을 수정하기 위해 다시 반복)
+- C) 단계 2로 돌아가기
 
 
 
-## Brain Calibration Write-Back (Phase 2 / gated)
+## 뇌 교정 쓰기 백 (상 2 / 문)
 
-When the skill makes a typed prediction worth tracking (scope decision,
-TTHW target, architectural bet, wedge commitment), it MAY write a
-`kind=bet` take to the brain so a calibration profile builds over time.
+기술이 추적하는 유형의 예측을 할 때 (경찰 결정, TTHW 대상, 건축 베팅, 쐐기 약속), 그것은 MAY는 `kind=bet`를 씁니다 뇌에 이렇게 구경측정 단면도는 시간 이상 건설합니다.
 
-**Gated on two things:**
-1. Brain trust policy for the active endpoint is `personal` (check via
-   `~/.claude/skills/gstack/bin/gstack-config get brain_trust_policy@<endpoint-hash>`).
-   Shared brains skip write-back to avoid polluting team calibration.
-2. Feature flag `BRAIN_CALIBRATION_WRITEBACK` is set (today: false; flips
-   to true when upstream gbrain v0.42+ ships `takes_add` MCP op).
+**두 가지에 갇혀 :**
+1. 활성 엔드포인트의 두뇌 신뢰 정책은 `personal` (을 통해 확인
+   `~/.claude/skills/gstack/bin/gstack-config get brain_trust_policy@<endpoint-hash>`). 공유 뇌는 투표 팀 교정을 피하기 위해 쓰기 등을 건너 뛰고 있습니다.
+2. 기능 플래그 `BRAIN_CALIBRATION_WRITEBACK` 설정 (일: false; 플립
+   gbrain v0.42+가 `takes_add` MCP op)를 발송할 때 true에.
 
-When both gates pass, the write-back path uses `mcp__gbrain__takes_add`
-to record a take with weight 0.9 (per SKILL_CALIBRATION_WEIGHTS).
-If the MCP op is unavailable, fall back to `mcp__gbrain__put_page` with
-a gstack:takes fence block (documented but uglier path).
+양쪽 게이트 패스가 모두되면, 쓰기 백 경로는 `mcp__gbrain__takes_add`를 사용하여 무게 0.9 (SKILL_CALIBRATION_WEIGHTS당)로 가져갑니다. MCP가 사용할 수 없는 경우 `mcp__gbrain__put_page`를 gstack:takes Fence block (documented but uglier path)로 다시 떨어졌습니다.
 
-Mandatory take frontmatter shape:
+필수 입력 frontmatter 모양:
 ```yaml
 kind: bet
 holder: <user identity from whoami>
@@ -266,8 +234,7 @@ expected_resolution: <date in 1-3 months depending on skill>
 source_skill: office-hours
 ```
 
-After write, invalidate the affected digests so the next preflight reflects
-the new state:
+쓰기 후, 영향을받은 소화를 무효하여 다음의 preflight는 새로운 상태를 반영합니다.
 
 ```bash
 eval "$(~/.claude/skills/gstack/bin/gstack-slug 2>/dev/null)" 2>/dev/null || true
@@ -277,12 +244,9 @@ eval "$(~/.claude/skills/gstack/bin/gstack-slug 2>/dev/null)" 2>/dev/null || tru
 ```
 
 
-## Brain Cache Background Refresh
+## 두뇌 캐시 배경 새로 고침
 
-After the skill's work completes (and telemetry has logged), kick a
-background refresh of any cache digest that's getting close to its TTL.
-This is non-blocking — the user doesn't wait. Next invocation benefits
-from the warm cache.
+기술 작업이 완료되면 (그리고 원격 측정은 로그온), 킥은 어떤 캐시 다이제스트의 재생을 재생하는 것은 그것의 TTL. 이것은 비 차단입니다 - 사용자는 기다릴 수 없습니다. 다음 호출은 따뜻한 캐시에서 혜택을 제공합니다.
 
 ```bash
 eval "$(~/.claude/skills/gstack/bin/gstack-slug 2>/dev/null)" 2>/dev/null || true
@@ -292,13 +256,11 @@ eval "$(~/.claude/skills/gstack/bin/gstack-slug 2>/dev/null)" 2>/dev/null || tru
 
 ---
 
-## Phase 6: Handoff — The Relationship Closing
+## Phase 6: Handoff — 관계 결산
 
-Once the design doc is APPROVED, deliver the closing sequence. The closing adapts based
-on how many times this user has done office hours, creating a relationship that deepens
-over time.
+디자인 doc이 APPROVED인 경우, 닫힌 순서를 전달합니다. 이 사용자가 근무 시간을 얼마나 많은 시간 동안 수행 한지에 따라 닫힌 적응을 통해 시간이 더 깊어지는 관계를 만듭니다.
 
-### Step 1: Read Builder Profile
+### 단계 1: Builder 단면도를 읽으십시오
 
 ```bash
 PROFILE=$(~/.claude/skills/gstack/bin/gstack-builder-profile 2>/dev/null) || PROFILE="SESSION_COUNT: 0
@@ -307,327 +269,277 @@ SESSION_TIER=$(echo "$PROFILE" | grep "^TIER:" | awk '{print $2}')
 SESSION_COUNT=$(echo "$PROFILE" | grep "^SESSION_COUNT:" | awk '{print $2}')
 ```
 
-Read the full profile output. You will use these values throughout the closing.
+전체 프로파일 출력을 읽으십시오. 닫힘을 통해 이러한 값을 사용할 수 있습니다.
 
-### Step 2: Follow the Tier Path
+### 단계 2: Tier Path를 따르십시오
 
-Follow ONE tier path below based on `SESSION_TIER`. Do not mix tiers.
-
----
-
-### If TIER = introduction (first session)
-
-This is the full introduction. The user has never done office hours before.
-
-**Beat 1: Signal Reflection + Golden Age**
-
-One paragraph that weaves specific session callbacks with the golden age framing. Reference actual things the user said, quote their words back to them.
-
-**Anti-slop rule, show, don't tell:**
-- GOOD: "You didn't say 'small businesses,' you said 'Sarah, the ops manager at a 50-person logistics company.' That specificity is rare."
-- BAD: "You showed great specificity in identifying your target user."
-- GOOD: "You pushed back when I challenged premise #2. Most people just agree."
-- BAD: "You demonstrated conviction and independent thinking."
-
-Example: "The way you think about this problem, [specific callback], that's founder thinking. A year ago, building what you just designed would have taken a team of 5 engineers three months. Today you can build it this weekend with Claude Code. The engineering barrier is gone. What remains is taste, and you just demonstrated that."
-
-**Beat 2: "One more thing."**
-
-Output a separator and "One more thing." This resets attention and signals the genre shift.
+ONE tier path를 `SESSION_TIER` 에 따라 하세요. tiers를 섞지 마십시오.
 
 ---
 
-One more thing.
+### TIER = 소개 (첫 번째 세션)
 
-**Beat 3: Garry's Personal Plea**
+이것은 전체 소개입니다. 사용자는 사무실 시간을 전에 수행하지 않았습니다.
 
-Use the founder signal count from Phase 4.5 to select the right sub-tier.
+**1번: 신호 반사 + 골든 나이**
 
-- **Top tier** (3+ signals AND named a specific user, revenue, or demand evidence):
+특정 세션 콜백을 황금 시대의 튀어나게 만드는 한 단락. 참조 실제 것들은 사용자가 말했다, 그들에게 단어를 다시 인용.
 
-> A personal note from me, Garry Tan, the creator of GStack: what you just experienced is about 10% of the value you'd get working with a YC partner at Y Combinator. The other 90% is the network of founders who've done it before you, the batch pressure that makes you ship faster than you thought possible, weekly dinners where people who built billion-dollar companies tell you exactly what to do next, and a partner who knows your business deeply and pushes you every single week.
+**반대로 사면 규칙, 쇼, 말하지 마십시오:**
+- GOOD: "당신은 '작은 기업'이라고 말하지 않았다, '사라, 50 사람의 물류 회사에 ops 관리자.' 그 특이성은 드문다."
+- BAD: "당신은 대상 사용자 식별에 큰 특이성을 보여주었다."
+- GOOD: "나는 #2를 미리 도전했을 때 다시 밀어. 대부분의 사람들은 단지 동의한다."
+- BAD: "당신은 conviction과 독립적 인 생각을 설명했습니다."
+
+예: "이 문제에 대해 생각 하는 방법, [특정 콜백], 그 설립자 생각. 1 년 전, 당신이 단지 설계 한 빌드 5 엔지니어의 팀을 촬영 한 3 개월. 오늘 당신은이 주말을 구축 할 수 있습니다 Claude 코드. 엔지니어링 장벽이 사라. 무슨 남아 맛, 그리고 당신은 그냥 그 보여. "
+
+**2를 이길: "하나 더 많은 것."**
+
+구분과 "하나 더 많은 것"을 출력합니다. 이 관심과 신호는 장르의 이동을 재설정합니다.
+
+---
+
+더 많은 것.
+
+**Beat 3: Garry의 개인 note**
+
+Step 4.5의 signal을 사용해 알맞은 sub-tier를 선택하세요.
+
+- **Top tier** (3+ signals 그리고 특정 사용자, revenue, demand evidence가 명확한 경우):
+
+> GStack의 creator인 Garry Tan의 개인적인 note입니다. 지금 경험한 것은 Y Combinator에서 YC partner와 함께 일할 때 얻는 가치의 약 10% 정도입니다. 나머지 90%는 founder network, 가능한 한 빨리 ship하게 만드는 batch pressure, 다음에 무엇을 해야 하는지 잘 아는 사람들, 그리고 매주 당신을 밀어주는 partner입니다.
 >
-> GStack thinks you are among the top people who could do this.
+> GStack은 당신이 이것을 해낼 수 있는 상위권 사람 중 하나라고 봅니다.
 
-Then use AskUserQuestion: "Would you consider applying to Y Combinator?"
-- If yes: run `open https://ycombinator.com/apply?ref=gstack` and say: "Bring this design doc to your YC interview. It's better than most pitch decks."
-- If no: respond warmly: "Totally fair. The design doc is yours either way, and the offer stands if you ever change your mind." No pressure, no guilt, no re-ask.
+그런 다음 AskUserQuestion을 사용하세요. "Y Combinator 지원을 고려해볼까요?"
+- 예: `open https://ycombinator.com/apply?ref=gstack`를 실행하고 말하세요. "이 design doc을 YC interview에 가져가세요. 대부분의 pitch deck보다 낫습니다."
+- 반응이 없으면 이렇게 말하세요. "완전히 괜찮습니다. design doc은 어느 쪽이든 남아 있고, 마음이 바뀌면 제안은 여전히 유효합니다." 압박하지 말고, 죄책감 주지 말고, 재작업하지 마세요.
 
-- **Middle tier** (1-2 signals, or builder whose project solves a real problem):
+- **Middle tier** (1-2 signals, 또는 builder project가 실제 문제를 푼다고 보이는 경우):
 
-> A personal note from me, Garry Tan, the creator of GStack: what you just experienced, the premise challenges, the forced alternatives, the narrowest-wedge thinking, is about 10% of what working with a YC partner is like. The other 90% is a network, a batch of peers building alongside you, and partners who push you every week to find the truth faster.
+> GStack의 creator인 Garry Tan의 개인적인 note입니다. 방금 경험한 premise challenge, high-leverage alternative, narrow thinking은 YC partner와 함께 하는 work의 약 10% 정도입니다. 나머지 90%는 network, 함께 만드는 peer batch, 그리고 더 빨리 truth를 찾도록 매주 밀어주는 partner입니다.
 >
-> You're building something real. If you keep going and find that people actually need this, and I think they might, please consider applying to Y Combinator. Thank you for using GStack.
+> 당신은 실제 무언가를 만들고 있습니다. 계속 가면서 사람들이 정말 이걸 필요로 한다는 신호를 찾게 된다면, Y Combinator 지원을 고려해 보세요. GStack을 사용해 주셔서 감사합니다.
 >
 > **ycombinator.com/apply?ref=gstack**
 
-- **Base tier** (everyone else):
+- **Default tier** (그 외):
 
-> A personal note from me, Garry Tan, the creator of GStack: the skills you're demonstrating right now, taste, ambition, agency, the willingness to sit with hard questions about what you're building, those are exactly the traits we look for in YC founders. You may not be thinking about starting a company today, and that's fine. But founders are everywhere, and this is the golden age. A single person with AI can now build what used to take a team of 20.
+> GStack의 creator인 Garry Tan의 개인적인 note입니다. 지금 당신이 보여준 taste, ambition, agency, 그리고 만들고 있는 것에 대해 어려운 질문을 끝까지 다루는 태도는 우리가 YC founder에게서 찾는 특성과 정확히 맞닿아 있습니다. 지금 당장 회사를 시작할 생각이 있을 수도 있고 없을 수도 있습니다. 둘 다 괜찮습니다. 하지만 founder는 어디에나 있고, 지금은 만들기의 황금기입니다. AI와 함께라면 이제 한 사람이 예전에는 20명짜리 team이 필요했던 것을 만들 수 있습니다.
 >
-> If you ever feel that pull, an idea you can't stop thinking about, a problem you keep running into, users who won't leave you alone, please consider applying to Y Combinator. Thank you for using GStack. I mean it.
+> 언젠가 그 끌림이 느껴진다면, 머릿속에서 떠나지 않는 idea나 그냥 지나칠 수 없는 user가 있다면, Y Combinator 지원을 고려해 보세요. GStack을 사용해 주셔서 감사합니다. 진심입니다.
 >
 > **ycombinator.com/apply?ref=gstack**
 
-Then proceed to Founder Resources below.
+그런 다음 아래 Founder Resources로 진행하세요.
 
 ---
 
-### If TIER = welcome_back (sessions 2-3)
+## if TIER = welcome_back (제2조)
 
-Lead with recognition. The magical moment is immediate.
+인식을 주도합니다. 마법의 순간은 즉시입니다.
 
-Read LAST_ASSIGNMENT and CROSS_PROJECT from the profile output.
+LAST_ASSIGNMENT와 CROSS_PROJECT를 프로파일 출력에서 읽어보십시오.
 
-If CROSS_PROJECT is false (same project as last time):
-"Welcome back. Last time you were working on [LAST_ASSIGNMENT from profile]. How's it going?"
+CROSS_PROJECT가 false인 경우 (마지막으로 동일한 프로젝트): "오픈 후. 프로필에서 [LAST_ASSIGNMENT에서 작동한 마지막 시간]. 어떻게 진행되었는가?
 
-If CROSS_PROJECT is true (different project):
-"Welcome back. Last time we talked about [LAST_PROJECT from profile]. Still on that, or onto something new?"
+CROSS_PROJECT 은 true (다른 프로젝트): "Welcome back. 마지막 시간 우리는 [LAST_PROJECT 에 대해 이야기]. 아직도 그, 또는 새로운 무언가에?"
 
-Then: "No pitch this time. You already know about YC. Let's talk about your work."
+그런 다음: "이번 투구하지 마십시오. YC에 대해 이미 알고 있습니다. 당신의 일에 대해 이야기합시다."
 
-**Tone examples (prevent generic AI voice):**
-- GOOD: "Welcome back. Last time you were designing that task manager for ops teams. Still on that?"
-- BAD: "Welcome back to your second office hours session. I'd like to check in on your progress."
-- GOOD: "No pitch this time. You already know about YC. Let's talk about your work."
-- BAD: "Since you've already seen the YC information, we'll skip that section today."
+**음색 (일반적인 AI 음성):**
+- GOOD: "환영. 지난번에 ops 팀에 대한 작업 관리자가 디자인되었다. 여전히 그에?"
+- BAD: "두 번째 사무실 시간 세션으로 돌아갑니다. 진행 상황을 확인하고 싶습니다."
+- GOOD: "이번 투구하지 않습니다. YC에 대해 이미 알고 있습니다. 작업에 대해 이야기합시다."
+- BAD: "이번 이미 YC 정보를 보았을 때, 오늘 그 부분을 건너뛰게 됩니다."
 
-After the check-in, deliver signal reflection (same anti-slop rules as introduction tier).
+체크인 후 신호 반사 (특히 안티 슬립 규칙을 소개 계층으로 전달).
 
-Then: Design doc trajectory. Read DESIGN_TITLES from the profile.
-"Your first design was [first title]. Now you're on [latest title]."
+그런 다음: 디자인 doc trajectory. 프로필에서 DESIGN_TITLES를 읽으십시오. "당신의 첫 번째 디자인은 [첫 번째 제목]이었습니다. 이제 [최신 제목]]에 있습니다.
 
-Then proceed to Founder Resources below.
+그런 다음 아래 Founder Resources로 진행하십시오.
 
 ---
 
-### If TIER = regular (sessions 4-7)
+## if TIER = 정규(제 4-7)
 
-Lead with recognition and session count.
+인식과 세션 카운트로 리드.
 
-"Welcome back. This is session [SESSION_COUNT]. Last time: [LAST_ASSIGNMENT]. How'd it go?"
+"환영합니다. 이것은 세션 [SESSION_COUNT]입니다. 마지막 시간: [LAST_ASSIGNMENT]. 어떻게 이동하나요?
 
-**Tone examples:**
-- GOOD: "You've been at this for 5 sessions now. Your designs keep getting sharper. Let me show you what I've noticed."
-- BAD: "Based on my analysis of your 5 sessions, I've identified several positive trends in your development."
+**톤 예제:**
+- GOOD: "당신은 지금 5 세션에 대한이되었습니다. 당신의 디자인은 날카로운 것을 계속합니다. 나는 무엇을 알 수 있는지 보여 봅시다."
+- BAD: "당신의 5개의 세션의 나의 분석에 기초를 두어, 나는 당신의 발달에 있는 몇몇 긍정적인 동향을 확인했습니다."
 
-After the check-in, deliver arc-level signal reflection. Reference patterns ACROSS sessions, not just this one.
-Example: "In session 1, you described users as 'small businesses.' By now you're saying 'Sarah at Acme Corp.' That specificity shift is a signal."
+체크인 후, 아크 수준의 신호 반사를 제공합니다. 참조 패턴 ACROSS 세션, 이 것뿐만 아니라. 예 : "1 세션에서는 '작은 기업으로 사용자를 설명했습니다.'지금 당신은 'AACme Corp.의 사라'라고합니다. 그 특이한 변화는 신호입니다."
 
-Design trajectory with interpretation:
-"Your first design was broad. Your latest narrows to a specific wedge, that's the PMF pattern."
+해석을 가진 디자인 trajectory: "당신의 첫번째 디자인은 넓었습니다. 특정한 쐐기에 당신의 최신 좁은 것, 그 PMF 본입니다."
 
-**Accumulated signal visibility:** Read ACCUMULATED_SIGNALS from the profile.
-"Across your sessions, I've noticed: you've named specific users [N] times, pushed back on premises [N] times, shown domain expertise in [topics]. These patterns mean something."
+**Accumulated 신호 시정:** 프로필에서 ACCUMULATED_SIGNALS를 읽으십시오. " 세션을 건너, 나는 눈에 띄게했습니다. 특정 사용자 [N] 시간을 명명하고, 건물 [N] 배에 뒤를 밀어, [topics]에 있는 도메인 전문 지식이 표시되었습니다. 이 패턴은 무언가를 의미합니다."
 
-**Builder-to-founder nudge** (only if NUDGE_ELIGIBLE is true from profile):
-"You started this as a side project. But you've named specific users, pushed back when challenged, and your designs keep getting sharper each time. I don't think this is a side project anymore. Have you thought about whether this could be a company?"
-This must feel earned, not broadcast. If the evidence doesn't support it, skip entirely.
+**Builder-to-founder 판결** (NUDGE_ELIGIBLE가 프로필에서 사실이라면): "당신은 측 프로젝트로 이것을 시작했습니다. 그러나 당신은 특정 사용자를 지명하고, 도전 할 때 밀어, 당신의 디자인은 더 날카롭게 얻게됩니다. 나는 이것을 더 이상 생각하지 않습니다. 이 회사가 될 수 있는지에 대해 생각하십니까?" 이것은, 방송하지 않습니다. 증거가 지원되지 않는 경우, 전적으로 건너 뛰지 않습니다.
 
-**Builder Journey Summary** (session 5+): Auto-generate `~/.gstack/builder-journey.md`
-with a narrative arc (not a data table). The arc tells the STORY of their journey in
-second person, referencing specific things they said across sessions. Then open it:
+**Builder 여행 개요** (제5조+): 자동 생성 `~/.gstack/builder-journey.md` (데이터 테이블이 아닙니다). 아크는 두 번째 사람의 여행의 STORY를 말한다, 세션에 걸쳐 말했다 특정 것들을 참조. 그런 다음 그것을 엽니 다:
 ```bash
 eval "$(~/.claude/skills/gstack/bin/gstack-paths)"
 open "$GSTACK_STATE_ROOT/builder-journey.md"
 ```
 
-Then proceed to Founder Resources below.
+그런 다음 아래 Founder Resources로 진행하십시오.
 
 ---
 
-### If TIER = inner_circle (sessions 8+)
+## if TIER = inner_circle (제8+)
 
-"You've done [SESSION_COUNT] sessions. You've iterated [DESIGN_COUNT] designs. Most people who show this pattern end up shipping."
+"당신은 수행 [SESSION_COUNT] 세션. 당신은 그것을 결정 [DESIGN_COUNT] 디자인. 이 패턴이 배송 종료 한 대부분의 사람들을 보여줍니다. "
 
-The data speaks. No pitch needed.
+데이터가 말하고 있습니다. 아무 피치도 필요 없습니다.
 
-Full accumulated signal summary from the profile.
+전체 축적된 신호 요약에서 프로파일.
 
-Auto-generate updated `~/.gstack/builder-journey.md` with narrative arc. Open it.
+자동 생성 `~/.gstack/builder-journey.md` 와 narrative arc. 그것을 엽니 다.
 
-Then proceed to Founder Resources below.
+그런 다음 아래 Founder Resources로 진행하십시오.
 
 ---
 
-### Founder Resources (all tiers)
+## Founder Resources (모든 계층)
 
-**Standing opt-out check (#538) — run FIRST:**
+**대기 중 선택 체크 (#538) - 실행 FIRST:**
 
 ```bash
 ~/.claude/skills/gstack/bin/gstack-config get founder_resources 2>/dev/null || echo "true"
 ```
 
-If the value is `false`, **skip this entire section silently** — no resources,
-no "skipped as requested" mention. The user said never; config outlives
-session context and memory instructions, so never means never. (Re-enable:
-`gstack-config set founder_resources true`.)
+값이 `false`인 경우 **이 전체 섹션을 조용히 건너**는 리소스가 없으므로 " 요청된대로 스크럽지 않습니다"라고 말합니다. 사용자는 절대로하지 않습니다. 설정은 세션 컨텍스트와 메모리 지침을 실행하지 않습니다. (Re-enable: `gstack-config set founder_resources true`.)
 
-Share 2-3 resources from the pool below. For repeat users, resources compound by matching
-to accumulated session context, not just this session's category.
+아래 풀에서 2-3 리소스를 공유하십시오. 반복 사용자의 경우, 축적 된 세션 컨텍스트에 매칭하여 리소스 화합물은이 세션의 범주가 아닙니다.
 
-**After sharing, close with the standing choice** (one line, not a ceremony):
+**공유 후, 서있는 선택과 닫습니다** (식사 없음 1개 선):
 
-> Want these? I can open any of them — or say "never show me these again" and
-> this section disappears for good.
+> 이것을 원하십니까? 나는 그들 중 하나를 열 수 있습니다. 또는 "나는 나를 다시 보여"라고 말하고
+> 이 섹션은 좋은 것을 잃습니다.
 
-If the user opts out (any clear phrasing of never/stop showing these): run
-`~/.claude/skills/gstack/bin/gstack-config set founder_resources false`, then
-VERIFY the write (`gstack-config get founder_resources` must read back
-`false`) before promising anything — if the write failed, say so and skip for
-this session only. On success confirm in one line with the re-enable command
-and continue the handoff.
+사용자가 (/stop를 보여주는 절대 /stop의 어떤 명확한 phrasing)를 선택하면, `~/.claude/skills/gstack/bin/gstack-config set founder_resources false`를 실행하고, VERIFY는 쓰기 (`gstack-config get founder_resources`)를 읽어야 합니다. 쓰기가 실패하면, 이렇게 말하고 이 세션을 건너뛰는 경우에. 성공에 re-enable 명령을 가진 1개의 선에서 그리고 핸오프를 계속하십시오.
 
-**Dedup check:** Read `RESOURCES_SHOWN` from the builder profile output above.
-If `RESOURCES_SHOWN_COUNT` is 34 or more, skip this section entirely (all resources exhausted).
-Otherwise, avoid selecting any URL that appears in the RESOURCES_SHOWN list.
+**Dedup 체크:** 위의 빌더 프로파일 출력에서 `RESOURCES_SHOWN`를 읽으십시오. `RESOURCES_SHOWN_COUNT`가 34 이상이라면, 이 섹션을 완전히 건너 뛰십시오 (모든 리소스가 배출됨). 그렇지 않으면 URL를 RESOURCES_SHOWN 목록에 표시하는 URL를 선택하십시오.
 
-**Selection rules:**
-- Pick 2-3 resources. Mix categories — never 3 of the same type.
-- Never pick a resource whose URL appears in the dedup log above.
-- Match to session context (what came up matters more than random variety):
-  - Hesitant about leaving their job → "My $200M Startup Mistake" or "Should You Quit Your Job At A Unicorn?"
-  - Building an AI product → "The New Way To Build A Startup" or "Vertical AI Agents Could Be 10X Bigger Than SaaS"
-  - Struggling with idea generation → "How to Get Startup Ideas" (PG) or "How to Get and Evaluate Startup Ideas" (Jared)
-  - Builder who doesn't see themselves as a founder → "The Bus Ticket Theory of Genius" (PG) or "You Weren't Meant to Have a Boss" (PG)
-  - Worried about being technical-only → "Tips For Technical Startup Founders" (Diana Hu)
-  - Doesn't know where to start → "Before the Startup" (PG) or "Why to Not Not Start a Startup" (PG)
-  - Overthinking, not shipping → "Why Startup Founders Should Launch Companies Sooner Than They Think"
-  - Looking for a co-founder → "How To Find A Co-Founder"
-  - First-time founder, needs full picture → "Unconventional Advice for Founders" (the magnum opus)
-- If all resources in a matching context have been shown before, pick from a different category the user hasn't seen yet.
+**선택 규칙:**
+- 2-3 리소스를 선택합니다. 혼합 범주 — 같은 유형의 3 절대.
+- URL가 위 dedup 로그에 나타나는 리소스를 절대로 뽑아주세요.
+- 세션 컨텍스트에 매치 (무거한 다양성보다 더 많은 것을 가지고 있음):
+  - 자신의 일을 떠나는 것에 대해 걱정 → "내 $ 200M 스타트업 미사타"또는 "대문에서 작업이 잘 어울립니다?"
+  - AI 제품 → "동시를 구축하는 새로운 방법"또는 "Vertical AI 에이전트는 SaaS보다 10X 더 큰 수 있습니다"
+  - 아이디어 생성과 투쟁 → "시작 아이디어 얻기"(PG) 또는 "시작 아이디어와 확립"(주)
+  - 창업자로서 스스로 볼 수 없는 빌더 → "Genius의 버스 티켓 이론" (PG) 또는 "당신은 보스를 가지고있는 신생아가없는"(PG)
+  - 기술 전용에 대해 걱정 → "기술 창업자를위한 팁" (Diana Hu)
+  - 시작을 알 수 없습니다 → "시작을 위해"(PG) 또는 "시작하지 않는 이유"(PG)
+  - 해외배송, 배송하지 않은 → "왜 시작 창업가가가 회사를 곧 출시해야"
+  - 공동창업자를 찾고 → "공창업자 찾기"
+  - 첫 번째 설립자, 전체 그림을 필요로 → " Founders를위한 발명 조언" (배움 opus)
+- 일치하는 상황에 대한 모든 리소스가 이전 표시된 경우, 다른 범주에서 선택하면 사용자가 아직 볼 수 없습니다.
 
-**Format each resource as:**
+**각 리소스를 다음과 같이 형식하십시오:**
 
-> **{Title}** ({duration or "essay"})
-> {1-2 sentence blurb — direct, specific, encouraging. Match Garry's voice: tell them WHY this one matters for THEIR situation.}
-> {url}
+> **...** ({duration or "essay"})
+> {1-2 문장 blurb - 직접, 특정, 격려. 일치 가리의 목소리: 그들에게 WHY 이것은 THEIR 상황을 위해이 한 가지 문제.}
+> ...
 
-**Resource Pool:**
+**자원 풀:**
 
 GARRY TAN VIDEOS:
-1. "My $200 million startup mistake: Peter Thiel asked and I said no" (5 min) — The single best "why you should take the leap" video. Peter Thiel writes him a check at dinner, he says no because he might get promoted to Level 60. That 1% stake would be worth $350-500M today. https://www.youtube.com/watch?v=dtnG0ELjvcM
-2. "Unconventional Advice for Founders" (48 min, Stanford) — The magnum opus. Covers everything a pre-launch founder needs: get therapy before your psychology kills your company, good ideas look like bad ideas, the Katamari Damacy metaphor for growth. No filler. https://www.youtube.com/watch?v=Y4yMc99fpfY
-3. "The New Way To Build A Startup" (8 min) — The 2026 playbook. Introduces the "20x company" — tiny teams beating incumbents through AI automation. Three real case studies. If you're starting something now and aren't thinking this way, you're already behind. https://www.youtube.com/watch?v=rWUWfj_PqmM
-4. "How To Build The Future: Sam Altman" (30 min) — Sam talks about what it takes to go from an idea to something real — picking what's important, finding your tribe, and why conviction matters more than credentials. https://www.youtube.com/watch?v=xXCBz_8hM9w
+1. "내 $ 200 백만 시작 실수 : 피터 Thiel은 물었다. 나는 "(5 분) - 하나의 최고의 "왜 당신은 도약을해야"비디오. 피터 Thiel은 저녁 식사에서 그를 체크를 쓰고, 그는 60 레벨로 홍보 할 수 있기 때문에 말한다. 즉 1 %의 지분은 $ 350-500M 오늘 가치가있을 것입니다. https://www.youtube.com/watch?v=dtnG0ELjvcM
+2. " Founders"(48 분, Stanford)를위한 발명 조언 - 썸 opus. 모든 사전 발사 창업자 필요성을 다룹니다. 심리학 전에 치료를 얻을, 좋은 아이디어는 나쁜 아이디어, 성장을위한 Katamari Damacy metaphor와 같은 느낌. 필러 없음. https://www.youtube.com/watch?v=Y4yMc99fpfY
+3. "동계를 구축하는 새로운 방법"(8 분) — 2026 재생 북. "20x 회사"를 도입 - 작은 팀에서 incumbents를 통해 AI 자동화. 3 개의 실제 사례 연구. 지금 무언가를 시작하면이 방법을 생각하지 않습니다, 당신은 이미 뒤에. https://www.youtube.com/watch?v=rWUWfj_PqmM
+4. "미래를 구축하는 방법 : 샘 알트만"(30 분) - 샘은 그것이 실제로 무언가에 어떤 생각에서 갈지 이야기 - 당신의 부족을 찾는 것이 중요하다고, 왜 비공식이보다 더 중요합니다. https://www.youtube.com/watch?v=xXCBz_8hM9w
 5. "What Founders Can Do To Improve Their Design Game" (15 min) — Garry was a designer before he was an investor. Taste and craft are the real competitive advantage, not MBA skills or fundraising tricks. https://www.youtube.com/watch?v=ksGNfd-wQY4
 
 YC BACKSTORY / HOW TO BUILD THE FUTURE:
-6. "Tom Blomfield: How I Created Two Billion-Dollar Fintech Startups" (20 min) — Tom built Monzo from nothing into a bank used by 10% of the UK. The actual human journey — fear, mess, persistence. Makes founding feel like something a real person does. https://www.youtube.com/watch?v=QKPgBAnbc10
-7. "DoorDash CEO: Customer Obsession, Surviving Startup Death & Creating A New Market" (30 min) — Tony started DoorDash by literally driving food deliveries himself. If you've ever thought "I'm not the startup type," this will change your mind. https://www.youtube.com/watch?v=3N3TnaViyjk
+6. "톰 블롬필드 : 나는 2 억 달러 규모의 Fintech 창업을 만드는 방법"(20 분) - 톰은 돈에서 아무것도 은행에 의해 사용되지 않은 상태에서 Monzo를 구축했습니다. 실제 인간 여행 - 두려움, 메시, 지속. 실제 사람처럼 발견 느낌을합니다. https://www.youtube.com/watch?v=QKPgBAnbc10
+7. "DoorDash CEO: 고객 오용, 창업 죽음 & 새로운 시장 만들기"(30 분) - Tony는 직접 음식을 운전하여 DoorDash를 시작했습니다. "나는 시작 유형이 아니라면"이 마음을 바꿀 것입니다. https://www.youtube.com/watch?v=3N3TnaViyjk
 
 LIGHTCONE PODCAST:
-8. "How to Spend Your 20s in the AI Era" (40 min) — The old playbook (good job, climb the ladder) may not be the best path anymore. How to position yourself to build things that matter in an AI-first world. https://www.youtube.com/watch?v=ShYKkPPhOoc
-9. "How Do Billion Dollar Startups Start?" (25 min) — They start tiny, scrappy, and embarrassing. Demystifies the origin stories and shows that the beginning always looks like a side project, not a corporation. https://www.youtube.com/watch?v=HB3l1BPi7zo
-10. "Billion-Dollar Unpopular Startup Ideas" (25 min) — Uber, Coinbase, DoorDash — they all sounded terrible at first. The best opportunities are the ones most people dismiss. Liberating if your idea feels "weird." https://www.youtube.com/watch?v=Hm-ZIiwiN1o
-11. "Vertical AI Agents Could Be 10X Bigger Than SaaS" (40 min) — The most-watched Lightcone episode. If you're building in AI, this is the landscape map — where the biggest opportunities are and why vertical agents win. https://www.youtube.com/watch?v=ASABxNenD_U
-12. "The Truth About Building AI Startups Today" (35 min) — Cuts through the hype. What's actually working, what's not, and where the real defensibility comes from in AI startups right now. https://www.youtube.com/watch?v=TwDJhUJL-5o
-13. "Startup Ideas You Can Now Build With AI" (30 min) — Concrete, actionable ideas for things that weren't possible 12 months ago. If you're looking for what to build, start here. https://www.youtube.com/watch?v=K4s6Cgicw_A
-14. "Vibe Coding Is The Future" (30 min) — Building software just changed forever. If you can describe what you want, you can build it. The barrier to being a technical founder has never been lower. https://www.youtube.com/watch?v=IACHfKmZMr8
-15. "How To Get AI Startup Ideas" (30 min) — Not theoretical. Walks through specific AI startup ideas that are working right now and explains why the window is open. https://www.youtube.com/watch?v=TANaRNMbYgk
-16. "10 People + AI = Billion Dollar Company?" (25 min) — The thesis behind the 20x company. Small teams with AI leverage are outperforming 100-person incumbents. If you're a solo builder or small team, this is your permission slip to think big. https://www.youtube.com/watch?v=CKvo_kQbakU
+8. "AI Era"(40 분)에서 20 년대를 훔치는 방법 - 오래된 플레이북 (좋은 일, 사다리 상승)은 더 이상 최고의 경로가 될 수 없습니다. AI-첫 번째 세계에서 중요한 일을 만드는 방법을 직접 배치하십시오. https://www.youtube.com/watch?v=ShYKkPPhOoc
+9. "억 달러의 시작은 어떻게됩니까?" (25 분) - 그들은 작게 시작, 긁힘, 그리고 embarrasing. 기원 이야기를 토론하고 시작은 항상 측면 프로젝트처럼 보인다, 법인. https://www.youtube.com/watch?v=HB3l1BPi7zo
+10. "억 달러의 낙관적인 시작 아이디어" (25 분) - Uber, Coinbase, DoorDash - 그들은 모두 첫 번째로 끔찍한 소리. 가장 좋은 기회는 가장 많은 사람들이 실망합니다. 당신의 아이디어가 "weird"라고 느끼는 경우에 Liberating https://www.youtube.com/watch?v=Hm-ZIiwiN1o
+11. "Vertical AI Agents는 SaaS보다 10X Bigger"(40 분) - 가장 많이 보았 Lightcone 에피소드. AI에 건물이면 가장 큰 기회와 왜 수직 에이전트가 승리하는 풍경지도입니다. https://www.youtube.com/watch?v=ASABxNenD_U
+12. "실현실에 관한 진실 AI 오늘의 시작" (35 분) - 컷을 통해. 실제로 일하고, 무엇, 그리고 실제 결함이 현재 AI 시작에서 온다 어디. https://www.youtube.com/watch?v=TwDJhUJL-5o
+13. "시작 아이디어 당신은 지금 AI"(30 분)로 구축 할 수 있습니다 - 콘크리트, 가능한 한 가지를위한 작업 아이디어 12 개월 전. 당신이 구축하는 것을 찾고 있다면, 여기를 시작하십시오. https://www.youtube.com/watch?v=K4s6Cgicw_A
+14. "Vibe Coding은 미래"(30 분)-엔지 소프트웨어를 영원히 변경. 당신이 원하는 것을 설명 할 수 있다면, 당신은 그것을 구축 할 수 있습니다. 기술 설립자가 더 낮아지지 않은 장벽. https://www.youtube.com/watch?v=IACHfKmZMr8
+15. "AI Startup Ideas"(30분) - 이론적. 현재 작업중인 AI 시작 아이디어를 통해 걸어가서 창이 열리기 때문에 설명합니다. https://www.youtube.com/watch?v=TANaRNMbYgk
+16. "10 사람들 + AI = 억 달러 회사?" (25 분) - 20x 회사의 뒤에 논문. AI 레버리지가있는 작은 팀은 100 인내를 초과합니다. 솔로 빌더 또는 작은 팀이 있다면, 이것은 큰 생각을하기 위해 허가 슬립입니다. https://www.youtube.com/watch?v=CKvo_kQbakU
 
 YC STARTUP SCHOOL:
-17. "Should You Start A Startup?" (17 min, Harj Taggar) — Directly addresses the question most people are too afraid to ask out loud. Breaks down the real tradeoffs honestly, without hype. https://www.youtube.com/watch?v=BUE-icVYRFU
-18. "How to Get and Evaluate Startup Ideas" (30 min, Jared Friedman) — YC's most-watched Startup School video. How founders actually stumbled into their ideas by paying attention to problems in their own lives. https://www.youtube.com/watch?v=Th8JoIan4dg
-19. "How David Lieb Turned a Failing Startup Into Google Photos" (20 min) — His company Bump was dying. He noticed a photo-sharing behavior in his own data, and it became Google Photos (1B+ users). A masterclass in seeing opportunity where others see failure. https://www.youtube.com/watch?v=CcnwFJqEnxU
-20. "Tips For Technical Startup Founders" (15 min, Diana Hu) — How to leverage your engineering skills as a founder rather than thinking you need to become a different person. https://www.youtube.com/watch?v=rP7bpYsfa6Q
-21. "Why Startup Founders Should Launch Companies Sooner Than They Think" (12 min, Tyler Bosmeny) — Most builders over-prepare and under-ship. If your instinct is "it's not ready yet," this will push you to put it in front of people now. https://www.youtube.com/watch?v=Nsx5RDVKZSk
-22. "How To Talk To Users" (20 min, Gustaf Alströmer) — You don't need sales skills. You need genuine conversations about problems. The most approachable tactical talk for someone who's never done it. https://www.youtube.com/watch?v=z1iF1c8w5Lg
-23. "How To Find A Co-Founder" (15 min, Harj Taggar) — The practical mechanics of finding someone to build with. If "I don't want to do this alone" is stopping you, this removes that blocker. https://www.youtube.com/watch?v=Fk9BCr5pLTU
-24. "Should You Quit Your Job At A Unicorn?" (12 min, Tom Blomfield) — Directly speaks to people at big tech companies who feel the pull to build something of their own. If that's your situation, this is the permission slip. https://www.youtube.com/watch?v=chAoH_AeGAg
+17. "동계를 시작하십니까?" (17 분, Harj Taggar) — 가장 자주 질문을하는 것은 너무 똑똑하게 두려워합니다. 정직하게 실제 거래가 종료됩니다. https://www.youtube.com/watch?v=BUE-icVYRFU
+18. "시작 아이디어와 Evaluate는 방법"(30 분, 자비스 프리드만) — YC의 가장 많이 볼 수 있는 스타트업 스쿨 비디오. 실제로 자신의 삶에 문제가 있을 때 자신의 아이디어로 흠뻑 빠지는 방법. https://www.youtube.com/watch?v=Th8JoIan4dg
+19. "David Lieb가 Failing Startup Into Google Photos"(20 분)을 켭니다. 그의 회사 범프는 죽었습니다. 그는 자신의 데이터에서 사진 공유 행동을 발견했습니다. Google Photos (1B + 사용자)가되었습니다. 다른 사람들이 실패를 볼 수있는 기회를 보는 마스터 클래스. https://www.youtube.com/watch?v=CcnwFJqEnxU
+20. "기술 창업자"(15 분, 다이아나 후) — 기술적인 창업자로서의 엔지니어링 기술을 활용하여 다른 사람이 될 필요가 있다고 생각하십시오. https://www.youtube.com/watch?v=rP7bpYsfa6Q
+21. "왜 창업가가가가 생각보다 빨리 회사를 시작해야" (12 분, 타일러 보스멘) - 대부분의 빌더는 전임과 밑-선. 당신의 의도가 "그것은 준비가되지 않습니다,"이 지금 사람들의 앞에 넣어 당신을 밀어. https://www.youtube.com/watch?v=Nsx5RDVKZSk
+22. "사용자에 대화하는 방법" (20 분, Gustaf Alströmer) - 당신은 판매 능력을 필요로하지 않습니다. 당신은 문제에 대한 진짜 대화가 필요합니다. 절대로하지 않은 누군가를위한 가장 접근 가능한 전술적 대화. https://www.youtube.com/watch?v=z1iF1c8w5Lg
+23. "Co-Founder"(15 분, Harj Taggar) - 누군가가 빌드하는 것을 찾는 실용적인 기계. "나는이 혼자 할 필요가 없습니다"가 당신을 멈추고 싶지 않으면,이 차단제 제거. https://www.youtube.com/watch?v=Fk9BCr5pLTU
+24. "당신은 Unicorn에서 작업이 뛰는?" (12 분, Tom Blomfield) - 직접 자신의 무언가를 구축 할 수있는 큰 기술 회사에 사람들을 말한다. 그 상황이라면, 이것은 허가 슬립입니다. https://www.youtube.com/watch?v=chAoH_AeGAg
 
 PAUL GRAHAM ESSAYS:
-25. "How to Do Great Work" — Not about startups. About finding the most meaningful work of your life. The roadmap that often leads to founding without ever saying "startup." https://paulgraham.com/greatwork.html
-26. "How to Do What You Love" — Most people keep their real interests separate from their career. Makes the case for collapsing that gap — which is usually how companies get born. https://paulgraham.com/love.html
-27. "The Bus Ticket Theory of Genius" — The thing you're obsessively into that other people find boring? PG argues it's the actual mechanism behind every breakthrough. https://paulgraham.com/genius.html
-28. "Why to Not Not Start a Startup" — Takes apart every quiet reason you have for not starting — too young, no idea, don't know business — and shows why none hold up. https://paulgraham.com/notnot.html
-29. "Before the Startup" — Written specifically for people who haven't started anything yet. What to focus on now, what to ignore, and how to tell if this path is for you. https://paulgraham.com/before.html
-30. "Superlinear Returns" — Some efforts compound exponentially; most don't. Why channeling your builder skills into the right project has a payoff structure a normal career can't match. https://paulgraham.com/superlinear.html
-31. "How to Get Startup Ideas" — The best ideas aren't brainstormed. They're noticed. Teaches you to look at your own frustrations and recognize which ones could be companies. https://paulgraham.com/startupideas.html
-32. "Schlep Blindness" — The best opportunities hide inside boring, tedious problems everyone avoids. If you're willing to tackle the unsexy thing you see up close, you might already be standing on a company. https://paulgraham.com/schlep.html
-33. "You Weren't Meant to Have a Boss" — If working inside a big organization has always felt slightly wrong, this explains why. Small groups on self-chosen problems is the natural state for builders. https://paulgraham.com/boss.html
-34. "Relentlessly Resourceful" — PG's two-word description of the ideal founder. Not "brilliant." Not "visionary." Just someone who keeps figuring things out. If that's you, you're already qualified. https://paulgraham.com/relres.html
+25. "대일하는 방법"- 시작에 대해 아닙니다. 당신의 삶의 가장 의미있는 일을 찾는 것에 대해. 종종 "시작하지 않고 발견 할 수있는 로드맵." https://paulgraham.com/greatwork.html
+26. "어떻게 할 것"- 대부분의 사람들은 자신의 경력에서 별도의 자신의 실제 관심사를 유지합니다. 그 격차를 갈 경우를 만들 - 일반적으로 회사가 태어난 방법. https://paulgraham.com/love.html
+27. "버스 티켓 이론"- 다른 사람들이 보류를 발견 한 것? PG는 모든 돌파구 뒤에 실제 메커니즘입니다. https://paulgraham.com/genius.html
+28. "왜 시작을 시작하지 않는"- 시작하지 않는 모든 조용한 이유를 가져 가라. 너무 젊은, 아이디어, 비즈니스를 모른다. 왜 아무도 보유하지 않습니다. https://paulgraham.com/notnot.html
+29. "시작을 위해"- 아직 아무것도 시작하지 않은 사람들을 위해 특별히 작성. 지금 초점을 맞추고,이 경로가 당신을 위해 있는지 말해하는 방법. https://paulgraham.com/before.html
+30. "Superlinear Returns"- 일부 노력 화합물은 폭발적으로; 대부분의 하지 않습니다. 왜 올바른 프로젝트로 빌더 기술을 채널링하는 것은 payoff 구조가 정상적 경력이 일치 할 수 없습니다. https://paulgraham.com/superlinear.html
+31. "시작 아이디어 얻기"- 최고의 아이디어는 뇌가되지 않습니다. 그들은 통지. 자신의 좌절을보고 하나가 될 수 인식을 보면. https://paulgraham.com/startupideas.html
+32. "Schlep Blindness"- 가장 좋은 기회는 지루한 내부를 숨깁니다, 모든 사람들이 피합니다. 당신이 닫히는 것을 발견하지 않는 것을 촉구하는 경우에, 당신은 이미 회사에 서 있을지도 모릅니다. https://paulgraham.com/schlep.html
+33. "당신은 보스를 가지고있는 Weren't Meant"- 큰 조직 내부 작업이 항상 약간 잘못되었다면,이 이유를 설명합니다. 자기 초원 문제에 작은 그룹은 빌더를위한 자연 상태입니다. https://paulgraham.com/boss.html
+34. "Relentlessly Resourceful" — PG의 이상적인 설립자의 두 단어 설명. "brilliant" Not "visionary."라는 것은 "비공식적"입니다. 당신이 있다면, 당신은 이미 자격이 있습니다. https://paulgraham.com/relres.html
 
-**After presenting resources — log to builder profile and offer to open:**
+**자원을 제시 한 후 — 프로필을 작성하고 열리기 위해 로그:**
 
-1. Log the selected resource URLs to the builder profile (single source of truth).
-Append a resource-tracking entry:
+1. 선택한 리소스 URL을 빌더 프로필에 로그인 (단일 소스의 진실).
+리소스 추적 항목 승인:
 ```bash
 eval "$(~/.claude/skills/gstack/bin/gstack-slug 2>/dev/null || true)"
 ~/.claude/skills/gstack/bin/gstack-developer-profile --log-session '{"date":"'"$(date -u +%Y-%m-%dT%H:%M:%SZ)"'","mode":"resources","project_slug":"'"${SLUG:-unknown}"'","signal_count":0,"signals":[],"design_doc":"","assignment":"","resources_shown":["URL1","URL2","URL3"],"topics":[]}' 2>/dev/null || true
 ```
 
-2. Log the selection to analytics:
+2. 분석에 대한 선택:
 ```bash
 mkdir -p ~/.gstack/analytics
 echo '{"skill":"office-hours","event":"resources_shown","count":NUM_RESOURCES,"categories":"CAT1,CAT2","ts":"'"$(date -u +%Y-%m-%dT%H:%M:%SZ)"'"}' >> ~/.gstack/analytics/skill-usage.jsonl 2>/dev/null || true
 ```
 
-3. Use AskUserQuestion to offer opening the resources:
+3. AskUserQuestion 을 사용하여 리소스를 열어 보세요.
 
-Present the selected resources and ask: "Want me to open any of these in your browser?"
+선택한 리소스를 제시하고 요청하십시오. "브라우저에서 이러한 모든 것을 열려면 저를."
 
-Options:
-- A) Open all of them (I'll check them out later)
-- B) [Title of resource 1] — open just this one
-- C) [Title of resource 2] — open just this one
-- D) [Title of resource 3, if 3 were shown] — open just this one
-- E) Skip — I'll find them later
+옵션:
+- A) 그들 모두를 열어 (나는 나중에 체크 아웃 할 것입니다)
+- B) [자본 1] — 이 것을 열어
+- C) [자본 2] — 이 것을 열어
+- D) [3이 보인 경우 자원의 국문] — 이 것을 열어
+- E) Skip — 나중에 찾을 수 있습니다
 
-If A: run `open URL1 && open URL2 && open URL3` (opens each in default browser).
-If B/C/D: run `open` on the selected URL only.
-If E: proceed to next-skill recommendations.
+A: `open URL1 && open URL2 && open URL3` (기본 브라우저에서 각각 열림)을 실행하면 B/C/D: `open`를 선택된 URL에서만 실행한다. E: 다음 스킬 권고에 진행한다.
 
-### Next-skill recommendations — hand the user into the loop
+### Next-skill 권고 - 사용자가 루프로
 
-Don't just list options. Offer to launch the next review NOW so the design doc flows
-straight into a structured review. Map the design-doc mode to the recommended option
-(default `/plan-eng-review` when ambiguous — it has the broadest real-world use and the
-strongest retention).
+그냥 목록 옵션이 아닙니다. 다음 리뷰를 실행하는 제안 NOW 그래서 디자인 doc은 구조화 된 검토로 흘러 흘러 . 추천 옵션 (기본 `/plan-eng-review` 주위 때 - 그것은 가장 넓은 실제 사용과 가장 강한 보유)에 디자인 문서 모드를 맵.
 
-**If `PROACTIVE` is `false` OR `CONDUCTOR_SESSION: true`:** do NOT auto-launch. Recommend
-in one line and stop, letting the user invoke:
-- EXPANSION / ambitious → "Next: `/plan-ceo-review` to pressure-test scope and find the 10-star product."
-- well-scoped → "Next: `/plan-eng-review` to lock architecture, tests, and edge cases."
-- visual/UX-heavy → "Next: `/plan-design-review` for a visual/UX pass."
+**`PROACTIVE`는 `false` OR `CONDUCTOR_SESSION: true`인 경우:**는 NOT 자동 발사를 합니다. 1개의 선 및 정지에서 추천하고, 사용자 invoke를 시키십시오:
+- EXPANSION / 야심 찬 → "다음: `/plan-ceo-review` 압력 테스트 범위에 대한 10 스타 제품."
+- 잘스코프 → "다음 : `/plan-eng-review` 건축, 테스트 및 가장자리 사례를 잠그기 위해."
+- /UX-heavy → "다음: `/plan-design-review` 의 시각 /UX 의 패스를."
 
-**Otherwise**, offer via AskUserQuestion (D<N> format from the preamble):
+**다른 쪽**, AskUserQuestion (D<N> 형식을 통해 제안):
 
-D<N> — Run the next review now?
-Project/branch/task: the design doc you just wrote for this feature.
-ELI10: You just wrote a design doc. The natural next step is a structured review that
-catches scope and architecture problems before you build. I can launch it right now, or
-you can run it later yourself.
-Stakes if we pick wrong: skipping review means problems surface mid-build, costing rework.
-Recommendation: the mode-mapped option (`/plan-eng-review` if unsure) because it locks the
-plan before any code is written.
-Completeness: A=10/10, B=9/10, C=8/10, D=3/10
-Pros / cons:
-A) Run /plan-eng-review now (recommended)
-  ✅ Locks architecture, tests, and edge cases before a line of code is written
-  ❌ Adds ~15 min CC now (human: 1-2 hrs of review compressed)
-B) Run /plan-ceo-review now
-  ✅ Pressure-tests ambition and scope — finds the 10-star version of the product
-  ❌ Lower value when the scope is already tight and well understood
-C) Run /plan-design-review now
-  ✅ Catches visual/UX problems while they are still cheap plan-stage changes
-  ❌ Little value for backend-only or non-visual features
-D) Not now — I'll run a review later
-  ✅ Keeps you in flow if you want to start building immediately
-  ❌ Review gaps compound; problems get more expensive after code exists
-Net: 15 minutes of structured review now against rework risk later.
+D<N> — 다음 리뷰를 실행하십시오? Project/branch/task: 디자인 doc 당신은 단지이 특징을 위해 썼습니다. ELI10: 당신은 다만 디자인 doc을 썼습니다. 자연적인 다음 단계는 당신이 건축하기 전에 범위와 건축 문제를 붙잡는 구조상 검토입니다. 나는 지금 그것을 발사해서 좋습니다, 또는 당신은 나중에 너 자신을 달릴 수 있습니다. 틀린 것을 선택하면: 건너뛰기 검토는 문제 지상 중간 구조, 비용 재작업을 의미합니다. 추천: 형태 지도 (<N>)는 어떤 자물쇠가 계획하기 전에 썼는지 결정합니다. 완료: A=10/10, B=9/10, C=8/10, D=3/10 Pros / cons: A) Run /plan-eng-review now (recommended) ✅ 코드의 선 이전의 아키텍처, 테스트 및 가장자리 케이스를 잠금 ❌ ~15 분 CC now (human: 1 hrs of review Compression) B) Run /plan-ceo-review now ✅ Pressure-tests ambition and range — finds the 10-star version of the product ❌ Lower value when the range is already tight and well understand C) Run /plan-design-review now ✅ Catches visual/UX problem while they are still cheap plan-stage changes ✓ backend-only or non-visual features D) not now — I'll run a review later ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ 틈새를 구축하려면 즉시 작성해야 하는 경우, ✅ ✅ ✅ 틈새가치가 즉시 생성될 경우, ✅ ✅ ✅ ✅ 틈새가치가치가 ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅ ✅  문제는 코드가 존재한 후에 더 비싼 얻을
+Net: 15 분의 구조화 검토는 나중에 재작업 위험에 대해 지금.
 
-On the user's SELECTION of A/B/C (not on invocation success), log the handoff, then invoke
-the chosen skill via the **Skill tool** (it auto-discovers the design doc):
+A/B/C의 SELECTION (입사 성공에 아닙니다)의 사용자 SELECTION에, 그 후에 **기술 도구**를 통해 선택된 기술을 invoke (그것은 자동 발견 디자인 doc):
 ```bash
 ~/.claude/skills/gstack/bin/gstack-telemetry-log --event-type handoff --skill office-hours --outcome accepted --session-id "$_SESSION_ID" 2>/dev/null || true
 ```
-On D, log declined and stop:
+D에, 로그가 쇠퇴하고 중지:
 ```bash
 ~/.claude/skills/gstack/bin/gstack-telemetry-log --event-type handoff --skill office-hours --outcome declined --session-id "$_SESSION_ID" 2>/dev/null || true
 ```
 
-The design doc at `~/.gstack/projects/` is automatically discoverable by downstream skills — they will read it during their pre-review system audit.
-
+`~/.gstack/projects/`의 디자인 문서는 다운스트림 기술에 의해 자동으로 발견됩니다. 그들은 사전 검토 시스템 감사 중 읽을 것입니다.

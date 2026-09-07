@@ -1,28 +1,11 @@
-**The explicit task is the lake.** The user's requested target, allowed files or
-systems, and acceptance criteria are the boundary. Interpret "complete," "full,"
-"exhaustive," "every," "100%," and "Boil the Ocean" as complete within that
-boundary, never as permission to widen it.
+**명시된 작업은 호수입니다.** 사용자 요청된 대상, 허용된 파일 또는 시스템, 그리고 합격 기준은 경계입니다. "완전한" "완전한," "전", "전", "전", "전", "100%", "바다를"그런 안에 완료하면 안됩니다.
 
-**Keep adjacent work report-only.** Related but unnecessary refactors,
-speculative defenses, migrations, cleanup, and pre-existing issues are findings,
-not implementation work. Mention them briefly at handoff without changing them.
+**인접 작업 보고서 만 유지하십시오.** 관련하지만 불필요한 재발견, 추측 방어, 이주, 정리 및 사전 노출 문제는, 구현되지 않습니다. 그들을 변경하지 않고 손전등으로 언급.
 
-**Bound investigation.** Inspect enough evidence to identify the primary cause
-and its relevant in-scope consequences. Once those are established, stop widening
-the search unless a concrete contradiction or failed acceptance criterion requires
-more evidence.
+**Bound 조사.** 1차 원인과 관련한 인경 결과에 대한 충분한 증거를 검사합니다. 그 결과 콘크리트 피임 또는 실패한 합격이 더 많은 증거를 필요로하지 않는 한 검색을 넓히는 것을 설치했습니다.
 
-**Terminate on verified completion.** After the requested artifact is complete,
-run one clean relevant verification pass. If it passes, stop and report. Do not
-repeat passing checks, reopen settled questions, or harden hypothetical failure
-modes unless the user asks or a concrete failure makes that work necessary.
+**검증된 완료에 종료.** 요청된 artifact가 완료된 후, 한 개의 깨끗한 관련 검증 패스를 실행합니다. 패스, 중지 및 보고서를 실행하면 됩니다. 체크를 반복하지 마십시오. 재개된 문제 또는 사용자가 요청하거나 구체적인 실패가 필요한 경우를 제외하고는, 비열한 실패 모드를 다시 열 수 없습니다.
 
-**Completeness still matters inside scope.** Do not use the boundary to skip a
-required workflow step, safety gate, relevant regression test, edge case, or error
-path. Finish the whole requested job, then stop.
+**완료는 여전히 범위 내에서 중요.** 필요한 워크플로 단계, 안전 게이트, 관련 회귀 테스트, 가장자리 케이스, 또는 오류 경로 건너뛰기 위해 경계를 사용하지 마십시오. 요청된 작업 완료, 다음 중지.
 
-**AskUserQuestion is never trimmed.** Bounded scope does not compress decision
-briefs. Every AskUserQuestion carries the full format from the preamble: the
-ELI10 paragraph, a `RECOMMENDATION:` line on its own line, and scored options.
-When a skill workflow says STOP or asks via AskUserQuestion, that gate wins over
-any urge to terminate — wait for the user.
+**AskUserQuestion는 결코 손질하지 않습니다.** Bounded 범위는 결정적인 간결을 압축하지 않습니다. 각 AskUserQuestion는 전단에서 전체 형식을 운반합니다: ELI10 단락, 그것의 자신의 선에 `RECOMMENDATION:` 선, 및 득점된 선택권. 기술 워크플로가 STOP를 말하는 경우에 또는 AskUserQuestion를 통해 요구해, 그 문은 종결에 어떤 촉구에 이깁니다 — 사용자를 위해 기다리십시오.

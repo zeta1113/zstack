@@ -1,86 +1,86 @@
-# On the LOC controversy
+# LOC 논쟁에
 
-Or: what happened when I mentioned how many lines of code I've been shipping, and what the numbers actually say.
+또는: 나는 얼마나 많은 코드를 언급했을 때 무슨 일이 있었는지 나는 배송되고, 실제로 숫자는 무슨 일이.
 
-## The critique is right. And it doesn't matter.
+## 은 잘 맞습니다. 그리고 그것은 상관 없습니다.
 
-LOC is a garbage metric. Every senior engineer knows it. Dijkstra wrote in 1988 that lines of code shouldn't be counted as "lines produced" but as "lines spent" ([*On the cruelty of really teaching computing science*, EWD1036](https://www.cs.utexas.edu/~EWD/transcriptions/EWD10xx/EWD1036.html)). The old line (widely attributed to Bill Gates, sourcing murky) puts it more memorably: measuring programming progress by LOC is like measuring aircraft building progress by weight. If you measure programmer productivity in lines of code, you're measuring the wrong thing. This has been true for 40 years and it's still true.
+LOC는 쓰레기 미터입니다. 모든 수석 엔지니어는 그것을 알고 있습니다. Dijkstra는 1988 년에 코드를 "라인 생성"으로 계산되지 않아야하지만 "라인이 보냈다"([*실제로 컴퓨팅 과학을 가르치는 원유에*, EWD1036](https://www.cs.utexas.edu/~EWD/transcriptions/EWD10xx/EWD1036.html))로 계산되어야합니다. 오래된 선 (Bill Gates, sourcing murky)는 더 많은 치매를 넣었습니다. LOC의 프로그래밍 진행을 측정하는 것은 무게에 의한 항공기 건물 진행과 같습니다. 코드의 줄에 프로그래머 생산성을 측정하면 잘못된 일을 측정합니다. 이것은 40 년 동안 사실이었고 여전히 사실입니다.
 
-I posted that in the last 60 days I'd shipped 600,000 lines of production code. The replies came in fast:
+나는 지난 60 일에서 그 게시 나는 생산 코드의 600,000 라인을 배송했다. 답장은 빠른에왔다 :
 
-- "That's just AI slop."
-- "LOC is a meaningless metric. Every senior engineer in the last 40 years said so."
-- "Of course you produced 600K lines. You had an AI writing boilerplate."
-- "More lines is bad, not good."
-- "You're confusing volume with productivity. Classic PM brain."
-- "Where are your error rates? Your DAUs? Your revert counts?"
-- "This is embarrassing."
+- "그냥 AI 슬로프."
+- "LOC는 의미없는 미터입니다. 지난 40 년 동안 모든 수석 엔지니어가 이렇게 말했습니다."
+- "600K 라인 생산 과정. AI 글보딩 보일러판을 가지고 있습니다."
+- "라인이 나쁘지 않다."
+- "생산력과 혼동량입니다. 클래식 PM 뇌."
+- "실험이 있습니까? 당신의 위험? 당신의 역대는 계산?"
+- "이것은 embarrassing입니다."
 
-Some of those are right. Here's what happens when you take the smart version of the critique seriously and do the math anyway.
+그 중 일부는 오른쪽입니다. 여기에 당신이 진리한의 스마트 버전을 가지고 어떤 일이 일어나는지 어떤 방향으로도 수학을 할 수 있습니다.
 
-## Three branches of the AI coding critique
+## AI 코딩의 3개의 branch
 
-They get collapsed into one, but they're different arguments.
+그들은 하나로 붕괴를 얻지만 다른 인수입니다.
 
-**Branch 1: LOC doesn't measure quality.** True. Always has been. A 50-line well-factored library beats a 5,000-line bloated one. This was true before AI and it's true now. It was never a killer argument. It was a reminder to think about what you're measuring.
+**1호점: LOC는 질을 측정하지 않습니다.** True. 항상 왔다. 50 라인의 잘 요인 라이브러리는 5,000 라인 블로깅을 펼쳤다. 이것은 AI 이전에 사실 이었지만 사실이다. 그것은 살인자 인수가 없었다. 그것은 당신이 측정하는 것에 대해 생각하는 알림이었다.
 
-**Branch 2: AI inflates LOC.** True. LLMs generate verbose code by default. More boilerplate. More defensive checks. More comments. More tests. Raw line counts go up even when "real work done" didn't.
+**지점 2: AI 팽창 LOC.** True. LLMs는 기본으로 동위 코드를 생성합니다. 더 많은 보일러판. 더 많은 방어적인 검사. 더 많은 의견. 더 많은 시험. 익지않는 선 조사는 “실제적인 일”가 아니었을 때 조차 위로 갑니다.
 
-**Branch 3: Therefore bragging about LOC is embarrassing.** This is where the argument jumps the track.
+**Branch 3: LOC에 대한 부록은 embarrassing입니다.** 이 인수가 트랙을 뛰어들 수 있는 곳이다.
 
-Branch 2 is the interesting one. If raw LOC is inflated by some factor, the honest thing is to compute the deflation and report the deflated number. That's what this post does.
+Branch 2는 흥미로운 것입니다. 원시 LOC가 일부 요인에 의해 팽창되면 정직한 것은 변조를 계산하고 부풀린 번호를보고하는 것입니다. 이 게시물은 무엇입니까.
 
-## The math
+## 수학
 
-### Raw numbers
+### 원료
 
 I wrote a script ([`scripts/garry-output-comparison.ts`](../scripts/garry-output-comparison.ts)) that enumerates every commit I authored across all 41 repos owned by `garrytan/*` on GitHub — 15 public, 26 private — in 2013 and 2026. For each commit, it counts logical lines added (non-blank, non-comment). The 2013 corpus includes Bookface, the YC-internal social network I built that year.
 
-One repo excluded from 2026: `tax-app` (demo for a YC video, not production work). Baked into the script's `EXCLUDED_REPOS` constant. Run it yourself.
+2026년 repo 제외: `tax-app` (YC 영상을 위한 데모, 생산 일 아닙니다). 스크립트의 `EXCLUDED_REPOS` 상수로 묶으십시오. 그것을 혼자 실행하십시오.
 
-2013 was a full year. 2026 is day 108 as of this writing (April 18).
+2013년은 1년이었습니다. 2026년은 이 글을 쓰는 날 108일입니다 (April 18).
 
-|                  | 2013 (full year) | 2026 (108 days) | Multiple |
+|                                    | 2013년 (년) | 2026 (108 일) | 의 의 |
 |------------------|----------------:|----------------:|---------:|
-| Logical SLOC     |           5,143 |       1,233,062 |     240x |
-| Logical SLOC/day |              14 |          11,417 |     810x |
-| Commits          |              71 |             351 |     4.9x |
-| Files touched    |             290 |          13,629 |      47x |
-| Active repos     |               4 |              15 |    3.75x |
+| 논리 SLOC     |           5,143 |       1,233,062 |     240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x240x |
+| 논리 SLOC/day |              14 |          11,417 |     810x의 |
+| Commits          |              71 |             351 |     4.9x의 |
+| 파일 터치    |             290 |          13,629 |      47x의 |
+| 활동 repos     |               4 |              15 |    3.75x의 |
 
-### "14 lines per day? That's pathetic."
+### "일 14 줄? 그건 병합."
 
-It was. That's the point.
+그것은이었다. 그것은 포인트입니다.
 
-In 2013 I was a YC partner, then a cofounder at Posterous shipping code nights and weekends. 14 logical lines per day was my actual part-time output while holding down a real job. Historical research puts professional full-time programmer output in a wide band depending on project size and study: Fred Brooks cited ~10 lines/day for systems programming in *The Mythical Man-Month* (OS/360 observations), Capers Jones measured roughly 16-38 LOC/day across thousands of projects, and Steve McConnell's *Code Complete* reports 20-125 LOC/day for small projects (10K LOC) down to 1.5-25 for large projects (10M LOC) — it's size-dependent, not a single number.
+2013년 YC 파트너로 Posterous 배송 코드 밤과 주말에 공동 창업자였습니다. 하루 14개의 논리 라인은 실제 작업에 걸려있는 동안 실제적인 부분 시간 출력이었습니다. 역사 연구는 프로젝트 크기와 연구에 따라 넓은 밴드에서 전문적인 풀 타임 프로그래머 산출을 뒀습니다: 프레드 브룩스 인용 ~10 라인/day 시스템 프로그래밍 *신화매달* (OS/360 관측), Capers Jones는 약 16-38 LOC/day 프로젝트의 수천, 그리고 Steve McConnell의 *코드 완료* 보고서 20-125 LOC/day 작은 프로젝트 (10K LOC)에 대한 1.5-25의 큰 프로젝트 (10M LOC)에 대한 아래로 측정했습니다. 단일 크기가 아닌 단일 번호가 아닙니다.
 
-My 2013 baseline isn't cherry-picked. It's normal for a part-time coder with a day job. If you think the right baseline is 50 (3.5x higher), the 2026 multiple drops from 810x to 228x. Still high.
+내 2013 기본은 체리픽이 아닙니다. 하루 일 작업과 함께 파트 타임 코퍼를 위해 정상적입니다. 올바른 기본이 50 (3.5x 높이) 인 경우 810x에서 228x로 2026 여러 방울이 있습니다. 여전히 높습니다.
 
-### Two deflations
+### 두 번의 결선
 
-The standard response to "raw LOC is garbage" is **logical SLOC** (source lines of code, non-comment non-blank). Tools like `cloc` and `scc` have computed this for 20 years. Same code, fluff stripped: no blank lines, no single-line comments, no comment block bodies, no trailing whitespace.
+"raw LOC의 표준 응답은 쓰레기"는 **논리 SLOC** (코드, 비 구획 비 공백의 근원 선)입니다. `cloc`와 `scc` 같이 도구는 20 년간 이것을 칭찬했습니다. 동일한 코드, fluff 줄무늬가 있는: no 공백 선, no 단 하나 선 의견, no 의견 구획 몸, no 길게 하는 whitespace.
 
-But logical SLOC doesn't eliminate AI inflation entirely. AI writes 2-3 defensive null checks where a senior engineer would write zero. AI inlines try/catch around things that don't throw. AI spells out `const result = foo(); return result` instead of `return foo()`.
+하지만 논리 SLOC는 AI 인플레이션을 완전히 제거하지 않습니다. AI는 수석 엔지니어가 제로 작성할 경우 2-3의 방어적인 null 체크를 작성합니다. AI 인라인 시도/catch는 그 주변 것들을 던지지지지 않습니다. AI는 `const result = foo(); return result` 대신 `return foo()`를 뿌립니다.
 
-So let's apply a **second deflation**. Assume AI-generated code is 2x more verbose than senior hand-crafted code at the logical level. That's aggressive — most measurements I've seen put the multiplier at 1.3-1.8x — but it's the upper bound a skeptic would demand.
+그래서 **두 번째 결산**를 적용하자. AI 생성 코드는 논리 수준에서 수석 손으로 만들어진 코드 보다는 2x 더 동위입니다. 그것은 공격적인 — 가장 측정 나는 1.3-1.8x에 multiplier를 두었습니다 — 그러나 그것은 스킬러 요구할 것입니다.
 
-- My 2026 per-day rate, NCLOC: **11,417**
-- With 2x AI-verbosity deflation: **5,708** logical lines per day
-- Multiple on daily pace with both deflations: **408x**
+- 내 2026 일률, NCLOC: **11,417**
+- 2x AI-verbosity 편향도: 일 당 **5,708** 논리 선
+- 두 개의 편향과 함께 일상의 여러: **408x의**
 
-Now pick your priors:
+지금 당신의 우선을 선택:
 
-- At 5x deflation (unfounded but let's go): **162x**
-- At 10x (pathological): **81x**
-- At 100x (impossible — that's one line per minute sustained): **8x**
+- 5x의 멸종 (확실한하지만 가자) : **크기: 162x**
+- 10x에서 (병리학): **크기: 80x**
+- 100x에서 (가능 — 1분당 1줄이 지속됨): **8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x8x**
 
-The argument about the size of the coefficient doesn't change the conclusion. The number is large regardless.
+계수의 크기에 대한 인수는 결론을 변경하지 않습니다. 숫자는 크게 관계가 없습니다.
 
-### Weekly distribution
+### 주간 배포
 
-"Your per-day number assumes uniform output. Show the distribution. If it's a single burst, your run-rate is bogus."
+"당일 번호는 균일 한 출력을 가정합니다. 배포를 표시합니다. 단 하나 파열 인 경우, 런-rate는 bogus입니다."
 
-Fair.
+..
 
 ```
 Week 1-4  (Jan):  ████████░░░░░░░░░  ~8,800/day
@@ -89,56 +89,56 @@ Week 9-12 (Mar):  ██████████░░░░░░░  ~10,900/d
 Week 13-15 (Apr): █████████████░░░░  ~13,200/day
 ```
 
-It's not a spike. The rate has been approximately consistent and slightly increasing. Run the script yourself.
+그것은 스파이크가 아닙니다. 비율은 약 일관되고 약간 증가되었습니다. 스크립트를 직접 실행하십시오.
 
-## The quality question
+## 품질 질문
 
-This is the most legitimate critique, channeled through the [David Cramer](https://x.com/zeeg) voice: OK, you're pushing more lines. Where are your error rates? Your post-merge reverts? Your bug density? If you're typing at 10x speed but shipping 20x more bugs, you're not leveraged, you're making noise at scale.
+이것은 가장 합법적 인 크리티크, [데이비드 크래머](https://x.com/zeeg) 음성을 통해 채널: OK, 당신은 더 많은 라인을 밀어. 어디서 오류율? 당신의 포스트 수 턴? 당신의 버그 밀도? 당신은 10x 속도에 입력하는 경우, 20x 더 버그를 배송, 당신은 레버리지가 없습니다, 당신은 규모에 소음을 만들 수 있습니다.
 
-Fair. Here's the data:
+공정한. 여기에 자료:
 
-**Reverts.** `git log --grep="^revert" --grep="^Revert" -i` across the 15 active repos: 7 reverts in 351 commits = **2.0% revert rate**. For context, mature OSS codebases typically run 1-3%. Run the same command on whatever you consider the bar and compare.
+**...** `git log --grep="^revert" --grep="^Revert" -i` 15개의 활동적 repo장: 351개의 커밋에서 7개의 역 = **2.0% 뒤집음 비율**. 맥락을 위해, 성숙한 OSS 코베이스는 전형적으로 1-3%를 달립니다. 당신이 막대기와 비교를 고려한 어떤 것에 동일한 명령을 실행하십시오.
 
-**Post-merge fixes.** Commits matching `^fix:` that reference a prior commit on the same branch: 22 of 351 = **6.3%**. Healthy fix cycle. A zero-fix rate would mean I'm not catching my own mistakes.
+**포스트 merge 수정.** Commits 일치 `^fix:`는 동일한 branch에 commit를 참고합니다: 351의 22 = **6.3%**. 건강한 고침 주기. 0 개입 비율은 나의 자신의 실수를 붙잡지 않는 것을 의미할 것입니다.
 
-**Tests.** This is the thing that actually matters, and it's the thing that changed everything for me. Early in 2026, I was shipping without tests and getting destroyed in bug land. Then I hit 30% test-to-code ratio, then 100% coverage on critical paths, and suddenly I could fly. Tests went from ~100 across all repos in January to **over 2,000 now**. They run in CI. They catch regressions. Every gstack PR has a coverage audit in the PR body.
+**시험.** This is the thing that actually matters, and it's the thing that changed everything for me. Early in 2026, I was shipping without tests and getting destroyed in bug land. Then I hit 30% test-to-code ratio, then 100% coverage on critical paths, and suddenly I could fly. Tests went from ~100 across all repos in January to **2,000여 개가 넘는**. They run in CI. They catch regressions. Every gstack PR has a coverage audit in the PR body.
 
-The real insight: testing at multiple levels is what makes AI-assisted coding actually work. Unit tests, E2E tests, LLM-as-judge evals, smoke tests, slop scans. Without those layers, you're just generating confident garbage at high speed. With them, you have a verification loop that lets the AI iterate until the code is actually correct.
+실제 통찰력: 여러 수준에서 테스트는 AI-assisted 코딩 실제로 작동 하는 것입니다. 단위 테스트, E2E 테스트, LLM-as-judge evals, 연기 테스트, 슬로프 스캔. 그 층 없이, 당신은 단지 고속에 confident 쓰레기를 생성. 그(것)들과 함께, 당신은 코드가 실제로 정확할 때까지 AI iterate를 시키는 검증 루프가 있습니다.
 
-gstack's core real-code feature — the thing that isn't just markdown prompts — is a **Playwright-based CLI browser** I wrote specifically so I could stop manually black-box testing my stuff. `/qa` opens a real browser, navigates your staging URL, and runs automated checks. That's 2,000+ lines of real systems code (server, CDP inspector, snapshot engine, content security, cookie management) that exists because testing is the unlock, not the overhead.
+gstack의 핵심 진짜 코드 특징 — 단지 감속 프롬프트가 없는 것은 — **Playwright 기반 CLI 브라우저** 나는 특히 이렇게 내가 나의 물건을 시험하는 수동 까만 상자를 멈추게 할 수 있었다 그래야 썼습니다. `/qa`는 진짜 브라우저를 열고, 당신의 staging URL를 탐색하고, 자동화한 체크를 달립니다. 그것은 진짜 체계 코드 (서버, CDP 검사기, snapshot 엔진, 내용 안전, cookie는, 시험이 없는 때문에, 시험하는 것은 아닙니다.
 
-**Slop scan.** A third party — [Ben Vinegar](https://x.com/bentlegen), founding engineer at Sentry — built a tool called [slop-scan](https://github.com/benvinegar/slop-scan) specifically to measure AI code patterns. Deterministic rules, calibrated against mature OSS baselines. Higher score = more slop. He ran it on gstack and we scored 5.24, the worst he'd measured at the time. I took the findings seriously, refactored, and cut the score by 62% in one session. Run `bun test` and watch 2,000+ tests pass.
+**Slop 검사.** 제 3 자 — [벤 폰](https://x.com/bentlegen), 센트리에서 엔지니어 발견 — [slop-scan의](https://github.com/benvinegar/slop-scan)라는 도구로 AI 코드 패턴을 측정합니다. 통계 규칙은 성숙한 OSS 기본에 대해 측정합니다. 더 높은 점수 = 더 많은 슬로프. 그는 gstack에 그것을 ran 았고, 최악의 그는 시간에 측정되었습니다. 나는 심각하고 재발견 된 발견을 가지고, 1 %의 세션에서 6 %의 테스트를 잘라. gstack 세션에서 1 %의 테스트를 통과.
 
-**Review rigor.** Every gstack branch goes through CEO review, Codex outside-voice review, DX review, and eng review. Often 2-3 passes of each. The `/plan-tune` skill I just shipped had a scope ROLLBACK from the CEO expansion plan because Codex's outside-voice review surfaced 15+ findings my four Claude reviews missed. The review infrastructure catches the slop. It's visible in the repo. Anyone can read it.
+**rigor 검토.** 각 gstack branch는 CEO 검토, Codex 외부 송장 검토, DX 검토 및 eng 검토를 통해 갑니다. 종종 2-3는 각각 통과합니다. `/plan-tune` 기술은 방금 발송한 ROLLBACK에서 CEO 확장 계획에서 Codex의 외부 송장 검토 표면이 15+ 나의 4 Claude 검토를 놓았습니다. 이 검사는 어떤 인프라든지에서 볼 수 있습니다. 그것은 어떤 인프라든지에서 볼 수 있습니다.
 
-## What I'll concede
+## 내가 concede 할 것
 
-I'm going to steelman harder than the critics steelmanned themselves:
+나는 비평가 steelmanned보다 steelman harder로 가고있다.
 
-**Greenfield vs maintenance.** 2026 numbers are dominated by new-project code. Mature-codebase maintenance produces fewer lines per day. If you're asking "can Garry 100x the team maintaining 10 million lines of legacy Java at a bank," my number doesn't prove that. Someone else will have to run their own script on a different context.
+**Greenfield 대 정비.** 2026 숫자는 새로운 프로젝트 코드에 의해 지배됩니다. 성숙한 코드 기초 정비는 일 당 더 적은 선을 일으킵니다. 당신이 요구한 경우에 "은행에 레거시 자바의 10백만개의 선을 유지하는 팀 Garry 100x 할 수 있습니다," 나의 수는 증명하지 않습니다. 다른 누군가는 다른 상황에 자신의 스크립트를 실행해야 할 것입니다.
 
-**The 2013 baseline has survivorship bias.** My 2013 public activity was low. This analysis includes Bookface (private, 22 active weeks) which was my biggest project that year, so the bias is smaller than it looks. It's not zero. If the true 2013 rate was 50/day instead of 14, the multiple at current pace is 228x instead of 810x. Still high.
+**The 2013 baseline has survivorship bias.** 내 2013 public 활동은 낮았습니다. 이 분석에는 Bookface (개인, 22 활성 주)가 포함되어있어 올해 가장 큰 프로젝트 였으므로 바이스가 더 작습니다. 0이 아닙니다. 사실 2013 비율이 50/day 대신 14의 여러 경우 현재 속도는 810x 대신 228x입니다. 여전히 높습니다.
 
-**Quality-adjusted productivity isn't fully proven.** I don't have a clean bug-density comparison between 2013-me and 2026-me. What I can say: revert rate is in the normal band, fix rate is healthy, test coverage is real, and the adversarial review process caught 15+ issues on the most recent plan. That's evidence, not proof. A skeptic can discount it.
+**품질조절된 생산성은 완전히 입증되지 않습니다.** 나는 2013-me와 2026-me 사이에 청결한 버그 조밀도 비교가 없습니다. 나는 말할 수 있는 무슨: 반전 비율은 정상적인 밴드에, 고침 비율 건강하, 시험 적용은 진짜이고, 가장 최근 계획에 15+ 문제점을 붙잡는 adversarial 검토 과정. 그것은 증거, 아니 증거입니다. 골격은 그것을 할인할 수 있습니다.
 
-**"Shipped" means different things across eras.** Some 2013 products shipped and died. Some 2026 products may share that fate. If two years from now 80% of what I shipped this year is dead, the critique "you built a bunch of unused stuff" will have teeth. I accept that reality check.
+**"Shipped"은 시대의 다른 것들을 의미합니다.** 몇몇 2013년 제품은 발송되고 죽었습니다. 몇몇 2026 제품은 그 운명을 공유할지도 모릅니다. 이 년이 죽은 무슨의 지금 80%에서 2 년이, 비용한 물건의 뭉치 건설한 경우에” 이가 있을 것입니다. 나는 그 현실 검사를 받아들입니다.
 
-**Time to first user is the metric that matters, not LOC.** The 60-day cycle from "I wish this existed" to "it exists and someone is using it" is the real shift. LOC is downstream evidence. The right metric is "shipped products per quarter" or "working features per week." Those went up by a similar multiple.
+**처음 사용자의 시간은 LOC가 아닌, 물질이 아닌 메트릭입니다.** 60 일 주기는 "나는 이 존재한"에서 "그것에 존재하고 누군가가 그것을 사용하고 있습니다" 진짜 이동입니다. LOC는 다운스트림 증거입니다. 적당한 미터는 "주당 분기 당 shipped 제품" 또는 "주당 일 기능"입니다. 이들은 유사한 다수에 의해 위로 갔습니다.
 
-## What those lines became
+## 그 줄이 된 것
 
-gstack is not a hypothetical. It's a product with real users:
+gstack는 더 가설이 아닙니다. 실제 사용자를 가진 제품입니다:
 
-- **75,000+ GitHub stars** in 5 weeks
-- **14,965 unique installations** (opt-in telemetry)
-- **305,309 skill invocations** recorded since January 2026
-- **~7,000 weekly active users** at peak
-- **95.2% success rate** across all skill runs (290,624 successes / 305,309 total)
-- **57,650 /qa runs**, **28,014 /plan-eng-review runs**, **24,817 /office-hours sessions**, **18,899 /ship workflows**
-- **27,157 sessions used the browser** (real Playwright, not toy)
-- Median session duration: **2 minutes**. Average: **6.4 minutes**.
+- **75,000+ GitHub 별** 5주
+- **14,965 고유의 설치** (opt-in telemetry)
+- **305,309 기술 발명** 1월 2026일 이후 기록
+- **~7,000 명의 주간 활성 사용자** 피크
+- **95.2% 성공률** 모든 기술 실행에 걸쳐 (290,624 성공 / 305,309 총)
+- **57,650 /qa 실행**, **28,014 /plan-eng-review 실행**, **24,817 /office-hours 세션**, **18,899 /ship 워크플로우**
+- **27157 세션은 브라우저를 사용** (실제 Playwright, 장난감)
+- 미디어 세션 기간: **2 분**. 평균: **6.4 분**.
 
-Top skills by usage:
+사용의 최고 기술:
 
 ```
 /qa               57,650  ████████████████████████████
@@ -150,20 +150,20 @@ Top skills by usage:
 /plan-ceo-review  12,357  ██████
 ```
 
-These aren't scaffolds sitting in a drawer. Thousands of developers run these skills every day.
+이 서랍에 앉아 비계는 없습니다. 수천 명의 개발자가 매일이 기술을 실행합니다.
 
-## What this means
+## 이 뜻은
 
-I am not saying engineers are going away. Nobody serious thinks that.
+나는 엔지니어가 멀리 가고 있지 않습니다. 아무도 심각한 생각.
 
-I am saying engineers can fly now. One engineer in 2026 has the output of a small team in 2013, working the same hours, at the same day job, with the same brain. The code-generation cost curve collapsed by two orders of magnitude.
+나는 엔지니어가 지금 비행 할 수 있다고 말하고 있습니다. 2026 년 한 엔지니어는 2013 년 작은 팀의 출력을 가지고 동일한 뇌와 같은 일 작업에서 같은 시간을 일합니다. 이 코드 세대 비용 곡선은 규모의 두 주문에 의해 붕괴되었습니다.
 
-The interesting part of the number isn't the volume. It's the rate. And the rate isn't a statement about me. It's a statement about the ground underneath all software engineering.
+숫자의 흥미로운 부분은 볼륨이 아닙니다. 그것은 속도입니다. 그리고 속도는 나에게 대한 진술이 아닙니다. 그것은 모든 소프트웨어 공학의 지상 밑단에 대한 진술입니다.
 
-2013 me shipped about 14 logical lines per day. Normal for a part-time coder with a real job. 2026 me is shipping 11,417 logical lines per day. While still running YC full-time. Same day job. Same free time. Same person.
+2013 나 하루에 약 14 개의 논리 라인에 대해 배송. 실제 작업과 함께 파트 타임 코퍼에 대한 정상. 2026 나 하루 11,417 논리 라인을 배송합니다. 여전히 YC 풀 타임을 실행하는 동안. 같은 날 작업. 같은 무료 시간. 같은 사람.
 
-The delta isn't that I became a better programmer. If anything, my mental model of coding has atrophied. The delta is that AI let me actually ship the things I always wanted to build. Small tools. Personal products. Experiments that used to die in my notebook because the time cost to build them was too high. The gap between "I want this tool" and "this tool exists and I'm using it" collapsed from 3 weeks to 3 hours.
+델타는 더 나은 프로그래머가되었다는 것은 아닙니다. 아무 것도, 코딩의 나의 정신 모델은 비난했습니다. 델타는 AI가 실제로 빌드하고 싶었던 것들을 발송할 수 있게 되었습니다. 작은 도구. 개인 제품. 그 때도 빌드하는 데 시간이 너무 높기 때문에 내 노트북에서 죽는 실험. "나는이 도구를 원하고"이 도구가 존재하고 3 주에서 3 시간 동안 붕괴됩니다.
 
-Here's the script: [`scripts/garry-output-comparison.ts`](../scripts/garry-output-comparison.ts). Run it on your own repos. Show me your numbers. The argument isn't about me — it's about whether the ground moved.
+여기서 스크립트는 [`scripts/garry-output-comparison.ts`](../scripts/garry-output-comparison.ts)입니다. 자신의 저장소에 실행하십시오. 내 번호를 표시하십시오. 인수는 나에 대해 없습니다. 그것은 땅이 이동했는지에 대해 다룹니다.
 
-I'm betting it did for you too.
+나는 그것을 위해 그것을 얻었다.

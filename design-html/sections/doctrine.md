@@ -1,86 +1,58 @@
 <!-- AUTO-GENERATED from doctrine.md.tmpl — do not edit directly -->
 <!-- Regenerate: bun run gen:skill-docs -->
-## UX Principles: How Users Actually Behave
+## UX 원리: 사용자가 실제적으로 행동하는 방법
 
-These principles govern how real humans interact with interfaces. They are observed
-behavior, not preferences. Apply them before, during, and after every design decision.
+이 원칙은 실제 인간이 인터페이스와 상호 작용하는 방법을 관리합니다. 그들은 관찰 된 행동, 선호하지 않습니다. 모든 디자인 결정 후, 그들에 적용하십시오.
 
-### The Three Laws of Usability
+## # 사용 가능성의 세 법
 
-1. **Don't make me think.** Every page should be self-evident. If a user stops
-   to think "What do I click?" or "What does this mean?", the design has failed.
-   Self-evident > self-explanatory > requires explanation.
+1. **나를 생각하지 마십시오.** 각 페이지는 각자 퇴비되어야 합니다. 사용자가 정지하는 경우에
+   "나는 무엇을 클릭합니까?"또는 "이 의미는 무엇입니까?"라고 생각하려면 디자인은 실패했습니다. 자기 증거 > 자기 계획 > 설명이 필요합니다.
 
-2. **Clicks don't matter, thinking does.** Three mindless, unambiguous clicks
-   beat one click that requires thought. Each step should feel like an obvious
-   choice (animal, vegetable, or mineral), not a puzzle.
+2. **생각하지 마십시오.** 3개의 마음이 없는, 비주얼 클릭
+   생각을 필요로 한 클릭을 한 번에 이길 수 있습니다. 각 단계는 퍼즐이 아니라 명백한 선택 (동물, 야채, 또는 무기물)와 같은 느낌해야합니다.
 
-3. **Omit, then omit again.** Get rid of half the words on each page, then get
-   rid of half of what's left. Happy talk (self-congratulatory text) must die.
-   Instructions must die. If they need reading, the design has failed.
+3. **오미, 그 후 다시 오미.** 각 페이지에 반 단어를 제거하고, 다음을 얻을
+   왼쪽의 절반을 제거하십시오. 행복한 대화 (자기적 텍스트)는 죽어야합니다. 지침은 죽어야합니다. 독서가 필요한 경우 디자인은 실패했습니다.
 
-### How Users Actually Behave
+### 사용자가 실제적으로 Behave 는 방법
 
-- **Users scan, they don't read.** Design for scanning: visual hierarchy
-  (prominence = importance), clearly defined areas, headings and bullet lists,
-  highlighted key terms. We're designing billboards going by at 60 mph, not
-  product brochures people will study.
-- **Users satisfice.** They pick the first reasonable option, not the best.
-  Make the right choice the most visible choice.
-- **Users muddle through.** They don't figure out how things work. They wing
-  it. If they accomplish their goal by accident, they won't seek the "right" way.
-  Once they find something that works, no matter how badly, they stick to it.
-- **Users don't read instructions.** They dive in. Guidance must be brief,
-  timely, and unavoidable, or it won't be seen.
+- **사용자 검사, 그들은 읽지 않습니다.** 스캔 설계: 시각적 계층
+  (전문가 = 중요성), 명확하게 정의 된 영역, 헤드링 및 총알 목록, 강조 된 키 용어. 우리는 60 mph로가는 빌보드를 설계하고 있으며, 제품 브로셔 사람들이 공부할 수 없습니다.
+- **사용자 satisfice.** 그들은 제일 제일 첫번째 적당한 선택권을, 선택합니다.
+  가장 눈에 보이는 선택이 올바른 선택.
+- **사용자를 통해 뮤들.** 그들은 어떻게 일을 했는지 알아 낼 수 없습니다. 그들은 날개를 펼칩니다.
+  그것은. 그들은 사고로 목표를 달성하면 그들은 "오른쪽"방법을 추구하지 않을 것입니다. 그들은 작동하는 것을 발견하면 나쁜 일이 아니고, 그들은 그것을 찔러.
+- **사용자는 지시를 읽지 않습니다.** 그들은 안으로 다이빙합니다. 안내서는 짧아야 합니다,
+  적시, 그리고 비할 수 없거나, 보았지 않습니다.
 
-### Billboard Design for Interfaces
+### 인터페이스를 위한 게시판 디자인
 
-- **Use conventions.** Logo top-left, nav top/left, search = magnifying glass.
-  Don't innovate on navigation to be clever. Innovate when you KNOW you have a
-  better idea, otherwise use conventions. Even across languages and cultures,
-  web conventions let people identify the logo, nav, search, and main content.
-- **Visual hierarchy is everything.** Related things are visually grouped. Nested
-  things are visually contained. More important = more prominent. If everything
-  shouts, nothing is heard. Start with the assumption everything is visual noise,
-  guilty until proven innocent.
-- **Make clickable things obviously clickable.** No relying on hover states for
-  discoverability, especially on mobile where hover doesn't exist. Shape, location,
-  and formatting (color, underlining) must signal clickability without interaction.
-- **Eliminate noise.** Three sources: too many things shouting for attention
-  (shouting), things not organized logically (disorganization), and too much stuff
-  (clutter). Fix noise by removal, not addition.
-- **Clarity trumps consistency.** If making something significantly clearer
-  requires making it slightly inconsistent, choose clarity every time.
+- **대회를 이용하십시오.** 로고 정상 왼쪽, nav top/left, 검색 = 확대 유리.
+  탐색에 혁신하지 마십시오. KNOW 당신은 더 나은 아이디어가있을 때 Innovate, 그렇지 않으면 컨벤션을 사용합니다. 언어와 문화를 통해 웹 컨벤션은 사람들이 로고, 네브, 검색 및 주요 콘텐츠를 식별 할 수 있습니다.
+- **Visual hierarchy는 모든 것을 말합니다.** 관련 것들은 시각적으로 그룹화됩니다. 둥지를 짓는
+  뭔가 잘못되었는지 아니면 그냥 빨리 결과를보고 싶다면, 전문 악성 코드 제거기의 도움을 사용하시기 바랍니다 – GridinSoft 안티 Malwre. 또한, 심지어 제거하는 데 성공했다 Archaeological Museum.com 컴퓨터와 브라우저에서, 다른 악성 프로그램이 시스템에 침투 여부를 우리는이 도구를 다운로드하여 볼 수있는 무료 맬웨어 방지 스캐너로 사용하는 것이 좋습니다. 주의 사항, 그 GridinSoft 안티 Malwre 쉐어웨어 프로그램은 위협의 수의 제한으로 15 일 시험 기간 함께. 그것은 당신의 시스템에 이상이 감염된 항목을 찾을 경우, 그들은 당신이 전체 registred 버전으로 프로그램을 업그레이드 할 때 만 제거 할 수 있습니다.
+- **클릭 가능한 일을 명확하게 클릭할 수 있습니다.** hover 상태에 의존하지 않음
+  hover가 존재하지 않는 모바일에서 발견성, 특히. 모양, 위치 및 포맷 (색상, 밑줄)은 상호 작용 없이 신호 clickability를 해야 합니다.
+- **소음을 제거하십시오.** 3개의 근원: 너무 많은 것은 주의를 위해 외침합니다
+  (주), 조직 된 통용 (편리화) 및 너무 많은 물건 (클래터). 제거에 의한 소음을 수정, 또한.
+- **Clarity trumps 일관성.** 뭔가를 크게 맑게 만드는 경우
+  약간의 주장을 만들기 위해서는 각 선을 선택합니다.
 
-### Navigation as Wayfinding
+### Wayfinding로 항법
 
-Users on the web have no sense of scale, direction, or location. Navigation
-must always answer: What site is this? What page am I on? What are the major
-sections? What are my options at this level? Where am I? How can I search?
+웹 사용자에는 규모, 방향, 또는 위치가 없다는 점이 없습니다. 탐색은 항상 답변해야합니다. 어떤 사이트가 있습니까? 어떤 페이지가 있습니까? 주요 섹션은 무엇입니까? 이 수준에서 내 옵션은 무엇입니까? 어디에서 찾을 수 있습니까?
 
-Persistent navigation on every page. Breadcrumbs for deep hierarchies.
-Current section visually indicated. The "trunk test": cover everything except
-the navigation. You should still know what site this is, what page you're on,
-and what the major sections are. If not, the navigation has failed.
+모든 페이지에 대한 지속적인 탐색. 깊은 계층에 대한 폭력. 현재 섹션 시각적으로 표시. "trunk test": 탐색을 제외하고 모든 것을 커버. 당신은 여전히 사이트가 무엇인지 알고 있어야합니다, 당신이 무엇을 페이지에, 그리고 중요한 섹션이 무엇인지. 그렇지 않다면, 탐색이 실패했습니다.
 
-### The Goodwill Reservoir
+## # Goodwill Reservoir의 장점
 
-Users start with a reservoir of goodwill. Every friction point depletes it.
+사용자는 Goodwill의 저수지로 시작합니다. 모든 마찰점은 그것을 depletes.
 
-**Deplete faster:** Hiding info users want (pricing, contact, shipping). Punishing
-users for not doing things your way (formatting requirements on phone numbers).
-Asking for unnecessary information. Putting sizzle in their way (splash screens,
-forced tours, interstitials). Unprofessional or sloppy appearance.
+**빠른 Deplete:** Hiding info users want (pricing, contact, shipping). 당신의 방법을하지 않는 사용자에게 처벌 (전화 번호에 형식 요구 사항). 불필요한 정보를 요청. 그들의 방법에 sizzle을 넣어 (스플리시 스크린, 강제 투어, 인터스티니언). 비보호 또는 sloppy 외관.
 
-**Replenish:** Know what users want to do and make it obvious. Tell them what they
-want to know upfront. Save them steps wherever possible. Make it easy to recover
-from errors. When in doubt, apologize.
+**보충:** 사용자가 원하는 것을 알고 분명하게 만듭니다. 그들이 프론트를 알고 싶은 것을 말해줍니다. 가능한 한 단계 저장하십시오. 오류에서 복구하기 쉬운. 의심스러운 경우, 사과.
 
-### Mobile: Same Rules, Higher Stakes
+## 모바일: 같은 규칙, 더 높은 Stakes
 
-All the above applies on mobile, just more so. Real estate is scarce, but never
-sacrifice usability for space savings. Affordances must be VISIBLE: no cursor
-means no hover-to-discover. Touch targets must be big enough (44px minimum).
-Flat design can strip away useful visual information that signals interactivity.
-Prioritize ruthlessly: things needed in a hurry go close at hand, everything
-else a few taps away with an obvious path to get there.
+모든 위의 모바일에 적용, 그냥 더. 부동산은 스카르, 하지만 결코 공간 절약에 대한 유용성을 희생. Affordances는 VISIBLE이어야한다: 아무 커서도 호버에 발견하지 않는다. 터치 대상은 충분히 크아야 (44px 최소한). 플랫 디자인은 신호 상호 작용에 유용한 시각 정보를 스트립 할 수 있습니다. 우선 : 한 번에 필요한 것들은 손에서 가까운, 다른 모든 경로에 분명하게 경로를 얻을 수있는 경로와 함께 몇 번 탭.

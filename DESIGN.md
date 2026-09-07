@@ -1,86 +1,85 @@
-# Design System — gstack
+# 디자인 시스템 - gstack
 
-## Product Context
-- **What this is:** Community website for gstack — a CLI tool that turns Claude Code into a virtual engineering team
-- **Who it's for:** Developers discovering gstack, existing community members
-- **Space/industry:** Developer tools (peers: Linear, Raycast, Warp, Zed)
-- **Project type:** Community dashboard + marketing site
+## 제품 콘텍스트
+- **이 것은:** gstack - CLI 도구로 Claude Code를 가상 엔지니어링 팀으로 전환
+- **누가 그것을 위해:** 개발자가 gstack, 기존 커뮤니티 회원을 발견
+- **공간/industry:** 개발자 도구 (첨단: 선형, 레이캐스트, 워프, Zed)
+- **프로젝트 유형:** 커뮤니티 대시보드 + 마케팅 사이트
 
-## Aesthetic Direction
-- **Direction:** Industrial/Utilitarian — function-first, data-dense, monospace as personality font
-- **Decoration level:** Intentional — subtle noise/grain texture on surfaces for materiality
-- **Mood:** Serious tool built by someone who cares about craft. Warm, not cold. The CLI heritage IS the brand.
-- **Reference sites:** formulae.brew.sh (competitor, but ours is live and interactive), Linear (dark + restrained), Warp (warm accents)
+## 운동 방향
+- **방향:** Industrial/Utilitarian — 기능 우선, 데이터 밀도, 모노스페이스를 개성 글꼴로
+- **훈장 수준:** Intentional — 미묘한 소음/grain 물자를 위한 표면에 짜임새
+- **미드:** 공예에 대한 관심있는 사람에 의해 만들어진 심각한 도구. 따뜻하지, 추워하지. CLI 유산 IS 브랜드.
+- **참고 사이트:** formulae.brew.sh (경쟁자, 그러나 우리의 생활하고 상호 작용합니다), 선형 (dark + 구속되는), 날실 (날씨 악센트)
 
-## Typography
-- **Display/Hero:** Satoshi (Black 900 / Bold 700) — geometric with warmth, distinctive letterforms (the lowercase 'a' and 'g'). Not Inter, not Geist. Loaded from Fontshare CDN.
-- **Body:** DM Sans (Regular 400 / Medium 500 / Semibold 600) — clean, readable, slightly friendlier than geometric display. Loaded from Google Fonts.
-- **UI/Labels:** DM Sans (same as body)
-- **Data/Tables:** JetBrains Mono (Regular 400 / Medium 500) — the personality font. Supports tabular-nums. Monospace should be prominent, not hidden in code blocks. Loaded from Google Fonts.
-- **Code:** JetBrains Mono
-- **Loading:** Google Fonts for DM Sans + JetBrains Mono, Fontshare for Satoshi. Use `display=swap`.
-- **Scale:**
-  - Hero: 72px / clamp(40px, 6vw, 72px)
+## 전기
+- **전시/Hero:** Satoshi (Black 900/Bold 700) - 따뜻함, 독특한 문자 (더 낮은 케이스 'a' 및 'g')과 기하학. 간, 지스트. Fontshare CDN에서로드.
+- **몸:** DM 산 (정규 400/중형 500/반대형 600) - 기하학적인 전시 보다는, 약간 우연히 청소하고, 읽을 수 있는. Google 글꼴에서 적재하는.
+- **UI/Labels:** DM 산 (몸과 같)
+- **자료/Tables:** JetBrains Mono (Regular 400 / Medium 500) - 개성 글꼴. 탭 nums를 지원한다. Monospace는 코드 블록에 숨겨지지 않아야합니다. Google 글꼴에서로드.
+- **이름:** JetBrains Mono(리브레인스)
+- **선적:** Google 글꼴 DM Sans + JetBrains Mono, Satoshi의 Fontshare. `display=swap`를 사용하십시오.
+- **크기:**
+  - 영웅: 72px / 클램프(40px, 6vw, 72px)
   - H1: 48px
   - H2: 32px
   - H3: 24px
   - H4: 18px
-  - Body: 16px
-  - Small: 14px
-  - Caption: 13px
-  - Micro: 12px
-  - Nano: 11px (JetBrains Mono labels)
+  - 몸: 16px
+  - 작은: 14px
+  - 캡션: 13px
+  - 마이크로: 12px
+  - 나노: 11px (제트볼 모노 라벨)
 
-## Color
-- **Approach:** Restrained — amber accent is rare and meaningful. Dashboard data gets the color; chrome stays neutral.
-- **Primary (dark mode):** amber-500 #F59E0B — warm, energetic, reads as "terminal cursor"
-- **Primary (light mode):** amber-600 #D97706 — darker for contrast against white backgrounds
-- **Primary text accent (dark mode):** amber-400 #FBBF24
-- **Primary text accent (light mode):** amber-700 #B45309
-- **Neutrals:** Cool zinc grays
-  - zinc-50: #FAFAFA (lightest)
-  - zinc-400: #A1A1AA
+## 색깔
+- **접근:** 재훈련 - amber 악센트는 드문 의미입니다. 대시보드 데이터는 색상을 얻고, 크롬은 중립을 유지한다.
+- **(dark 형태):** amber-500 #F59E0B - 따뜻하고 에너지, "기존 커서"로 읽습니다.
+- **(빛 형태):** amber-600 #D97706 - 흰색 배경 대비 어둠
+- **1 차적인 원본 악센트 (dark 형태):** 호박색 400 #FBBF24
+- **1 차적인 원본 악센트 (빛 형태):** 호박색 700 #B45309
+- **중립국:** 차가운 아연 회색
+  - 아연-50: #FAFAFA (가벼운)
+  - 아연-400: #A1A1AA
   - zinc-600: #52525B
   - zinc-800: #27272A
-  - Surface (dark): #141414
-  - Base (dark): #0C0C0C
+  - 표면 (dark): #141414
+  - 기초 (dark): #0C0C0C
   - Surface (light): #FFFFFF
-  - Base (light): #FAFAF9
-- **Semantic:** success #22C55E, warning #F59E0B, error #EF4444, info #3B82F6
-- **Dark mode:** Default. Near-black base (#0C0C0C), surface cards at #141414, borders at #262626.
-- **Light mode:** Warm stone base (#FAFAF9), white surface cards, stone borders (#E7E5E4). Amber accent shifts to amber-600 for contrast.
+  - 기본 (빛): #FAFAF9
+- **공급 능력:** 성공 #22C55E, 경고 #F59E0B, 오류 #EF4444, 정보 #3B82F6
+- **어두운 형태:** 과태. #262626에 #141414의 지상 카드, #262626의 국경에 있는 #262626의 가까이 까만 기초 (#0C0C0C).
+- **빛 형태:** 따뜻한 돌베이스 (#FAFAF9), 백색 표면 카드, 돌 경계 (#E7E5E4). 대조를 위한 호박색 악센트 교대.
 
-## Spacing
-- **Base unit:** 4px
-- **Density:** Comfortable — not cramped (not Bloomberg Terminal), not spacious (not a marketing site)
-- **Scale:** 2xs(2px) xs(4px) sm(8px) md(16px) lg(24px) xl(32px) 2xl(48px) 3xl(64px)
+## 간격
+- **자료 단위:** 4px
+- **조밀도:** 안락한 — 주름을 잡지 않는 (Bloomberg Terminal), 넓지 않는 (마케팅 사이트 아닙니다)
+- **크기:** 2xs(2px) xs(4px) sm(8px) md(16px) lg(24px) xl(32px) 2xl(48px) 3xl(64px)
 
-## Layout
-- **Approach:** Grid-disciplined for dashboard, editorial hero for landing page
-- **Grid:** 12 columns at lg+, 1 column at mobile
-- **Max content width:** 1200px (6xl)
-- **Border radius:** sm:4px, md:8px, lg:12px, full:9999px
-  - Cards/panels: lg (12px)
-  - Buttons/inputs: md (8px)
-  - Badges/pills: full (9999px)
-  - Skill bars: sm (4px)
+## 배치
+- **접근:** 대시보드용 Grid-disciplined, 페이지 착륙을 위한 편집 영웅
+- **격자:** 12 열은 lg+, 1 열에 이동할 수 있습니다
+- **최대 내용 폭:** 1200px (6xl)
+- **국경 반경:** sm:4px, md:8px, lg:12px, 전체:9999px
+  - 카드/panels: lg (12px)
+  - 버튼/inputs: md (8px)
+  - 배지/pills: 전체 (9999px)
+  - 기술 바 : sm (4px)
 
-## Motion
-- **Approach:** Minimal-functional — only transitions that aid comprehension. The dashboard's live feed IS the motion.
-- **Easing:** enter(ease-out / cubic-bezier(0.16,1,0.3,1)) exit(ease-in) move(ease-in-out)
-- **Duration:** micro(50-100ms) short(150ms) medium(250ms) long(400ms)
-- **Animated elements:** live feed dot pulse (2s infinite), skill bar fill (600ms ease-out), hover states (150ms)
+## 모션
+- **접근:** Minimal-functional — 단지 전환은 원조 comprehension. 대쉬보드의 살아있는 급식 IS 동의.
+- **에칭:** 입력(ease-out / 입방 짐수(0.16,1,0.3,1)) 출구(ease-in) 이동(ease-in-out)
+- **기간:** 마이크로 (50-100ms) 짧은 (150ms) 매체 (250ms) 긴 (400ms)
+- **애니메이션 요소:** 살아있는 급식 점 맥박 (2s 무한한), 기술 막대기 fill (600ms 쉬운 밖으로), hover 국가 (150ms)
 
-## Grain Texture
-Apply a subtle noise overlay to the entire page for materiality:
-- Dark mode: opacity 0.03
-- Light mode: opacity 0.02
-- Use SVG feTurbulence filter as a CSS background-image on body::after
-- pointer-events: none, position: fixed, z-index: 9999
+## Grain Texture는 재료의 전체 페이지에 미묘한 소음을 적용합니다:
+- 어두운 형태: 불투명 0.03
+- 가벼운 형태: 불투명 0.02
+- SVG feTurbulence 필터를 CSS로 사용해서 몸에 배경 이미지:: 후에
+- 포인터 - 일: none, 위치: 고정, z-index: 9999
 
-## Decisions Log
-| Date | Decision | Rationale |
+## 결정 로그
+| Date | 의약 | 의원 |
 |------|----------|-----------|
-| 2026-03-21 | Initial design system | Created by /design-consultation. Industrial aesthetic, warm amber accent, Satoshi + DM Sans + JetBrains Mono. |
-| 2026-03-21 | Light mode amber-600 | amber-500 too bright/washed against white; amber-700 too brown/umber. amber-600 is the sweet spot. |
-| 2026-03-21 | Grain texture | Adds materiality to flat dark surfaces. Prevents the "generic SaaS template" sameness. |
+| 2026-03-21 | 초기 설계 시스템 | /design-consultation에 의해 창조해. 산업 심미, 온난한 호박색 악센트, Satoshi + DM 산 + JetBrains Mono. |
+| 2026-03-21 | 가벼운 형태 amber-600 | amber-500 너무 밝은/washed 흰색; amber-700 너무 갈색/umber. amber-600은 달콤한 반점입니다. |
+| 2026-03-21 | 곡물 질감 | 평평한 어두운 표면에 재료가 추가됩니다. "일반적인 SaaS 템플릿"을 동일하게 방지합니다. |

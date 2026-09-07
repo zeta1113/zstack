@@ -1,75 +1,57 @@
 <!-- AUTO-GENERATED from consult-mode.md.tmpl — do not edit directly -->
 <!-- Regenerate: bun run gen:skill-docs -->
-## Step 2C: Consult Mode
+## 단계 2C: 상담 형태
 
-Ask Codex anything about the codebase. Supports session continuity for follow-ups.
+Codex 코드베이스에 대해 아무것도 묻습니다. 다음 단계에 대한 세션 연속성을 지원합니다.
 
-1. **Check for existing session:**
+1. **기존 세션에 대한 확인:**
 ```bash
 cat .context/codex-session-id 2>/dev/null || echo "NO_SESSION"
 ```
 
-If a session file exists (not `NO_SESSION`), use AskUserQuestion:
+세션 파일이 존재하는 경우 (`NO_SESSION`), AskUserQuestion를 사용한다:
 ```
 You have an active Codex conversation from earlier. Continue it or start fresh?
 A) Continue the conversation (Codex remembers the prior context)
 B) Start a new conversation
 ```
 
-2. Create temp files:
+2. 임시 직원 파일을 창조하십시오:
 ```bash
 TMPRESP=$(mktemp "$TMP_ROOT/codex-resp-XXXXXX")
 TMPERR=$(mktemp "$TMP_ROOT/codex-err-XXXXXX")
 ```
 
-3. **Plan review auto-detection:** If the user's prompt is about reviewing a plan,
-or if plan files exist and the user said `/codex` with no arguments:
+3. **계획 검토 자동 탐지:** 사용자의 프롬프트가 계획 검토에 관한 경우,
+또는 플랜 파일이 존재하고 사용자가 `/codex`를 인수하지 않는다면:
 ```bash
 setopt +o nomatch 2>/dev/null || true  # zsh compat
 ls -t "$PLAN_ROOT"/*.md 2>/dev/null | xargs grep -l "$(basename $(pwd))" 2>/dev/null | head -1
 ```
-If no project-scoped match, fall back to `ls -t "$PLAN_ROOT"/*.md 2>/dev/null | head -1`
-but warn: "Note: this plan may be from a different project — verify before sending to Codex."
+프로젝트의 경기가 없다면 `ls -t "$PLAN_ROOT"/*.md 2>/dev/null | head -1`로 돌아갑니다. 그러나 warn : "주의 :이 계획은 다른 프로젝트에서 일 수 있습니다. — Codex로 보내기 전에 확인."
 
-**IMPORTANT — embed content, don't reference path:** Codex runs sandboxed to the repo
-root and cannot access `~/.claude/plans/` or any files outside the repo. You MUST
-read the plan file yourself and embed its FULL CONTENT in the prompt below. Do NOT tell
-Codex the file path or ask it to read the plan file — it will waste 10+ tool calls
-searching and fail.
+**IMPORTANT - embed content, 참조 경로가 없습니다.** Codex는 repo 루트에 sandboxed를 달고 `~/.claude/plans/` 또는 repo 밖에 어떤 파일도 접근할 수 없습니다. MUST는 계획 파일을 직접 읽고 아래 프롬프트에서 FULL CONTENT를 삽입했습니다. NOT는 Codex 파일 경로 또는 계획 파일을 읽을 것을 요구합니까 — 그것은 10+ 도구 호출 검색 및 실패를 낭비할 것입니다.
 
-Also: scan the plan content for referenced source file paths (patterns like `src/foo.ts`,
-`lib/bar.py`, paths containing `/` that exist in the repo). If found, list them in the
-prompt so Codex reads them directly instead of discovering them via rg/find.
+또한: 참고된 소스 파일 경로에 대한 계획 내용을 스캔 (`src/foo.ts`, `lib/bar.py`, repo에 존재하는 `/` 포함 경로). 발견되면, 그 목록에서 프롬프트 그래서 Codex rg/find를 통해 그들을 발견하는 대신 직접 그들을 읽으십시오.
 
-**Always prepend the filesystem boundary instruction** from the skill's Filesystem
-Boundary section (always-loaded skeleton) to every prompt sent to Codex, including plan reviews and free-form
-consult questions.
+**항상 filesystem 경계 지시를 미리 준비** 의 기술 Filesystem 경계 섹션 (알로 로드 스켈레톤) 을 통해 각 프롬프트에 전송 Codex, 계획 리뷰 및 무료 양식 상담 질문을 포함.
 
-Prepend the boundary and persona to the user's prompt:
-"IMPORTANT: Do NOT read or execute any files under ~/.claude/, ~/.agents/, .claude/skills/, or agents/. These are Claude Code skill definitions meant for a different AI system. Do NOT modify agents/openai.yaml. Stay focused on repository code only.
+사용자의 프롬프트에 경계와 인내를 미리 설치하십시오: "IMPORTANT: NOT는 ~/.claude/, ~/.agents/, .claude/skills/, 또는 에이전트/의 밑에 어떤 파일을 읽고 또는 실행합니다. 이들은 Claude Code 기술 정의는 다른 AI 체계를 의미합니다. NOT는/openai.yaml를 수정합니다. 저장소 코드에 집중하십시오.
 
-You are a brutally honest technical reviewer. Review this plan for: logical gaps and
-unstated assumptions, missing error handling or edge cases, overcomplexity (is there a
-simpler approach?), feasibility risks (what could go wrong?), and missing dependencies
-or sequencing issues. Be direct. Be terse. No compliments. Just the problems.
-Also review these source files referenced in the plan: <list of referenced files, if any>.
+당신은 잔인하게 정직한 기술 검토자입니다. 이 계획을 검토하십시오: 논리적인 간격 및 unstated assumptions, 누락된 과실 취급 또는 가장자리 상자, overcomplexity (단단한 접근이 있습니까?), 무관한 위험 (무엇이 잘못될 수 있었습니까?), 및 누락된 종점 또는 sequencing 문제점. 직접적. terse 없음. 다만 문제. 또한 계획에서 언급된 이 근원 파일 검토: <list of referenced files, if any>.
 
-THE PLAN:
-<full plan content, embedded verbatim>"
+THE PLAN: <full plan content, embedded verbatim>"
 
-For non-plan consult prompts (user typed `/codex <question>`), still prepend the boundary:
-"IMPORTANT: Do NOT read or execute any files under ~/.claude/, ~/.agents/, .claude/skills/, or agents/. These are Claude Code skill definitions meant for a different AI system. Do NOT modify agents/openai.yaml. Stay focused on repository code only.
+비 계획은 프롬프트 (사용자 유형 `/codex <question>`)를 참조하거나 ~/.claude/, ~/.agents/, .claude/skills/, 또는 에이전트 / 아래 모든 파일을 읽고, "IMPORTANT: Do NOT를 미리 작성하거나 실행합니다. 이것은 Claude Code 기술 정의는 다른 AI 시스템을 의미하지 않습니다. NOT는 Agent/openai.yaml를 수정합니다. 저장소 코드에만 집중하십시오.
 
 <user's question>"
 
-4. Run codex exec with **JSONL output** to capture reasoning traces. Use
-`timeout: 660000` on the Bash call (for both new and resumed sessions) — the gate
-sits ABOVE the 600s wrapper so the wrapper fires first with its explicit stall
-message:
+4. **JSONL 출력**로 코드 실행을 실행하여, 의문을 캡처합니다. 사용
+`timeout: 660000` Bash 통화 (새로운 및 재시작 세션 모두) - 게이트는 ABOVE 600s 래퍼를 앉아서 래퍼가 명시된 섀시 메시지로 먼저 불을 덮습니다.
 
-If the user passed `--xhigh`, use `"xhigh"` instead of `"medium"`.
+`--xhigh`를 통과한 경우 `"medium"` 대신 `"xhigh"`를 사용하십시오.
 
-For a **new session:**
+**새로운 세션:**를 위해
 ```bash
 _REPO_ROOT=$(git rev-parse --show-toplevel) || { echo "ERROR: not in a git repo" >&2; exit 1; }
 PYTHON_CMD=$(command -v python3 2>/dev/null || command -v python 2>/dev/null || true)
@@ -135,15 +117,9 @@ elif [ "$_CODEX_EXIT" != "0" ]; then
 fi
 ```
 
-**Session-cost reality (#2387, measured):** every `codex exec` call — resumed
-or fresh — pays Codex's ~21K-token session prelude (its skill catalogue +
-instructions); `resume` does NOT amortize it (a measured resume came in
-slightly ABOVE a fresh call). Resume buys conversational continuity, never
-token savings. So: prefer ONE codex call per skill where the workflow allows,
-batch questions into that call, and reach for resume only when the follow-up
-genuinely needs the prior session's context.
+**세션 코스트 리얼(#2387, 측정):** 각 `codex exec` 호출 — 재시작 또는 신선한 — 지불 Codex의 ~21K-token 세션은 (그것의 기술 카탈로그 + 지시); `resume`는 NOT amortize 그것 (측정된 이력서는 약간 ABOVE 신선한 외침에 왔다). 이력서는 대화 연속성을 구입하고, 결코 저축하지 않습니다. 이렇게: 워크플로우가 허용하는 기술 당 ONE 코덱 호출을 선호하고, 배치 질문은 즉시 회의를 위한 응답을 위한 질문과 일치할 수 있는 경우에만 대답합니다.
 
-For a **resumed session** (user chose "Continue"):
+**재시작** (사용자는 "Continue")를 선택했습니다.
 ```bash
 _REPO_ROOT=$(git rev-parse --show-toplevel) || { echo "ERROR: not in a git repo" >&2; exit 1; }
 PYTHON_CMD=$(command -v python3 2>/dev/null || command -v python 2>/dev/null || true)
@@ -171,15 +147,14 @@ elif [ "$_CODEX_EXIT" != "0" ]; then
 fi
 ```
 
-5. Capture session ID from the streamed output. The parser prints `SESSION_ID:<id>`
-   from the `thread.started` event. Save it for follow-ups:
+5. 캡처 세션 ID 스트림 출력에서. 파서 인쇄 `SESSION_ID:<id>`
+   `thread.started` 이벤트에서. 다음을 위해 저장:
 ```bash
 mkdir -p .context
 ```
-Save the session ID printed by the parser (the line starting with `SESSION_ID:`)
-to `.context/codex-session-id`.
+`.context/codex-session-id`로 파서(`SESSION_ID:`)를 시작으로 `.context/codex-session-id`로 인쇄한 세션 ID를 저장합니다.
 
-6. Present the full streamed output:
+6. 출력을 Streamed 현재:
 
 ```
 CODEX SAYS (consult):
@@ -190,23 +165,21 @@ Tokens: N | Est. cost: ~$X.XX
 Session saved — run /codex again to continue this conversation.
 ```
 
-7. After presenting, note any points where Codex's analysis differs from your own
-   understanding. If there is a disagreement, flag it:
-   "Note: Claude Code disagrees on X because Y."
+7. 현재 진행중인 후 Codex의 분석이 자기와 다를 점에 주의하십시오.
+   이해. 불분명이 있는 경우, "주의: Claude Code는 Y 때문에 X에 불분명한다."
 
-8. **Synthesis recommendation (REQUIRED).** Emit ONE recommendation line
-summarizing what the user should do based on Codex's consult output, in the
-canonical format the AskUserQuestion judge grades:
+8. **Synthesis 권고 (REQUIRED).** Emit ONE 권장라인
+사용자가 Codex의 계산 출력을 기준으로해야 하는 것을 요약해서, canonical 형식에서 AskUserQuestion 판사 급료:
 
 ```
 Recommendation: <action> because <one-line reason that names the most actionable insight from Codex>
 ```
 
-Examples (the strongest reasons compare Codex's insight against an alternative — different recommendation, status-quo, or another Codex point):
+예 (강한 이유는 대안에 대한 Codex의 통찰력을 비교합니다. - 다른 권고, 상태 쿼, 또는 다른 Codex 점) :
 - `Recommendation: Adopt Codex's sharding suggestion because it eliminates the head-of-line blocking the current writer-pool has, while the cache-layer alternative Codex also floated still has a single-writer hot path.`
 - `Recommendation: Reject Codex's "use SQLite instead" suggestion because the team's Postgres operational experience outweighs the simplicity gain at the projected scale, and Codex's secondary suggestion (read replicas) handles the read-load concern that motivated the SQLite pivot.`
 - `Recommendation: Investigate Codex's flagged migration ordering before D3 lands because it surfaces a real foreign-key cycle that the in-house schema review missed, while the styling concern Codex also raised can wait for a follow-up.`
 
-The reason must engage with a specific Codex insight and compare against an alternative (a different recommendation, status-quo, or another Codex point). Generic synthesis ("because Codex raised good points") fails the format. **Never silently auto-decide; always emit the line.**
+Codex 통찰력과 관련해야 하며, 대안에 대한 비교 (다른 권고, 상태 쿼, 또는 다른 Codex 점). 일반적인 종합 ("Codex가 좋은 점을 올리기")는 형식을 실패합니다. **절대로 자동 변형; 항상 선을 방출.**
 
 ---

@@ -1,22 +1,20 @@
-# Plan: User Dashboard Page
+# 계획: 사용자 대시보드 페이지
 
-## Context
-We're shipping a new user dashboard at `/dashboard` showing recent activity,
-notifications panel, and quick-action buttons. Users land here after login.
+## Context 최근의 활동, 알림 패널 및 빠른 액션 버튼을 보여주는 `/dashboard`의 새로운 사용자 대시보드를 발송하고 있습니다. 로그인 후 사용자 대시보드를 설치합니다.
 
-## UI Scope
-- New React page component `UserDashboard.tsx` at `src/pages/`
-- Three new sub-components: `ActivityFeed`, `NotificationsPanel`, `QuickActions`
-- Tailwind CSS for layout, mobile-first responsive (breakpoints: sm/md/lg)
-- Empty state, loading skeleton, error state for each panel
-- Hover states + focus-visible outlines on every interactive element
-- Modal dialog for "Mark all as read" on notifications panel
-- Toast notification system for action feedback
+## UI 범위
+- `src/pages/`의 새로운 React 페이지 구성 요소 `UserDashboard.tsx`
+- 세 가지 새로운 하위 구성 요소 : `ActivityFeed`, `NotificationsPanel`, `QuickActions`
+- 레이아웃, 모바일-최초의 반응형(breakpoints: sm/md/lg)
+- 빈 상태, 적재 skeleton, 각 패널을 위한 과실 국가
+- Hover states + 모든 대화 형 요소에 중점을 두는 아웃라인
+- 알림 패널에서 "Mark all as read"를 위한 Modal 대화 상자
+- 행동 피드백을 위한 Toast 알림 시스템
 
-## Backend
-- New REST endpoint `GET /api/dashboard` returns `{ activity, notifications, quickActions }`
-- Backed by existing PostgreSQL tables; no schema changes
+## 백엔드
+- 새로운 REST 엔드포인트 `GET /api/dashboard` `{ activity, notifications, quickActions }`를 반환합니다.
+- 기존 PostgreSQL 테이블에 의해 백업; schema 변경 없음
 
-## Out of scope
-- Dark mode (separate plan)
-- Personalization / customization (separate plan)
+## 범위의 아웃
+- 어두운 모드 (separate 계획)
+- 개인화 / 사용자 정의 (separate plan)

@@ -1,126 +1,119 @@
-# QA Report: {APP_NAME}
+# QA 보고서: {APP_NAME}
 
-| Field | Value |
+| Field | 의 값 |
 |-------|-------|
 | **Date** | {DATE} |
 | **URL** | {URL} |
-| **Branch** | {BRANCH} |
+| **팟캐스트** | {BRANCH} |
 | **Commit** | {COMMIT_SHA} ({COMMIT_DATE}) |
-| **PR** | {PR_NUMBER} ({PR_URL}) or "—" |
-| **Tier** | Quick / Standard / Exhaustive |
-| **Scope** | {SCOPE or "Full app"} |
+| **PR** | {PR_NUMBER} ({PR_URL}) 또는 "-" |
+| **Tier** | / 표준 / 배출 |
+| **범위** | {SCOPE 또는 "Full app"} |
 | **Duration** | {DURATION} |
-| **Pages visited** | {COUNT} |
-| **Screenshots** | {COUNT} |
-| **Framework** | {DETECTED or "Unknown"} |
-| **Index** | [All QA runs](./index.md) |
+| **자주 묻는 질문** | {COUNT} |
+| **스크린샷** | {COUNT} |
+| **스크랩** | {DETECTED 또는 "Unknown"} |
+| **의논하기** | [모든 QA 실행](./index.md) |
 
-## Health Score: {SCORE}/100
+## 건강 점수: {SCORE}/100
 
 | Category | Score |
 |----------|-------|
-| Console | {0-100} |
+| 의 특징 | {0-100} |
 | Links | {0-100} |
-| Visual | {0-100} |
-| Functional | {0-100} |
+| 의 특징 | {0-100} |
+| 기능상 | {0-100} |
 | UX | {0-100} |
-| Performance | {0-100} |
-| Accessibility | {0-100} |
+| 의 특징 | {0-100} |
+| 의 특징 | {0-100} |
 
-## Top 3 Things to Fix
+## 정상 3 고치는 것
 
 1. **{ISSUE-NNN}: {title}** — {one-line description}
 2. **{ISSUE-NNN}: {title}** — {one-line description}
 3. **{ISSUE-NNN}: {title}** — {one-line description}
 
-## Console Health
+## 콘솔 건강
 
-| Error | Count | First seen |
+| Error | Count | 처음 본 |
 |-------|-------|------------|
-| {error message} | {N} | {URL} |
+| {error 메시지} | ₢ 킹 | {URL} |
 
-## Summary
+## 요약
 
-| Severity | Count |
+| 의욕 | Count |
 |----------|-------|
 | Critical | 0 |
 | High | 0 |
-| Medium | 0 |
-| Low | 0 |
+| 의 의 | 0 |
+| 의 의 | 0 |
 | **Total** | **0** |
 
-## Issues
+## 문제
 
 ### ISSUE-001: {Short title}
 
-| Field | Value |
+| Field | 의 값 |
 |-------|-------|
-| **Severity** | critical / high / medium / low |
-| **Category** | visual / functional / ux / content / performance / console / accessibility |
+| **의욕** | 중점 / 고/중/저 |
+| **Category** | 시각적/기능/UX/콘텐츠/성과/콘텐츠/액세스 |
 | **URL** | {page URL} |
 
-**Description:** {What is wrong, expected vs actual.}
+**묘사:** {실행된 것은, 실제 대입니다.}
 
-**Repro Steps:**
+**Repro 단계:**
 
-1. Navigate to {URL}
-   ![Step 1](screenshots/issue-001-step-1.png)
-2. {Action}
-   ![Step 2](screenshots/issue-001-step-2.png)
-3. **Observe:** {what goes wrong}
+1. {URL}에 대한 탐색
+   ![단계 1](screenshots/issue-001-step-1.png)
+2. ...
+   ![단계 2](screenshots/issue-001-step-2.png)
+3. **전망:** {무엇이 잘못되었는지}
    ![Result](screenshots/issue-001-result.png)
 
 ---
 
-## Fixes Applied (if applicable)
+## 적용 수정 (적용되는 경우에)
 
-| Issue | Fix Status | Commit | Files Changed |
+| 의정부 | 수정 상태 | Commit | 파일 변경 |
 |-------|-----------|--------|---------------|
-| ISSUE-NNN | verified / best-effort / reverted / deferred | {SHA} | {files} |
+| ISSUE-NNN | 인증 / 최우수 / 복제 / 파편 | {SHA} | ... |
 
-### Before/After Evidence
+## 전/After 증거
 
-#### ISSUE-NNN: {title}
-**Before:** ![Before](screenshots/issue-NNN-before.png)
-**After:** ![After](screenshots/issue-NNN-after.png)
+#### ISSUE-NNN: {title} **이전 :** ![의 전](screenshots/issue-NNN-before.png) **후:** ![후지후](screenshots/issue-NNN-after.png)
 
 ---
 
-## Regression Tests
+## 회귀 시험
 
-| Issue | Test File | Status | Description |
+| 의정부 | 시험 파일 | Status | 의 특징 |
 |-------|-----------|--------|-------------|
-| ISSUE-NNN | path/to/test | committed / deferred / skipped | description |
+| ISSUE-NNN | path/to/test | 꽉 / 드리 / 드리프트 | 제품 설명 |
 
-### Deferred Tests
+## # Deferred 시험
 
-#### ISSUE-NNN: {title}
-**Precondition:** {setup state that triggers the bug}
-**Action:** {what the user does}
-**Expected:** {correct behavior}
-**Why deferred:** {reason}
+### ISSUE-NNN: {title} **전 상태:** {setup state that 트리거 버그} **활동 :** {what user does} **예상 :** {correct behavior} **왜 방어:** {reason}
 
 ---
 
-## Ship Readiness
+## 배 읽음
 
-| Metric | Value |
+| Metric | 의 값 |
 |--------|-------|
-| Health score | {before} → {after} ({delta}) |
-| Issues found | N |
-| Fixes applied | N (verified: X, best-effort: Y, reverted: Z) |
-| Deferred | N |
+| 건강 점수 | {before} → {after} ({delta}) |
+| 자주 묻는 질문 | ₢ 킹 |
+| 적용된 수정 | N (확장: X, 최고의 노력: Y, 회귀: Z) |
+| 의제 | ₢ 킹 |
 
-**PR Summary:** "QA found N issues, fixed M, health score X → Y."
+**PR 요약:** "QA N문제, 고정 M, 건강점 X → Y"를 찾았습니다.
 
 ---
 
-## Regression (if applicable)
+## 회귀 (해당되는 경우)
 
-| Metric | Baseline | Current | Delta |
+| Metric | 기본 정보 | 현재 위치 | 델타 |
 |--------|----------|---------|-------|
-| Health score | {N} | {N} | {+/-N} |
-| Issues | {N} | {N} | {+/-N} |
+| 건강 점수 | ₢ 킹 | ₢ 킹 | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 의정부 | ₢ 킹 | ₢ 킹 | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 
-**Fixed since baseline:** {list}
-**New since baseline:** {list}
+**기본라인 이후의 고정:** {list} **기본 라인 이후 새로운:** {list}

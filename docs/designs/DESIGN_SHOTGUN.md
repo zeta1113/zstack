@@ -1,21 +1,14 @@
-# Design: Design Shotgun — Browser-to-Agent Feedback Loop
+# 디자인 : 디자인 샷건 - 브라우저 -에 - 일관된 피드백 루프
 
-Generated on 2026-03-27
-Branch: garrytan/agent-design-tools
-Status: LIVING DOCUMENT — update as bugs are found and fixed
+2026-03-27 지점에서 생성됨: garrytan/agent-design-tools 상태: LIVING DOCUMENT — 버그가 발견되고 고쳐지는 갱신
 
-## What This Feature Does
+## 이 기능은 무엇을 합니까
 
-Design Shotgun generates multiple AI design mockups, opens them side-by-side in the
-user's real browser as a comparison board, and collects structured feedback (pick a
-favorite, rate alternatives, leave notes, request regeneration). The feedback flows
-back to the coding agent, which acts on it: either proceeding with the approved
-variant or generating new variants and reloading the board.
+디자인 샷건은 여러 AI 디자인의 모조를 생성하고, 비교 보드로 사용자의 실제 브라우저에서 측면을 열고 구조화 된 피드백을 수집합니다 (즐거워하고, 가격 대안을 핥고, 메모, 요청 재생을 남깁니다). 피드백은 코딩 에이전트로 돌아갑니다. 즉, 승인 된 변형으로 진행하거나 새로운 변형을 생성하고 보드를 다시로드합니다.
 
-The user never leaves their browser tab. The agent never asks redundant questions.
-The board is the feedback mechanism.
+사용자는 브라우저 탭을 결코 나지 않습니다. 에이전트은 중복한 질문을 결코 요구하지 않습니다. 널은 의견 기계장치입니다.
 
-## The Core Problem: Two Worlds That Must Talk
+## 핵심 문제: 두 세계는 말하는
 
 ```
   ┌─────────────────────┐          ┌──────────────────────┐
@@ -31,11 +24,9 @@ The board is the feedback mechanism.
   └─────────────────────┘          └──────────────────────┘
 ```
 
-The "???" is the hard part. The user clicks a button in Chrome. The agent running in
-a terminal needs to know about it. These are two completely separate processes with
-no shared memory, no shared event bus, no WebSocket connection.
+"???"은 단단한 부분입니다. 사용자는 크롬에서 버튼을 클릭합니다. 터미널에서 실행되는 에이전트는 그것에 대해 알아야합니다. 이들은 no 공유 메모리, no 공유 이벤트 버스, no WebSocket 연결과 두 개의 완전 분리 프로세스입니다.
 
-## Architecture: How the Linkage Works
+## 건축술: Linkage 일하는 방법
 
 ```
   USER'S BROWSER                    $D serve (Bun HTTP)              AGENT
@@ -61,15 +52,15 @@ no shared memory, no shared event bus, no WebSocket connection.
        │                                   │                   reads file]
 ```
 
-### The Three Files
+### 세 파일
 
-| File | Written when | Means | Agent action |
+| File | 글 때 | Means | 에이전트 작업 |
 |------|-------------|-------|-------------|
-| `feedback.json` | User clicks Submit | Final selection, done | Read it, proceed |
-| `feedback-pending.json` | User clicks Regenerate/More Like This | Wants new options | Read it, delete it, generate new variants, reload board |
-| `feedback.json` (round 2+) | User clicks Submit after regeneration | Final selection after iteration | Read it, proceed |
+| `feedback.json` | 사용자 클릭 제출 | 최종 선택, 완료 | 읽다, 진행 |
+| `feedback-pending.json` | 사용자는 이처럼 Regenerate/More를 클릭 | 새로운 옵션을 원합니다. | 그것을 읽고, 삭제, 새로운 변형을 생성, 다시로드 보드 |
+| `feedback.json` (약 2+) | 사용자의 재생 후 제출 | 반복 후 최종 선택 | 읽다, 진행 |
 
-### The State Machine
+### 국가 기계
 
 ```
   $D serve starts
@@ -102,188 +93,132 @@ no shared memory, no shared event bus, no WebSocket connection.
                                  └──────────────┘
 ```
 
-### Port Discovery
+## 포트 디스커버리
 
-The agent backgrounds `$D serve` and reads stderr for the port:
+에이전트 배경 `$D serve` 및 포트에 대한 stderr를 읽습니다.
 
 ```
 SERVE_STARTED: port=54321 html=/path/to/board.html
 SERVE_BROWSER_OPENED: url=http://127.0.0.1:54321
 ```
 
-The agent parses `port=XXXXX` from stderr. This port is needed later to POST
-`/api/reload` when the user requests regeneration. If the agent loses the port
-number, it cannot reload the board.
+에이전트는 stderr에서 `port=XXXXX`를 파로 씁니다. 이 포트는 나중에 POST `/api/reload`로 사용되며, 요청 재생시. 에이전트가 포트 번호를 잃으면, 보드를 다시로드 할 수 없습니다.
 
-### Why 127.0.0.1, Not localhost
+## 왜 127.0.0.1, 로컬 호스트가 아닌
 
-`localhost` can resolve to IPv6 `::1` on some systems while Bun.serve() listens
-on IPv4 only. More importantly, `localhost` sends all dev cookies for every domain
-the developer has been working on. On a machine with many active sessions, this
-blows past Bun's default header size limit (HTTP 431 error). `127.0.0.1` avoids
-both issues.
+`localhost`는 IPv4에서만 듣는 동안 몇몇 체계에 IPv6 `::1`에 해결할 수 있습니다. 더 중요하게, `localhost`는 개발자가 작동하고 있는 각 도메인을 위한 모든 dev 쿠키를 보냅니다. 많은 활동적인 회의를 가진 기계에, 이 불어는 Bun의 default 머리 크기 한계 (HTTP 431 과실)를입니다. `127.0.0.1`는 둘 다 문제점을 피합니다.
 
-## Every Edge Case and Pitfall
+## 모든 가장자리 케이스 및 Pitfall
 
-### 1. The Zombie Form Problem
+##1. 좀비 형태 문제
 
-**What:** User submits feedback, the POST succeeds, the server exits. But the HTML
-page is still open in Chrome. It looks interactive. The user might edit their
-feedback and click Submit again. Nothing happens because the server is gone.
+**이름:** 사용자는 피드백을 제출합니다. POST는 서버 종료를 성공합니다. 그러나 HTML 페이지는 여전히 Chrome에서 열립니다. 그것은 상호 작용합니다. 사용자는 피드백과 click를 다시 편집할 수 있습니다. 서버가 사라지기 때문에 아무 것도 일어나지 않습니다.
 
-**Fix:** After successful POST, the board JS:
-- Disables ALL inputs (buttons, radios, textareas, star ratings)
-- Hides the Regenerate bar entirely
-- Replaces the Submit button with: "Feedback received! Return to your coding agent."
-- Shows: "Want to make more changes? Run `/design-shotgun` again."
-- The page becomes a read-only record of what was submitted
+**수정 :** 성공적인 POST 후에, 널 JS:
+- ALL 입력 (버튼, 라디오, textareas, 별 등급)
+- Regenerate bar를 완전히 숨깁니다.
+- 제출 버튼을 다음과 같이 대체하십시오. "Feedback 수신! 코딩 에이전트로 돌아갑니다."
+- 쇼: "더 많은 변화를 만들기 위해 필요? `/design-shotgun`를 다시 실행하십시오."
+- 페이지는 read-only 제출된 내용이 됩니다.
 
-**Implemented in:** `compare.ts:showPostSubmitState()` (line 484)
+**에 구현:** `compare.ts:showPostSubmitState()` (선 484)
 
-### 2. The Dead Server Problem
+##2. 죽은 서버 문제
 
-**What:** The server times out (10 min default) or crashes while the user still has
-the board open. User clicks Submit. The fetch() fails silently.
+**이름:** 서버는 서버가 10분 default) 또는 충돌을 하면서 사용자가 여전히 보드가 열립니다. 사용자의 클릭 제출. fetch()는 조용히 실패합니다.
 
-**Fix:** The `postFeedback()` function has a `.catch()` handler. On network failure:
-- Shows red error banner: "Connection lost"
-- Displays the collected feedback JSON in a copyable `<pre>` block
-- User can copy-paste it directly into their coding agent
+**수정 :** `postFeedback()` 함수는 `.catch()` 핸들러가 있다. 네트워크 실패에:
+- red 오류 배너를 표시합니다. "연결 손실"
+- 복사할 수 있는 `<pre>` 구획에 있는 수집된 의견 JSON를 표시합니다
+- 사용자는 직접 코딩 에이전트로 복사 할 수 있습니다.
 
-**Implemented in:** `compare.ts:showPostFailure()` (line 546)
+**에 구현:** `compare.ts:showPostFailure()` (선 546)
 
-### 3. The Stale Regeneration Spinner
+##3. 이야기 재생 스피너
 
-**What:** User clicks Regenerate. Board shows spinner and polls `/api/progress`
-every 2 seconds. Agent crashes or takes too long to generate new variants. The
-spinner spins forever.
+**이름:** 사용자는 재생산을 클릭합니다. 보드는 회전자와 polls `/api/progress`를 매 2 초마다 보여줍니다. 에이전트 충돌 또는 새로운 변형을 생성하기 위해 너무 오래 걸립니다. 회전수는 영원히 회전합니다.
 
-**Fix:** Progress polling has a hard 5-minute timeout (150 polls x 2s interval).
-After 5 minutes:
-- Spinner replaced with: "Something went wrong."
-- Shows: "Run `/design-shotgun` again in your coding agent."
-- Polling stops. Page becomes informational.
+**수정 :** 진행 오염은 5분 간격으로 단 5분 간격으로 갖춰집니다. 5분 후:
+- Spinner와 교체 : "Something이 잘못되었습니다."
+- 쇼: "Run `/design-shotgun` 다시 코딩 에이전트에서."
+- 투표 중지. 페이지가 정보를 얻게됩니다.
 
-**Implemented in:** `compare.ts:startProgressPolling()` (line 511)
+**에 구현:** `compare.ts:startProgressPolling()` (선 511)
 
-### 4. The file:// URL Problem (THE ORIGINAL BUG)
+##4. 파일:// URL 문제 (THE ORIGINAL BUG)
 
-**What:** The skill template originally used `$B goto file:///path/to/board.html`.
-But `browse/src/url-validation.ts:71` blocks `file://` URLs for security. The
-fallback `open file://...` opens the user's macOS browser, but `$B eval` polls
-Playwright's headless browser (different process, never loaded the page).
-Agent polls empty DOM forever.
+**이름:** 기술 템플릿은 원래 `$B goto file:///path/to/board.html`를 사용했습니다. 그러나 `browse/src/url-validation.ts:71` 블록 `file://` 보안 URL. fallback `open file://...`는 사용자 macOS 브라우저를 열고 `$B eval`는 Playwright의 headless 브라우저 (다른 프로세스를로드하지 않는 경우 페이지)를 사용합니다. 에이전트는 DOM를 영원히 비웁니다.
 
-**Fix:** `$D serve` serves over HTTP. Never use `file://` for the board. The
-`--serve` flag on `$D compare` combines board generation and HTTP serving in
-one command.
+**수정 :** `$D serve`는 HTTP 이상 봉사합니다. 널을 위해 `file://`를 결코 사용하지 마십시오. `--serve` 플래그는 `$D compare`에 1개의 명령에서 널 세대와 HTTP 서빙을 결합합니다.
 
-**Evidence:** See `.context/attachments/image-v2.png` — a real user hit this exact
-bug. The agent correctly diagnosed: (1) `$B goto` rejects `file://` URLs,
-(2) no polling loop even with the browse daemon.
+**증거:** `.context/attachments/image-v2.png` — 실제 사용자는 이 정확한 버그를 명중합니다. 제대로 진단되는 에이전트: (1) `$B goto`는 `file://` URL, (2) no는 찾아낸 daemon과 조차 반복을 거절합니다.
 
-### 5. The Double-Click Race
+##5. 더블 클릭 레이스
 
-**What:** User clicks Submit twice rapidly. Two POST requests arrive at the server.
-First one sets state to "done" and schedules exit(0) in 100ms. Second one arrives
-during that 100ms window.
+**이름:** 사용자는 두 번 신속하게 제출합니다. 두 개의 POST 요청은 서버에서 도착합니다. 첫 번째 세트는 "done"으로 상태와 100ms에서 출구(0)을 계획합니다. 두 번째는 100ms 창 중 하나가 도착합니다.
 
-**Current state:** NOT fully guarded. The `handleFeedback()` function doesn't check
-if state is already "done" before processing. The second POST would succeed and
-write a second `feedback.json` (harmless, same data). The exit still fires after
-100ms.
+**현재 국가:** NOT는 완전히 감시했습니다. `handleFeedback()` 기능은 국가가 이미 가공하기 전에 "done"인 경우에 검사하지 않습니다. 두번째 POST는 성공하고 두번째 `feedback.json` (무무한, 동일한 자료)를 써야 합니다. 출구는 100ms 후에 아직도 불을 불립니다.
 
-**Risk:** Low. The board disables all inputs on the first successful POST response,
-so a second click would need to arrive within ~1ms. And both writes would contain
-the same feedback data.
+**위험:** 저. 널은 첫번째 성공적인 POST 응답에 모든 입력을, 이렇게 두번째 click는 ~1ms 안에 도착해야 할 것입니다. 그리고 둘 다 동일한 의견 자료를 포함할 것입니다.
 
-**Potential fix:** Add `if (state === 'done') return Response.json({error: 'already submitted'}, {status: 409})` at the top of `handleFeedback()`.
+**잠재적인 고침:** `handleFeedback()`의 상단에 `if (state === 'done') return Response.json({error: 'already submitted'}, {status: 409})`를 추가합니다.
 
-### 6. The Port Coordination Problem
+##6. 포트 조정 문제
 
-**What:** Agent backgrounds `$D serve` and parses `port=54321` from stderr. Agent
-needs this port later to POST `/api/reload` during regeneration. If the agent
-loses context (conversation compresses, context window fills up), it may not
-remember the port.
+**이름:** 에이전트 배경 `$D serve` 및 `port=54321`를 stderr에서 파로 씁니다. 에이전트는 재생 중 POST `/api/reload`로 나중에 이 포트를 필요로 합니다. 에이전트가 컨텍스트를 잃으면 (변환 압축, 컨텍스트 윈도우 채우기), 포트를 기억할 수 없습니다.
 
-**Current state:** The port is printed to stderr once. The agent must remember it.
-There is no port file written to disk.
+**현재 국가:** 항구는 stderr에 한 번 인쇄됩니다. 에이전트은 그것을 기억해야 합니다. 디스크에 쓴 no 항구 파일이 있습니다.
 
-**Potential fix:** Write a `serve.pid` or `serve.port` file next to the board HTML
-on startup. Agent can read it anytime:
+**잠재적인 고침:** `serve.pid` 또는 `serve.port` 파일이 시작시 보드 HTML에 나옵니다. 에이전트는 언제든지 읽을 수 있습니다.
 ```bash
 cat "$_DESIGN_DIR/serve.port"  # → 54321
 ```
 
-### 7. The Feedback File Cleanup Problem
+##7. 피드백 파일 정리 문제
 
-**What:** `feedback-pending.json` from a regeneration round is left on disk. If the
-agent crashes before reading it, the next `$D serve` session finds a stale file.
+재생 라운드에서 **이름:** `feedback-pending.json`는 디스크에 남아 있습니다. 그 전에 에이전트가 충돌하면 다음 `$D serve` 세션은 stale 파일을 찾습니다.
 
-**Current state:** The polling loop in the resolver template says to delete
-`feedback-pending.json` after reading it. But this depends on the agent following
-instructions perfectly. Stale files could confuse a new session.
+**현재 국가:** 해결자 템플릿의 polling 루프는 `feedback-pending.json`를 읽고 읽은 후 삭제합니다. 그러나 이것은 완벽하게 지시를 따르는 에이전트에 달려 있습니다. Stale 파일은 새로운 세션을 혼란시킬 수 있습니다.
 
-**Potential fix:** `$D serve` could check for and delete stale feedback files on
-startup. Or: name files with timestamps (`feedback-pending-1711555200.json`).
+**잠재적인 고침:** `$D serve`는 시작에 stale 의견 파일을 검사하고 삭제할 수 있었습니다. 또는: 타임스탬프 (`feedback-pending-1711555200.json`)를 가진 이름 파일.
 
-### 8. Sequential Generate Rule
+##8. 순차적 생성 규칙
 
-**What:** The underlying OpenAI GPT Image API rate-limits concurrent image generation
-requests. When 3 `$D generate` calls run in parallel, 1 succeeds and 2 get aborted.
+**이름:** OpenAI GPT 이미지 API 비율 제한 동시 이미지 생성 요청. 3 `$D generate` 호출이 평행으로 실행되면 1개의 성공과 2는 낙관을 얻습니다.
 
-**Fix:** The skill template must explicitly say: "Generate mockups ONE AT A TIME.
-Do not parallelize `$D generate` calls." This is a prompt-level instruction, not
-a code-level lock. The design binary does not enforce sequential execution.
+**수정 :** 기술 템플릿은 명시적으로 말해야 합니다: "Generate mockups ONE AT A TIME. `$D generate` 호출을 병렬화하지 마십시오." 이것은 코드 레벨 잠금이 아닌 프롬프트 레벨 명령입니다. 디자인 바이너리는 순차적 실행을 시행하지 않습니다.
 
-**Risk:** Agents are trained to parallelize independent work. Without an explicit
-instruction, they will try to run 3 generates simultaneously. This wastes API calls
-and money.
+**위험:** 에이전트는 독립적 인 작업을 병렬화하기 위해 훈련됩니다. 명시적 인 명령없이, 그들은 동시에 3 생성을 실행하려고합니다. 이 폐기물 API 통화 및 돈.
 
-### 9. The AskUserQuestion Redundancy
+### 9. AskUserQuestion 중복
 
-**What:** After the user submits feedback via the board (with preferred variant,
-ratings, comments all in the JSON), the agent asks them again: "Which variant do
-you prefer?" This is annoying. The whole point of the board is to avoid this.
+**이름:** 사용자가 보드를 통해 피드백을 제출 한 후 (예를 들어, 평가, JSON)에서 모든 의견, 에이전트은 다시 묻습니다 : "그것을 싫어합니까?" 이것은 성가신입니다. 보드의 전체 지점은 이것을 피하기 위해 것입니다.
 
-**Fix:** The skill template must say: "Do NOT use AskUserQuestion to ask the user's
-preference. Read `feedback.json`, it contains their selection. Only AskUserQuestion
-to confirm you understood correctly, not to re-ask."
+**수정 :** 기술 템플릿은 "Do NOT use AskUserQuestion to asked the user's preference. 읽기 `feedback.json`, 그것은 그들의 선택을 포함합니다. 단지 AskUserQuestion 당신이 제대로 이해하기 위하여, 재작업하지 않는 것을 확인하기 위하여."
 
-### 10. The CORS Problem
+### 10. CORS 문제
 
-**What:** If the board HTML references external resources (fonts, images from CDN),
-the browser sends requests with `Origin: http://127.0.0.1:PORT`. Most CDNs allow
-this, but some might block it.
+**이름:** 보드 HTML 참조 외부 리소스 (폰트, CDN)의 이미지, 브라우저는 `Origin: http://127.0.0.1:PORT`와 요청을 보냅니다. 대부분의 CDN은 이것을 허용하지만 일부가 차단할 수 있습니다.
 
-**Current state:** The server does not set CORS headers. The board HTML is
-self-contained (images base64-encoded, styles inline), so this hasn't been an
-issue in practice.
+**현재 국가:** 서버는 CORS 헤더를 설정하지 않습니다. 보드 HTML는 자체가 포함 된 (images base64-encoded, styles 인라인)이므로 연습에 문제가 없습니다.
 
-**Risk:** Low for current design. Would matter if the board loaded external
-resources.
+**위험:** 낮은 현재 디자인을 위해. 널이 외부 자원 적재한 경우에 사정할 것입니다.
 
-### 11. The Large Payload Problem
+### 11. 큰 탑재량 문제
 
-**What:** No size limit on POST bodies to `/api/feedback`. If the board somehow
-sends a multi-MB payload, `req.json()` will parse it all into memory.
+**이름:** No POST체에 `/api/feedback` 크기 한계. 널이 몇몇이 다MB 탑재량을 보내는 경우에, `req.json()`는 기억으로 그것을 파는 것입니다.
 
-**Current state:** In practice, feedback JSON is ~500 bytes to ~2KB. The risk is
-theoretical, not practical. The board JS constructs a fixed-shape JSON object.
+**현재 국가:** 실습에서, 피드백 JSON는 ~500 바이트 ~~2KB입니다. 위험은 이론적, 실제적이지 않습니다. 보드 JS는 고정 모양 JSON 객체를 건설합니다.
 
-### 12. The fs.writeFileSync Error
+### 12. fs.writeFileSync 오류
 
-**What:** `feedback.json` write in `serve.ts:138` uses `fs.writeFileSync()` with no
-try/catch. If the disk is full or the directory is read-only, this throws and
-crashes the server. The user sees a spinner forever (server is dead, but board
-doesn't know).
+**이름:** `feedback.json` `serve.ts:138`는 no try/catch를 가진 `fs.writeFileSync()`를 사용합니다. 디스크가 가득 차 있거나 디렉토리가 read-only인 경우, 이 던지기는 서버가 충돌합니다. 사용자는 척수가 영원히 보이고 있습니다 (서버는 죽지만, 널은 모른다).
 
-**Risk:** Low in practice (the board HTML was just written to the same directory,
-proving it's writable). But a try/catch with a 500 response would be cleaner.
+**위험:** 저 연습 (보드 HTML는 동일한 디렉토리에 작성되었으며, writable입니다). 그러나 500 응답으로 /catch를 시도하면 클리너가 될 것입니다.
 
-## The Complete Flow (Step by Step)
+## 완전한 흐름 (단계별 단계)
 
-### Happy Path: User Picks on First Try
+## 행복한 경로: 사용자는 첫 번째 시도에 선택합니다
 
 ```
 1. Agent runs: $D compare --images "A.png,B.png,C.png" --output board.html --serve &
@@ -306,7 +241,7 @@ proving it's writable). But a try/catch with a 500 response would be cleaner.
 17. Agent reads it, summarizes to user, proceeds
 ```
 
-### Regeneration Path: User Wants Different Options
+### 재생 경로: 사용자는 다른 선택권을 원합니다
 
 ```
 1-6.  Same as above
@@ -335,7 +270,7 @@ proving it's writable). But a try/catch with a 500 response would be cleaner.
 25. User picks one, clicks Submit → happy path from step 10
 ```
 
-### "More Like This" Path
+### "더 좋아"길
 
 ```
 Same as regeneration, except:
@@ -344,7 +279,7 @@ Same as regeneration, except:
   instead of $D variants
 ```
 
-### Fallback Path: $D serve Fails
+## # Fallback Path: $D는 실패를 봉사
 
 ```
 1. Agent tries $D compare --serve, it fails (binary missing, port error, etc.)
@@ -355,97 +290,97 @@ Same as regeneration, except:
 5. Agent proceeds with text feedback (no structured JSON)
 ```
 
-## Files That Implement This
+## 이 구현하는 파일
 
-| File | Role |
+| File | - 연혁 |
 |------|------|
-| `design/src/serve.ts` | HTTP server, state machine, file writing, browser launch |
-| `design/src/compare.ts` | Board HTML generation, JS for ratings/picks/regen, POST logic, post-submit lifecycle |
-| `design/src/cli.ts` | CLI entry point, wires `serve` and `compare --serve` commands |
-| `design/src/commands.ts` | Command registry, defines `serve` and `compare` with their args |
-| `scripts/resolvers/design.ts` | `generateDesignShotgunLoop()` — template resolver that outputs the polling loop and reload instructions |
-| `design-shotgun/SKILL.md.tmpl` | Skill template that orchestrates the full flow: context gathering, variant generation, `{{DESIGN_SHOTGUN_LOOP}}`, feedback confirmation |
-| `design/test/serve.test.ts` | Unit tests for HTTP endpoints and state transitions |
-| `design/test/feedback-roundtrip.test.ts` | E2E test: browser click → JS fetch → HTTP POST → file on disk |
-| `browse/test/compare-board.test.ts` | DOM-level tests for the comparison board UI |
+| `design/src/serve.ts` | HTTP 서버, 주 기계, 파일 쓰기, 브라우저 시작 |
+| `design/src/compare.ts` | HTML 세대 JS ratings/picks/regen, POST 논리, 포스트 서브 수명주기를 위한 널 HTML 발생 |
+| `design/src/cli.ts` | CLI 입력점, 철사 `serve` 및 `compare --serve` 명령 |
+| `design/src/commands.ts` | 명령 레지스트리, 정의 `serve` 그리고 `compare` 그들의 args |
+| `scripts/resolvers/design.ts` | `generateDesignShotgunLoop()` — polling loop 및 reload 지시를 출력하는 템플릿 해결자 |
+| `design-shotgun/SKILL.md.tmpl` | 전체 흐름을 오케스트라 스킬 템플릿: 컨텍스트 모임, 변종 발생, `{{DESIGN_SHOTGUN_LOOP}}`, 피드백 확인 |
+| `design/test/serve.test.ts` | HTTP 엔드포인트 및 상태 전환을 위한 단위 테스트 |
+| `design/test/feedback-roundtrip.test.ts` | E2E 테스트: 브라우저 click → JS fetch → HTTP POST → 디스크에 파일 |
+| `browse/test/compare-board.test.ts` | DOM- 비교표에 대한 레벨 테스트 UI |
 
-## What Could Still Go Wrong
+## 아직도 무슨 일도 걸릴 수 있었습니다
 
-### Known Risks (ordered by likelihood)
+## # Known Risks (예: 안젤리후드에 의해 주문 됨)
 
-1. **Agent doesn't follow sequential generate rule** — most LLMs want to parallelize. Without enforcement in the binary, this is a prompt-level instruction that can be ignored.
+1. **에이전트는 순차적 생성 규칙을 따르지 않습니다.** - 대부분의 LLMs는 평행으로 원합니다. 이진에 있는 강제 없이, 이것은 무시될 수 있는 신속한 수준 지시입니다.
 
-2. **Agent loses port number** — context compression drops the stderr output. Agent can't reload the board. Mitigation: write port to a file.
+2. **에이전트는 포트 번호를 잃** - context 압축은 stderr 출력을 떨어뜨립니다. 에이전트은 널을 재부팅할 수 없습니다. 부록: 파일에 항구를 쓰십시오.
 
-3. **Stale feedback files** — leftover `feedback-pending.json` from a crashed session confuses the next run. Mitigation: clean on startup.
+3. **Stale 의견 파일** - 충돌 세션에서 `feedback-pending.json`가 다음 실행을 끊습니다. 부채: 시작을 청소합니다.
 
-4. **fs.writeFileSync crash** — no try/catch on the feedback file write. Silent server death if disk is full. User sees infinite spinner.
+4. **fs.writeFileSync 충돌** — no try/catch 에 대한 피드백 파일 쓰기. 디스크가 가득 차면 침묵 서버 죽음. 사용자는 무한한 스피너를 참조하십시오.
 
-5. **Progress polling drift** — `setInterval(fn, 2000)` over 5 minutes. In practice, JavaScript timers are accurate enough. But if the browser tab is backgrounded, Chrome may throttle intervals to once per minute.
+5. **진행 오염 드리프트** — `setInterval(fn, 2000)` 5분 이상. 실제로 JavaScript 타이머는 충분히 정확합니다. 그러나 브라우저 탭이 배경인 경우 Chrome는 분 당 한 번에 흉한 간격을 펼칠 수 있습니다.
 
-### Things That Work Well
+### 잘 일하는 것들
 
-1. **Dual-channel feedback** — stdout for foreground mode, files for background mode. Both always active. Agent can use whichever works.
+1. **듀얼 채널 피드백** — stdout 이 지상 모드의 경우, 배경 모드의 파일. 모두 항상 능동적. 에이전트는 어느 쪽이든 작동을 사용할 수 있습니다.
 
-2. **Self-contained HTML** — board has all CSS, JS, and base64-encoded images inline. No external dependencies. Works offline.
+2. **Self-contained HTML** - 널은 모든 CSS, JS 및 base64 인코딩된 이미지 인라인을 비치하고 있습니다. No 외부 의존성. 오프라인으로 작동합니다.
 
-3. **Same-tab regeneration** — user stays in one tab. Board auto-refreshes via `/api/progress` polling + `window.location.reload()`. No tab explosion.
+3. **횡령화** - 사용자는 한 탭에 머물. `/api/progress` polling + `window.location.reload()`를 통해 자동 재흡입. No 탭 폭발.
 
-4. **Graceful degradation** — POST failure shows copyable JSON. Progress timeout shows clear error message. No silent failures.
+4. **그라프의 쾌감** — POST 실패는 복사 가능한 JSON를 보여줍니다. 진행 timeout는 명확한 과실 메시지를 보여줍니다. No 침묵하는 실패.
 
-5. **Post-submit lifecycle** — board becomes read-only after submit. No zombie forms. Clear "what to do next" message.
+5. **포스트 서브 수명주기** - 보드는 read-only를 제출한 후입니다. No 좀비 형태. "다음을 할 것"이라고 해서는 안 됩니다.
 
-## Test Coverage
+## 시험 적용
 
-### What's Tested
+### 시험되는 것은 무엇입니까
 
-| Flow | Test | File |
+| Flow | 의 특징 | File |
 |------|------|------|
-| Submit → feedback.json on disk | browser click → file | `feedback-roundtrip.test.ts` |
-| Post-submit UI lockdown | inputs disabled, success shown | `feedback-roundtrip.test.ts` |
-| Regenerate → feedback-pending.json | chiclet + regen click → file | `feedback-roundtrip.test.ts` |
-| "More like this" → specific action | more_like_B in JSON | `feedback-roundtrip.test.ts` |
-| Spinner after regenerate | DOM shows loading text | `feedback-roundtrip.test.ts` |
-| Full regen → reload → submit | 2-round trip | `feedback-roundtrip.test.ts` |
-| Server starts on random port | port 0 binding | `serve.test.ts` |
-| HTML injection of server URL | __GSTACK_SERVER_URL check | `serve.test.ts` |
-| Invalid JSON rejection | 400 response | `serve.test.ts` |
-| HTML file validation | exit 1 if missing | `serve.test.ts` |
-| Timeout behavior | exit 1 after timeout | `serve.test.ts` |
-| Board DOM structure | radios, stars, chiclets | `compare-board.test.ts` |
+| 디스크에 → feedback.json 제출 | 브라우저 click → 파일 | `feedback-roundtrip.test.ts` |
+| Post-submit UI lockdown | 입력 비활성화, 성공 표시 | `feedback-roundtrip.test.ts` |
+| Regenerate → feedback-pending.json | 스칼렛 + 레겐 click → 파일 | `feedback-roundtrip.test.ts` |
+| "더 좋아" → 특정 행동 | _은_B 에서 JSON | `feedback-roundtrip.test.ts` |
+| 재 생성 후 Spinner | DOM 로딩 텍스트를 보여줍니다 | `feedback-roundtrip.test.ts` |
+| 완전 재원 → 재부하 → submit | 2라운드 여행 | `feedback-roundtrip.test.ts` |
+| Server는 임의 포트에서 시작합니다. | 항구 0 바인딩 | `serve.test.ts` |
+| HTML 서버의 주입 URL | __GSTACK_SERVER_URL 체크 | `serve.test.ts` |
+| JSON 거절 | 400 응답 | `serve.test.ts` |
+| HTML 파일 검증 | 종료 1 누락된 경우 | `serve.test.ts` |
+| Timeout 행동 | 1번 출구 | `serve.test.ts` |
+| 널 DOM 구조 | 라디오, 별, chiclets | `compare-board.test.ts` |
 
-### What's NOT Tested
+### NOT 테스트
 
-| Gap | Risk | Priority |
+| Gap | 위험 위험 | 주요연혁 |
 |-----|------|----------|
-| Double-click submit race | Low — inputs disable on first response | P3 |
-| Progress polling timeout (150 iterations) | Medium — 5 min is long to wait in a test | P2 |
-| Server crash during regeneration | Medium — user sees infinite spinner | P2 |
-| Network timeout during POST | Low — localhost is fast | P3 |
-| Backgrounded Chrome tab throttling intervals | Medium — could extend 5-min timeout to 30+ min | P2 |
-| Large feedback payload | Low — board constructs fixed-shape JSON | P3 |
-| Concurrent sessions (two boards, one server) | Low — each $D serve gets its own port | P3 |
-| Stale feedback file from prior session | Medium — could confuse new polling loop | P2 |
+| 더블 클릭 submit 레이스 | 낮은 - 첫 번째 응답에 비활성화 입력 | P3 |
+| 진행 오염 시간 (150 상승) | 중간 — 5 분은 시험에서 기다리는 길 | P2 |
+| 재생 중에 서버 충돌 | Medium - 사용자는 무한한 회전자를 볼 수 있습니다. | P2 |
+| POST 중 네트워크 타임아웃 | 낮은 — localhost는 빠른 | P3 |
+| 배경 Chrome 탭 스로틀링 간격 | 중간 - 5 분의 타임 아웃을 30 + 분으로 연장 할 수 있습니다 | P2 |
+| 큰 의견 payload | Low — board constructs fixed-shape JSON | P3 |
+| 동시 세션 (두 개의 보드, 한 서버) | 낮은 — 각 $D는 자체 포트를 가져옵니다 | P3 |
+| 이전 세션에서 Stale 피드백 파일 | 중간 — 새로운 polling 루프를 혼란시킬 수 있었습니다 | P2 |
 
-## Potential Improvements
+## 잠재적 개선
 
 ### Short-term (this branch)
 
-1. **Write port to file** — `serve.ts` writes `serve.port` to disk on startup. Agent reads it anytime. 5 lines.
-2. **Clean stale files on startup** — `serve.ts` deletes `feedback*.json` before starting. 3 lines.
-3. **Guard double-click** — check `state === 'done'` at top of `handleFeedback()`. 2 lines.
-4. **try/catch file write** — wrap `fs.writeFileSync` in try/catch, return 500 on failure. 5 lines.
+1. **파일에 포트 쓰기** — `serve.ts`는 `serve.port`를 시작에 디스크에 쓰입니다. 에이전트는 언제나 읽습니다. 5개의 선.
+2. **Clean stale 파일 시작** — `serve.ts` 시작하기 전에 `feedback*.json`를 삭제합니다. 3개의 선.
+3. **Guard 더블 클릭** - `handleFeedback()`의 상단에 `state === 'done'`를 확인합니다. 2개의 선.
+4. **try/catch 파일 쓰기** - `fs.writeFileSync`를 시도 /catch에서 포장하고, 실패에 500를 돌려줍니다. 5개의 선.
 
-### Medium-term (follow-up)
+### 중간단계 (follow-up)
 
-5. **WebSocket instead of polling** — replace `setInterval` + `GET /api/progress` with a WebSocket connection. Board gets instant notification when new HTML is ready. Eliminates polling drift and backgrounded-tab throttling. ~50 lines in serve.ts + ~20 lines in compare.ts.
+5. **WebSocket 대신 오염** — `setInterval` + `GET /api/progress`를 WebSocket 연결으로 대체하십시오. 널은 새로운 HTML가 준비되어 있을 때 즉시 통보를 얻습니다. 오염 물질 및 배경이 있는 tab throttling을 삭제하십시오. serve.ts + ~20의 선 compare.ts에 있는 ~50의 선.
 
-6. **Port file for agent** — write `{"port": 54321, "pid": 12345, "html": "/path/board.html"}` to `$_DESIGN_DIR/serve.json`. Agent reads this instead of parsing stderr. Makes the system more robust to context loss.
+6. **항만증제** — `{"port": 54321, "pid": 12345, "html": "/path/board.html"}`를 `$_DESIGN_DIR/serve.json`로 쓰십시오. 에이전트은 파싱 stderr 대신 이것을 읽습니다. 체계가 더 튼튼한 경우에 컨텍스트 손실.
 
-7. **Feedback schema validation** — validate the POST body against a JSON schema before writing. Catch malformed feedback early instead of confusing the agent downstream.
+7. **피드백 schema 검증** - 쓰기 전에 JSON schema에 대하여 POST 몸에 유효한. 응집은 에이전트 하류를 혼란시키기 대신에 의견 일찍 변형했습니다.
 
-### Long-term (design direction)
+### 장기 (디자인 방향)
 
-8. **Persistent design server** — instead of launching `$D serve` per session, run a long-lived design daemon (like the browse daemon). Multiple boards share one server. Eliminates cold start. But adds daemon lifecycle management complexity.
+8. **Persistent 디자인 서버** — 세션당 `$D serve`를 실행하는 대신, 긴 수명 디자인 daemon (검색 daemon와 같이)를 실행합니다. 다수 널은 1개의 서버를 공유합니다. 찬 시작을 삭제하십시오. 그러나 daemon 수명주기 관리 복잡성을 추가하십시오.
 
-9. **Real-time collaboration** — two agents (or one agent + one human) working on the same board simultaneously. Server broadcasts state changes via WebSocket. Requires conflict resolution on feedback.
+9. **실시간 협업** — 두 에이전트 (또는 하나의 에이전트 + 하나의 인간) 동시에 동일한 보드에서 작업. 서버는 WebSocket을 통해 국가 변경 방송. 피드백에 충돌 해결.

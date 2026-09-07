@@ -1,8 +1,8 @@
-# Project structure
+# 프로젝트 구조
 
-Moved verbatim from CLAUDE.md (token-load reduction).
+CLAUDE.md (토큰 로드 감소)에서 동사.
 
-## Directory tree
+## 디렉토리 트리
 
 ```
 gstack/
