@@ -214,6 +214,7 @@ export class BrowseClient {
   async fill(selector: string, value: string): Promise<string> { return this.command('fill', [selector, value]); }
   async select(selector: string, value: string): Promise<string> { return this.command('select', [selector, value]); }
   async hover(selector: string): Promise<string> { return this.command('hover', [selector]); }
+  async contextmenu(selector: string): Promise<string> { return this.command('contextmenu', [selector]); }
   async type(text: string): Promise<string> { return this.command('type', [text]); }
   async press(key: string): Promise<string> { return this.command('press', [key]); }
   async scroll(selector?: string): Promise<string> {
@@ -254,6 +255,7 @@ class LazyBrowseClient {
   fill(selector: string, value: string) { return this.get().fill(selector, value); }
   select(selector: string, value: string) { return this.get().select(selector, value); }
   hover(selector: string) { return this.get().hover(selector); }
+  contextmenu(selector: string) { return this.get().contextmenu(selector); }
   type(text: string) { return this.get().type(text); }
   press(key: string) { return this.get().press(key); }
   scroll(selector?: string) { return this.get().scroll(selector); }

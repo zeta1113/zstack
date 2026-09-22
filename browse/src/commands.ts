@@ -22,7 +22,7 @@ export const READ_COMMANDS = new Set([
 export const WRITE_COMMANDS = new Set([
   'goto', 'back', 'forward', 'reload',
   'load-html',
-  'click', 'fill', 'select', 'hover', 'type', 'press', 'scroll', 'wait',
+  'click', 'fill', 'select', 'hover', 'contextmenu', 'type', 'press', 'scroll', 'wait',
   'viewport', 'cookie', 'cookie-import', 'cookie-import-browser', 'header', 'useragent',
   'upload', 'dialog-accept', 'dialog-dismiss',
   'style', 'cleanup', 'prettyscreenshot',
@@ -122,6 +122,7 @@ export const COMMAND_DESCRIPTIONS: Record<string, { category: string; descriptio
   'fill':    { category: 'Interaction', description: 'Fill input', usage: 'fill <sel> <val>' },
   'select':  { category: 'Interaction', description: 'Select dropdown option by value, label, or visible text', usage: 'select <sel> <val>' },
   'hover':   { category: 'Interaction', description: 'Hover element', usage: 'hover <sel>' },
+  'contextmenu': { category: 'Interaction', description: 'Right-click element (opens native/page contextmenu)', usage: 'contextmenu <sel>' },
   'type':    { category: 'Interaction', description: 'Type into focused element', usage: 'type <text>' },
   'press':   { category: 'Interaction', description: 'Press a Playwright keyboard key against the focused element. Names are case-sensitive: Enter, Tab, Escape, ArrowUp/Down/Left/Right, Backspace, Delete, Home, End, PageUp, PageDown. Modifiers combine with +: Shift+Enter, Control+A, Meta+K. Single printable chars (a, A, 1) work too. Full key list: https://playwright.dev/docs/api/class-keyboard#keyboard-press', usage: 'press <key>' },
   'scroll':  { category: 'Interaction', description: 'With a selector, smooth-scrolls the element into view. Without a selector, jumps to page bottom. No --by/--to amount option; for pixel-precise scrolling use `js window.scrollTo(0, N)`.', usage: 'scroll [sel|@ref]' },

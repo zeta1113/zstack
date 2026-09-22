@@ -372,6 +372,30 @@ export async function handleWriteCommand(
       return `Clicked ${selector} → now at ${page.url()}`;
     }
 
+    case "hover": {
+      const selector = args[0];
+      if (!selector) throw new Error("Usage: browse hover <selector>");
+      const resolved = await session.resolveRef(selector);
+      if ("locator" in resolved) {
+        await resolved.locator.hover({ timeout: 5000 });
+      } else {
+        await target.locator(resolved.selector).hover({ timeout: 5000 });
+      }
+      return `Hovered ${selector}`;
+    }
+
+    case "contextmenu": {
+      const selector = args[0];
+      if (!selector) throw new Error("Usage: browse contextmenu <selector>");
+      const resolved = await session.resolveRef(selector);
+      if ("locator" in resolved) {
+        await resolved.locator.click({ button: "right", timeout: 5000 });
+      } else {
+        await target.locator(resolved.selector).click({ button: "right", timeout: 5000 });
+      }
+      return `Right-clicked (contextmenu) ${selector}`;
+    }
+
     case 'fill': {
       const [selector, ...valueParts] = args;
       const value = valueParts.join(' ');
