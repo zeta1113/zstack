@@ -1,5 +1,23 @@
 # gstack
 
+> ## This is a fork of gstack
+>
+> **Upstream: [github.com/garrytan/gstack](https://github.com/garrytan/gstack) — created by [Garry Tan](https://github.com/garrytan). MIT License, Copyright (c) 2026 Garry Tan.**
+>
+> This repository (`zeta1113/zstack`) is a personal fork. Everything of substance here is
+> Garry Tan's work; we only adapt it to our own machines. **Thank you — deeply — for making
+> this available.** (원저자께: 제공해 주신 것에 깊이 감사드립니다. 포크해서 제 환경에 맞게
+> 쓰고 있습니다.)
+>
+> **What differs from upstream:** the suite is renamed `gstack` → `zstack` throughout (file
+> names and every hardcoded path, so it installs to `~/.claude/skills/zstack` and `~/.zstack`),
+> plus small environment-specific installer fixes. No feature or behaviour changes are intended.
+> For upstream documentation, issues and updates, go to the upstream repository above.
+>
+> The MIT `LICENSE` and the third-party `NOTICE.md` are carried over unchanged, as MIT requires.
+>
+> ---
+
 > "I don't think I've typed like a line of code probably since December, basically, which is an extremely large change." — [Andrej Karpathy](https://fortune.com/2026/03/21/andrej-karpathy-openai-cofounder-ai-agents-coding-state-of-psychosis-openclaw/), No Priors podcast, March 2026
 
 When I heard Karpathy say this, I wanted to find out how. How does one person ship like a team of twenty? Peter Steinberger built [OpenClaw](https://github.com/openclaw/openclaw) — 247K GitHub stars — essentially solo with AI agents. The revolution is here. A single builder with the right tooling can move faster than a traditional team.
