@@ -1,5 +1,23 @@
 # gstack
 
+> ## This is a fork of gstack
+>
+> **Upstream: [github.com/garrytan/gstack](https://github.com/garrytan/gstack) — created by [Garry Tan](https://github.com/garrytan). MIT License, Copyright (c) 2026 Garry Tan.**
+>
+> This repository (`zeta1113/zstack`) is a personal fork. Everything of substance here is
+> Garry Tan's work; we only adapt it to our own machines. **Thank you — deeply — for making
+> this available.** (원저자께: 제공해 주신 것에 깊이 감사드립니다. 포크해서 제 환경에 맞게
+> 쓰고 있습니다.)
+>
+> **What differs from upstream:** the suite is renamed `gstack` → `zstack` throughout (file
+> names and every hardcoded path, so it installs to `~/.claude/skills/zstack` and `~/.zstack`),
+> plus small environment-specific installer fixes. No feature or behaviour changes are intended.
+> For upstream documentation, issues and updates, go to the upstream repository above.
+>
+> The MIT `LICENSE` and the third-party `NOTICE.md` are carried over unchanged, as MIT requires.
+>
+> ---
+
 > "아마 12월 이후로는 코드 한 줄도 직접 친 적이 거의 없는 것 같습니다. 기본적으로 아주 큰 변화죠." — [Andrej Karpathy](https://fortune.com/2026/03/21/andrej-karpathy-openai-cofounder-ai-agents-coding-state-of-psychosis-openclaw/), No Priors 팟캐스트, 2026년 3월
 
 Karpathy의 말을 듣고 나는 그 방법이 궁금해졌습니다. 한 사람이 어떻게 스무 명짜리 팀처럼 ship할 수 있을까요? Peter Steinberger는 AI 에이전트와 함께 [OpenClaw](https://github.com/openclaw/openclaw)를 거의 혼자 만들었고, GitHub star는 247K에 이릅니다. 변화는 이미 와 있습니다. 올바른 도구를 가진 1인 빌더는 전통적인 팀보다 더 빠르게 움직일 수 있습니다.
