@@ -48,6 +48,47 @@ pcnDev WSL 172.24.8.106:8899 — naver-map-proxy 서비스(화이트리스트 CO
 같은 서버가 `GET /proxy.pac`(또는 `/naver-map-proxy.pac`) 요청에도 응답해서 PAC 스크립트 자체를
 서빙한다 — CONNECT 프록시와 PAC 서버가 같은 포트를 공유하는 구조.
 
+## 평소 쓰는(자동화 전용이 아닌) 크롬에도 적용하기 — 시스템 프록시 자동구성
+
+위 `--proxy-pac-url` 크롬 실행 플래그는 **GATEONE 자동화 전용 프로필(`C:\gateone-profile`)에만** 적용된다.
+사용자가 평소 쓰는 일반 크롬(시스템 프로필)에도 같은 PAC을 태우려면 **Windows "인터넷 옵션 > 연결 >
+LAN 설정 > 자동 구성 스크립트 사용"**에 같은 PAC URL을 등록하면 된다 — 이게 `HKCU`(사용자별)
+레지스트리라 **관리자 권한이 필요 없다**(2026-09-29 pcnDev-WSL-claude가 직접 설정 성공).
+
+```powershell
+# 등록 (관리자 권한 불필요)
+Set-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Internet Settings' -Name AutoConfigURL -Value 'http://192.168.101.200:8899/proxy.pac'
+
+# 바로 적용되게 시스템에 알림(안 해도 새 브라우저/탭에는 대부분 곧 반영되지만, 확실히 하려면)
+Add-Type @"
+using System;
+using System.Runtime.InteropServices;
+public class WinInet {
+    [DllImport("wininet.dll", SetLastError = true)]
+    public static extern bool InternetSetOption(IntPtr hInternet, int dwOption, IntPtr lpBuffer, int dwBufferLength);
+}
+"@
+[WinInet]::InternetSetOption([IntPtr]::Zero, 39, [IntPtr]::Zero, 0) | Out-Null  # INTERNET_OPTION_SETTINGS_CHANGED
+[WinInet]::InternetSetOption([IntPtr]::Zero, 37, [IntPtr]::Zero, 0) | Out-Null  # INTERNET_OPTION_REFRESH
+```
+
+**되돌리기(원복):**
+```powershell
+Remove-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Internet Settings' -Name AutoConfigURL -ErrorAction SilentlyContinue
+# 위와 같은 InternetSetOption 알림 두 줄을 다시 실행해서 즉시 반영
+```
+
+**검증(브라우저 안 띄우고 확인):**
+```powershell
+$proxy = [System.Net.WebRequest]::GetSystemWebProxy()
+$proxy.GetProxy([Uri]"https://map.pstatic.net/")   # -> http://192.168.101.200:8899/ 가 나와야 정상
+$proxy.GetProxy([Uri]"https://www.google.com/")    # -> 그대로(프록시 안 탐)여야 정상 — 다르면 화이트리스트가 새고 있는 것
+```
+
+**주의**: 이건 이 사용자 계정 전체(모든 WinINet/WinHTTP 기반 앱 — 크롬 기본 프로필, Edge, 대부분의
+Windows 앱)에 적용된다. `--proxy-pac-url` 플래그를 쓰는 GATEONE 자동화 크롬은 이미 자기 프록시
+설정을 쓰므로 이것과 무관하게 독립적으로 동작한다(서로 간섭 없음).
+
 ## 빠진 것 — 다시 만들 때 반드시 짚을 함정
 
 **PAC을 `file:///C:/...pac` 로컬 파일로 주면 크롬이 제대로 안 읽는다** (DIRECT로 계속 폴백돼서
