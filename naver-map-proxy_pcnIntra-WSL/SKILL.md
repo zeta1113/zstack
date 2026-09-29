@@ -55,6 +55,18 @@ pcnDev WSL 172.24.8.106:8899 — naver-map-proxy 서비스(화이트리스트 CO
 서버 자체가 `/proxy.pac`도 서빙하도록 만들었다. 다음에 또 이 증상(PAC 설정했는데 안 먹음)을 보면
 file:// 대신 HTTP 서빙부터 의심할 것.
 
+**`maps.apigw.ntruss.com`(reverse geocode) 요청이 간헐적으로 `ERR_CONNECTION_TIMED_OUT`나면 —
+프록시 코드를 손대기 전에 먼저 pcnDev에서 직접(프록시 없이) `curl`로 같은 URL을 5~10번 반복해서
+쳐보고 재현되는지부터 확인할 것.** 한 번 이 증상이 나서 "DNS 라운드로빈 IP 중 하나가 죽었다"고
+오판하고 프록시에 멀티 IP 페일오버/병렬 연결 로직을 추가했었는데, **그게 오히려 새 버그였다**(직접
+curl은 10/10 성공, "고친" 프록시는 3~5/10 실패). 원인 규명 없이 되돌렸더니(단순히
+`asyncio.wait_for(asyncio.open_connection(host, port), timeout=10)` 한 줄로) 다시 10/10 성공했다.
+**교훈: 이 프록시는 TCP CONNECT 터널만 뜨고 그 안의 TLS/HTTP는 전혀 건드리지 않으니, 특정 API가
+간헐적으로 안 되면 거의 항상 원인은 프록시 코드가 아니라 (a) 그 시점의 CDP 브리지/크롬 상태 또는
+(b) Naver 서버 쪽의 일시적 지연이다 — 성급하게 프록시 연결 로직을 복잡하게 만들지 말 것.** 실제
+이 세션에서 최종 재현 실패의 진짜 원인은 CDP 브리지가 도중에 죽어있었던 것(크롬 CDP 프로세스가
+알 수 없는 이유로 내려가 있었음 — `schtasks /run`으로 재기동 후 5/5 성공, `status=200`).
+
 ## 재현/점검 절차
 
 1. pcnDev: `systemctl --user status naver-map-proxy.service` — 떠 있는지 확인.
